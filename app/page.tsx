@@ -31,7 +31,7 @@ const FOREST_FLOWERS = [
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
-// TỌA ĐỘ CÁC VỊ TRÍ LẤP LÁNH TRÊN VÁY CÔ DÂU (Tập trung ở nửa dưới màn hình)
+// TỌA ĐỘ CÁC VỊ TRÍ LẤP LÁNH TRÊN VÁY CÔ DÂU
 const DRESS_SPARKLES = [
   { id: 1, bottom: "10%", left: "30%", delay: "0s", size: "12px" },
   { id: 2, bottom: "25%", left: "55%", delay: "0.5s", size: "8px" },
@@ -85,20 +85,20 @@ export default function WeddingCardPage() {
         
         @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
 
-        /* HIỆU ỨNG NGÔI SAO LẤP LÁNH TRÊN VÁY */
+        /* HIỆU ỨNG NGÔI SAO LẤP LÁNH */
         @keyframes sparkle {
            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
            50% { opacity: 0.9; transform: scale(1) rotate(90deg); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
-        /* MÔI TRƯỜNG 3D THỰC TẾ */
+        /* MÔI TRƯỜNG 3D */
         .perspective-2000 { perspective: 2000px; -webkit-perspective: 2000px; }
         .preserve-3d { transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       `}} />
 
-      {/* Bao bọc toàn bộ bằng Không gian 3D (Perspective) */}
+      {/* Bao bọc toàn bộ bằng Không gian 3D */}
       <section className="perspective-2000 w-full min-h-screen relative flex items-center justify-center p-4 bg-[#8C8076] z-20 overflow-hidden">
         
         {/* Hạt rơi nền */}
@@ -111,7 +111,7 @@ export default function WeddingCardPage() {
         </div>
 
         {/* ============================================== */}
-        {/* CUỐN SÁCH TỔNG (CONTAINER): Phóng to ra khi mở */}
+        {/* CUỐN SÁCH TỔNG (CONTAINER) */}
         {/* ============================================== */}
         <div 
             className="relative preserve-3d w-[92%] sm:w-full max-w-[420px] aspect-[3/4] min-h-[550px] md:min-h-[600px] shadow-2xl transition-all duration-[1200ms] ease-in-out"
@@ -122,7 +122,7 @@ export default function WeddingCardPage() {
         >
             
           {/* ============================================== */}
-          {/* RUỘT THIỆP (Nằm dưới đáy): Lộ ra khi lật bìa */}
+          {/* RUỘT THIỆP */}
           {/* ============================================== */}
           <div className="absolute inset-0 z-10 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] flex flex-col items-center pt-10 pb-6 px-4 overflow-hidden">
              
@@ -147,7 +147,7 @@ export default function WeddingCardPage() {
                         }} 
                     />
                     
-                    {/* HIỆU ỨNG LẤP LÁNH TRÊN VÁY CÔ DÂU */}
+                    {/* Hiệu ứng lấp lánh váy cô dâu */}
                     <div className="absolute inset-0 pointer-events-none z-10">
                         {DRESS_SPARKLES.map((sparkle) => (
                             <svg 
@@ -173,16 +173,19 @@ export default function WeddingCardPage() {
                     }}
                 />
                 
-                {/* HOA TRANG TRÍ ĐUNG ĐƯA / LƠ LỬNG */}
+                {/* HOA TRANG TRÍ RIÊNG Ở TRANG 1 (HoaT1) */}
                 <div 
                     className="absolute -bottom-8 -left-8 md:-bottom-10 md:-left-12 w-32 md:w-40 z-20 pointer-events-none drop-shadow-lg" 
                     style={{ transform: 'rotate(-12deg)' }}
                 >
                     <img 
-                        src="/Hoa.png" 
+                        src="/HoaT1.png" 
                         alt="Hoa Polaroid"
                         className="w-full h-auto origin-bottom-left" 
                         style={{ animation: 'sway-forest 6s ease-in-out infinite' }} 
+                        onError={(e) => {
+                            if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg";
+                        }}
                     />
                 </div>
              </div>
@@ -245,7 +248,7 @@ export default function WeddingCardPage() {
                      <div className="text-[130px] md:text-[160px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
                   
-                  {/* Rừng hoa đong đưa */}
+                  {/* Rừng hoa đong đưa ngoài bìa (vẫn dùng Hoa.png) */}
                   <div className="absolute inset-x-0 bottom-0 pointer-events-none z-30">
                      {FOREST_FLOWERS.map((flower) => (
                         <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, zIndex: flower.zIndex, transform: `rotate(${flower.rotate})`, transformOrigin: 'bottom center' }}>
