@@ -31,6 +31,20 @@ const FOREST_FLOWERS = [
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
+// TỌA ĐỘ CÁC VỊ TRÍ LẤP LÁNH TRÊN VÁY CÔ DÂU (Tập trung ở nửa dưới màn hình)
+const DRESS_SPARKLES = [
+  { id: 1, bottom: "10%", left: "30%", delay: "0s", size: "12px" },
+  { id: 2, bottom: "25%", left: "55%", delay: "0.5s", size: "8px" },
+  { id: 3, bottom: "15%", left: "70%", delay: "1.2s", size: "14px" },
+  { id: 4, bottom: "35%", left: "45%", delay: "0.8s", size: "10px" },
+  { id: 5, bottom: "5%", left: "50%", delay: "1.5s", size: "16px" },
+  { id: 6, bottom: "20%", left: "20%", delay: "0.3s", size: "11px" },
+  { id: 7, bottom: "40%", left: "80%", delay: "1.7s", size: "13px" },
+  { id: 8, bottom: "12%", left: "85%", delay: "0.9s", size: "9px" },
+  { id: 9, bottom: "28%", left: "35%", delay: "2.1s", size: "15px" },
+  { id: 10, bottom: "18%", left: "60%", delay: "1.4s", size: "12px" },
+];
+
 const LuxuryCorner = ({ className }: { className?: string }) => (
   <svg className={`absolute w-12 h-12 md:w-16 md:h-16 pointer-events-none opacity-90 z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 98 V2 H98" stroke="#C3B09B" strokeWidth="2"/>
@@ -68,9 +82,17 @@ export default function WeddingCardPage() {
         @keyframes fall { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(110vh) translateX(-20px) rotate(360deg); opacity: 0; } }
         @keyframes heart-blink { 0%, 100% { stroke: transparent; stroke-width: 0px; transform: scale(1); opacity: 0.5; } 50% { stroke: #FF99C2; stroke-width: 1.5px; transform: scale(1.15); opacity: 0.85; } }
         .animate-heart { animation: heart-blink 2s ease-in-out infinite; }
+        
         @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
 
-        /* LỚP CSS TẠO MÔI TRƯỜNG 3D THỰC TẾ */
+        /* HIỆU ỨNG NGÔI SAO LẤP LÁNH TRÊN VÁY */
+        @keyframes sparkle {
+           0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+           50% { opacity: 0.9; transform: scale(1) rotate(90deg); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
+        }
+        .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
+
+        /* MÔI TRƯỜNG 3D THỰC TẾ */
         .perspective-2000 { perspective: 2000px; -webkit-perspective: 2000px; }
         .preserve-3d { transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
@@ -94,9 +116,8 @@ export default function WeddingCardPage() {
         <div 
             className="relative preserve-3d w-[92%] sm:w-full max-w-[420px] aspect-[3/4] min-h-[550px] md:min-h-[600px] shadow-2xl transition-all duration-[1200ms] ease-in-out"
             style={{ 
-                // Khi mở thiệp, đẩy toàn bộ khung sang phải một chút và phóng to lên 12%
                 transform: isOpen ? 'scale(1.12) translateX(4%)' : 'scale(1) translateX(0)',
-                transitionDelay: isOpen ? '0.2s' : '0s' // Trễ 0.2s để chờ bìa bắt đầu lật
+                transitionDelay: isOpen ? '0.2s' : '0s'
             }}
         >
             
@@ -109,7 +130,7 @@ export default function WeddingCardPage() {
              <p className="uppercase tracking-[0.25em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-2">The Wedding Of</p>
              <h2 className="text-3xl md:text-4xl font-serif italic text-[#5C4F44] mb-8">Đỗ Trung & Đặng Hải</h2>
              
-             {/* Khung ảnh Polaroid chứa AnhT1 & Con_dau1 */}
+             {/* Khung ảnh Polaroid */}
              <div className="relative w-[85%] max-w-[300px] bg-white p-3 md:p-4 pb-12 md:pb-14 shadow-xl rotate-[2deg] mt-2">
                 
                 {/* Băng dính */}
@@ -125,6 +146,21 @@ export default function WeddingCardPage() {
                             if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png";
                         }} 
                     />
+                    
+                    {/* HIỆU ỨNG LẤP LÁNH TRÊN VÁY CÔ DÂU */}
+                    <div className="absolute inset-0 pointer-events-none z-10">
+                        {DRESS_SPARKLES.map((sparkle) => (
+                            <svg 
+                                key={`sp-${sparkle.id}`} 
+                                className="absolute text-white animate-sparkle drop-shadow-md" 
+                                style={{ bottom: sparkle.bottom, left: sparkle.left, width: sparkle.size, height: sparkle.size, animationDelay: sparkle.delay }} 
+                                viewBox="0 0 24 24" 
+                                fill="currentColor"
+                            >
+                                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                            </svg>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Dấu sáp (Con_dau1) */}
@@ -137,8 +173,18 @@ export default function WeddingCardPage() {
                     }}
                 />
                 
-                {/* Hoa trang trí đè lên góc trái ảnh */}
-                <img src="/Hoa.png" className="absolute -bottom-8 -left-8 md:-bottom-10 md:-left-12 w-32 md:w-40 -rotate-[12deg] opacity-90 pointer-events-none z-20 drop-shadow-lg" />
+                {/* HOA TRANG TRÍ ĐUNG ĐƯA / LƠ LỬNG */}
+                <div 
+                    className="absolute -bottom-8 -left-8 md:-bottom-10 md:-left-12 w-32 md:w-40 z-20 pointer-events-none drop-shadow-lg" 
+                    style={{ transform: 'rotate(-12deg)' }}
+                >
+                    <img 
+                        src="/Hoa.png" 
+                        alt="Hoa Polaroid"
+                        className="w-full h-auto origin-bottom-left" 
+                        style={{ animation: 'sway-forest 6s ease-in-out infinite' }} 
+                    />
+                </div>
              </div>
 
              {/* Nút Đóng */}
@@ -152,7 +198,7 @@ export default function WeddingCardPage() {
 
 
           {/* ============================================== */}
-          {/* CỤM BÌA THIỆP (Nằm trên cùng): Có 2 mặt trước sau */}
+          {/* CỤM BÌA THIỆP (Nằm trên cùng): Lật 140 độ */}
           {/* ============================================== */}
           <div 
               className="absolute inset-0 z-40 preserve-3d"
@@ -164,7 +210,7 @@ export default function WeddingCardPage() {
               }}
           >
               
-              {/* --- MẶT SAU CỦA BÌA (Hiện ra khi thiệp lật sang trái) --- */}
+              {/* --- MẶT SAU CỦA BÌA --- */}
               <div 
                   className="absolute inset-0 bg-[#F4EFEA] rounded-lg border border-[#D5C7B8] backface-hidden shadow-inner flex items-center justify-center"
                   style={{ transform: 'rotateY(180deg)' }}
@@ -172,7 +218,7 @@ export default function WeddingCardPage() {
                   <div className="text-[120px] font-serif text-[#D5C7B8] opacity-30">囍</div>
               </div>
 
-              {/* --- MẶT TRƯỚC CỦA BÌA (Giao diện cũ của bạn) --- */}
+              {/* --- MẶT TRƯỚC CỦA BÌA --- */}
               <div className="absolute inset-0 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] backface-hidden overflow-hidden">
                   
                   {/* Hạt rơi bên trong bìa */}
@@ -184,7 +230,7 @@ export default function WeddingCardPage() {
                     ))}
                   </div>
 
-                  {/* Các góc viền cao cấp */}
+                  {/* Các góc viền */}
                   <LuxuryCorner className="top-4 left-4" />
                   <LuxuryCorner className="top-4 right-4 rotate-90" />
                   <LuxuryCorner className="bottom-4 right-4 rotate-180" />
@@ -228,7 +274,7 @@ export default function WeddingCardPage() {
                     <p className="text-[#8C7A6B] text-sm mt-2 mb-10 uppercase tracking-[0.2em] font-medium pointer-events-none">Thân Mời</p>
 
                     <button 
-                        onClick={() => setIsOpen(true)} // Gắn sự kiện lật trang
+                        onClick={() => setIsOpen(true)}
                         className="px-10 py-3.5 bg-[#8C7A6B] text-white text-[13px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#6A5A4E] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
                     >
                         Mở thiệp
