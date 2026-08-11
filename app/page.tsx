@@ -52,8 +52,8 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const WaterColorLeafBranch = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 200 400" className={`pointer-events-none drop-shadow-md ${className}`} fill="none" xmlns="http://www.w3.org/2000/svg">
+const WaterColorLeafBranch = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
+  <svg viewBox="0 0 200 400" className={`pointer-events-none drop-shadow-md ${className}`} style={style} fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M100 400 Q80 250 120 0" stroke="#8A9A86" strokeWidth="3" fill="none" />
     <path d="M105 320 Q50 300 20 250 Q60 260 105 320" fill="#A9B5A3" opacity="0.8" />
     <path d="M98 260 Q150 240 180 180 Q140 210 98 260" fill="#8A9A86" opacity="0.8" />
@@ -74,7 +74,15 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
-// Component cảm biến hiện chữ khi cuộn (FadeIn on Scroll)
+// SVG Chiếc lá bay
+const FlyingLeafSVG = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
+  <svg className={`absolute pointer-events-none drop-shadow-sm opacity-[0.55] ${className}`} style={style} viewBox="0 0 24 24" fill="#8A9A86" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21,3C21,3,16,2,10,7C4,12,3,21,3,21s5,1,11-4C20,12,21,3,21,3z" />
+    <path d="M3,21l9-9" stroke="#EAE3DB" strokeWidth="0.5" />
+  </svg>
+);
+
+// Component cảm biến hiện chữ
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -84,22 +92,17 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect(); // Chỉ chạy hiệu ứng 1 lần
+          observer.disconnect();
         }
       },
-      { threshold: 0.15 } // Hiện khi khối lọt vào màn hình 15%
+      { threshold: 0.15 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div 
-      ref={ref} 
-      className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center
-        ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} 
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+    <div ref={ref} className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
@@ -135,7 +138,8 @@ export default function WeddingCardPage() {
         const deltaTime = time - lastTime;
         lastTime = time;
 
-        accumulator += deltaTime * 0.05;
+        // Đã TĂNG tốc độ cuộn lên một chút (từ 0.05 -> 0.075)
+        accumulator += deltaTime * 0.075;
 
         if (accumulator >= 1) {
           const step = Math.floor(accumulator);
@@ -175,11 +179,7 @@ export default function WeddingCardPage() {
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
-    <div 
-        className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] cursor-pointer w-full
-            ${!isOpen ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'}`} 
-        onClick={toggleAutoScroll}
-    >
+    <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] cursor-pointer w-full ${!isOpen ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'}`} onClick={toggleAutoScroll}>
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -197,6 +197,22 @@ export default function WeddingCardPage() {
            50% { opacity: 0.9; transform: scale(1) rotate(90deg); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
+
+        /* Animation cho lá bay ngang */
+        @keyframes blow-right {
+           0% { left: -20%; transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+           20% { opacity: 1; }
+           80% { opacity: 1; }
+           100% { left: 120%; transform: translateY(-50px) rotate(270deg) scale(1.2); opacity: 0; }
+        }
+        @keyframes blow-left {
+           0% { left: 120%; transform: translateY(50px) rotate(45deg) scale(1); opacity: 0; }
+           20% { opacity: 1; }
+           80% { opacity: 1; }
+           100% { left: -20%; transform: translateY(-30px) rotate(-180deg) scale(0.9); opacity: 0; }
+        }
+        .animate-blow-right { animation: blow-right linear infinite; }
+        .animate-blow-left { animation: blow-left linear infinite; }
       `}} />
 
       {/* MÀN HÌNH CHÀO */}
@@ -291,15 +307,16 @@ export default function WeddingCardPage() {
       </div>
 
       {/* ============================================== */}
-      {/* CUỘN GIẤY THIỆP CHÍNH CÓ HIỆU ỨNG TILT & REVEAL */}
+      {/* CUỘN GIẤY THIỆP CHÍNH */}
+      {/* LƯU Ý: Đã chỉnh lại hiệu ứng mở thẳng thớm (không nghiêng) */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div 
               className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isOpen ? 'opacity-100 scale-100 translate-y-0 rotate-0' : 'opacity-0 scale-[0.85] translate-y-32 -rotate-6'} 
+                  ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
               `}
               style={{
-                  transformOrigin: 'bottom center',
+                  transformOrigin: 'top center',
                   transitionDelay: isOpen ? '0.4s' : '0s' 
               }}
           >
@@ -341,10 +358,21 @@ export default function WeddingCardPage() {
                  {/* Thẻ Thông Tin Lễ Cưới Nổi (Kèm hiệu ứng rung rinh cho lá) */}
                  <div className="relative w-[90%] max-w-[400px] bg-[#F5EFE6] rounded-sm shadow-[0_10px_40px_rgba(0,0,0,0.05)] mt-24 mb-10 border border-[#EAE3DB]">
                      
+                     {/* Lá tĩnh rung rinh bên ngoài */}
                      <WaterColorLeafBranch className="absolute top-1/2 -left-[60px] -translate-y-1/2 w-[120px] h-[240px] z-30" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} />
                      
                      <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
                         <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                     </div>
+
+                     {/* LỚP LÁ BAY ĐỘNG XUYÊN QUA THẺ */}
+                     <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-sm z-10">
+                         <FlyingLeafSVG className="animate-blow-right w-6 h-6" style={{ top: '25%', animationDuration: '7s', animationDelay: '0s' }} />
+                         <FlyingLeafSVG className="animate-blow-left w-5 h-5" style={{ top: '45%', animationDuration: '9s', animationDelay: '2s' }} />
+                         <FlyingLeafSVG className="animate-blow-right w-7 h-7" style={{ top: '35%', animationDuration: '8.5s', animationDelay: '4s' }} />
+                         <FlyingLeafSVG className="animate-blow-left w-6 h-6" style={{ top: '65%', animationDuration: '10s', animationDelay: '1s' }} />
+                         <FlyingLeafSVG className="animate-blow-right w-5 h-5" style={{ top: '15%', animationDuration: '11s', animationDelay: '3s' }} />
+                         <FlyingLeafSVG className="animate-blow-left w-8 h-8" style={{ top: '75%', animationDuration: '8s', animationDelay: '5s' }} />
                      </div>
 
                      <div className="px-6 py-14 flex flex-col items-center text-center relative z-20">
@@ -375,7 +403,7 @@ export default function WeddingCardPage() {
                          </FadeIn>
 
                          <FadeIn delay={400}>
-                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-2">Đỗ Trung</h1>
+                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-2 drop-shadow-sm">Đỗ Trung</h1>
                             <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-4">Trưởng Nam</span>
                          </FadeIn>
 
@@ -384,7 +412,7 @@ export default function WeddingCardPage() {
                          </FadeIn>
 
                          <FadeIn delay={600}>
-                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-2">Đặng Hải</h1>
+                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-2 drop-shadow-sm">Đặng Hải</h1>
                             <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-10">Út Nữ</span>
                          </FadeIn>
 
