@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 // ==========================================
 // 1. DỮ LIỆU TĨNH
 // ==========================================
-// Hạt tim rơi lơ lửng
 const PARTICLES = [
   { id: 1, left: "5%", delay: "0s", duration: "7s", size: "12px", content: "❤" },
   { id: 2, left: "20%", delay: "2s", duration: "8s", size: "10px", content: "✿" },
@@ -20,7 +19,6 @@ const PARTICLES = [
   { id: 11, left: "85%", delay: "3.5s", duration: "7s", size: "17px", content: "❤" },
 ];
 
-// RỪNG HOA: Đồng nhất dùng Hoa.png, giữ nguyên độ cao đã tinh chỉnh
 const FOREST_FLOWERS = [
   { id: 1, src: "/Hoa.png", left: "-15%", bottom: "-80px", width: "240px", rotate: "-20deg", duration: "5s", delay: "0s", zIndex: 12 },
   { id: 2, src: "/Hoa.png", left: "-5%", bottom: "-100px", width: "200px", rotate: "-10deg", duration: "6.5s", delay: "1.2s", zIndex: 10 },
@@ -36,9 +34,6 @@ const FOREST_FLOWERS = [
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-80px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
-// ==========================================
-// 2. TRANG CHÍNH
-// ==========================================
 export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   
@@ -49,26 +44,22 @@ export default function WeddingCardPage() {
   return (
     <div className="relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans overflow-hidden text-[#5C4F44]">
       
-      {/* --- CSS CỐT LÕI --- */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Montserrat', sans-serif; }
         
-        /* Hiệu ứng tim rơi */
         @keyframes fall { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(110vh) translateX(-20px) rotate(360deg); opacity: 0; } }
         @keyframes heart-blink { 0%, 100% { stroke: transparent; stroke-width: 0px; transform: scale(1); opacity: 0.5; } 50% { stroke: #FF99C2; stroke-width: 1.5px; transform: scale(1.15); opacity: 0.85; } }
         .animate-heart { animation: heart-blink 2s ease-in-out infinite; }
 
-        /* Hiệu ứng rừng hoa đong đưa */
         @keyframes sway-forest { 
             0%, 100% { transform: rotate(-4deg); } 
             50% { transform: rotate(4deg); } 
         }
       `}} />
 
-      {/* MÀN HÌNH BÌA THƯ DUY NHẤT */}
       <section className="w-full h-screen relative flex items-center justify-center p-4 bg-[#8C8076] z-20">
         
         {/* Hạt rơi nền ngoài */}
@@ -84,18 +75,31 @@ export default function WeddingCardPage() {
         <div className="relative bg-[#FDFBF7] w-full max-w-md aspect-[4/5] md:aspect-[3/4] rounded-lg shadow-2xl overflow-hidden flex flex-col items-center justify-center border border-[#EAE3DB]">
           
           {/* Hạt rơi bên trong bìa */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
             {PARTICLES.slice(0, 8).map((p) => (
               <div key={`card-${p.id}`} className="absolute top-[-5%]" style={{ left: p.left, width: p.size, height: p.size, animation: `fall ${p.duration} linear infinite`, animationDelay: p.delay }}>
                 <svg viewBox="0 0 24 24" fill="#FFC0CB" className="w-full h-full animate-heart" style={{ animationDelay: p.delay, overflow: 'visible' }}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               </div>
             ))}
           </div>
+
+          {/* ============================================== */}
+          {/* HỌA TIẾT IN CHÌM (WATERMARK) HIỆN ĐẠI (z-10) */}
+          {/* ============================================== */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
+             {/* Vòng tròn nhẫn đan xen tinh tế */}
+             <div className="absolute flex items-center justify-center -translate-y-24">
+                <div className="absolute w-[260px] h-[260px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-6"></div>
+                <div className="absolute w-[260px] h-[260px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-6"></div>
+             </div>
+             {/* Chữ Hỷ lớn, làm mờ ảo vào nền */}
+             <div className="text-[180px] font-serif text-[#D5C7B8] opacity-[0.12] select-none -translate-y-24">
+                囍
+             </div>
+          </div>
           
-          {/* ============================================== */}
-          {/* RỪNG HOA ĐONG ĐƯA (100% Hoa.png) */}
-          {/* ============================================== */}
-          <div className="absolute inset-x-0 bottom-0 pointer-events-none">
+          {/* RỪNG HOA */}
+          <div className="absolute inset-x-0 bottom-0 pointer-events-none z-30">
              {FOREST_FLOWERS.map((flower) => (
                 <div 
                     key={flower.id} 
@@ -122,8 +126,8 @@ export default function WeddingCardPage() {
              ))}
           </div>
 
-          {/* CHỮ VÀ NÚT (z-30) - Đã sửa -mt-16 để đẩy chữ lên cao */}
-          <div className="relative z-30 flex flex-col items-center text-center px-6 w-full -mt-16">
+          {/* CHỮ VÀ NÚT (z-40) - Đã sửa -mt-32 để kéo cao hẳn lên */}
+          <div className="relative z-40 flex flex-col items-center text-center px-6 w-full -mt-32">
             <div className="bg-[#6A5A4E] w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-6 pointer-events-none">
               <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </div>
@@ -139,7 +143,7 @@ export default function WeddingCardPage() {
             </div>
 
             <p className="text-[#8C7A6B] text-lg font-serif tracking-wide pointer-events-none mb-1">3 tháng 1, 2027</p>
-            <p className="text-[#8C7A6B] text-sm mt-2 mb-8 uppercase tracking-[0.2em] font-medium pointer-events-none">Thân Mời</p>
+            <p className="text-[#8C7A6B] text-sm mt-2 mb-10 uppercase tracking-[0.2em] font-medium pointer-events-none">Thân Mời</p>
 
             <button 
                 onClick={() => alert("Ruột thiệp đang được thiết kế!")}
