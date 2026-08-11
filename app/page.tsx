@@ -122,8 +122,8 @@ export default function WeddingCardPage() {
              ))}
           </div>
 
-          {/* CHỮ VÀ NÚT (z-30) */}
-          <div className="relative z-30 flex flex-col items-center text-center px-6 w-full mt-4">
+          {/* CHỮ VÀ NÚT (z-30) - Đã sửa -mt-16 để đẩy chữ lên cao */}
+          <div className="relative z-30 flex flex-col items-center text-center px-6 w-full -mt-16">
             <div className="bg-[#6A5A4E] w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-6 pointer-events-none">
               <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </div>
