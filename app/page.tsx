@@ -5,15 +5,16 @@ import React, { useState, useEffect, useRef } from "react";
 // ==========================================
 // 1. DỮ LIỆU TĨNH & COMPONENT TRANG TRÍ
 // ==========================================
+// Trái tim dạt sang 2 bên lề và rơi chậm (14s - 20s)
 const PARTICLES = [
-  { id: 1, left: "3%", delay: "0s", duration: "15s", size: "12px", content: "❤" },
-  { id: 2, left: "8%", delay: "3s", duration: "18s", size: "10px", content: "✿" },
-  { id: 3, left: "12%", delay: "7s", duration: "14s", size: "14px", content: "❤" },
-  { id: 4, left: "6%", delay: "2s", duration: "19s", size: "12px", content: "✿" },
-  { id: 5, left: "85%", delay: "1s", duration: "16s", size: "15px", content: "❤" },
+  { id: 1, left: "3%", delay: "0s", duration: "16s", size: "12px", content: "❤" },
+  { id: 2, left: "8%", delay: "4s", duration: "19s", size: "10px", content: "✿" },
+  { id: 3, left: "12%", delay: "8s", duration: "15s", size: "14px", content: "❤" },
+  { id: 4, left: "6%", delay: "2s", duration: "20s", size: "12px", content: "✿" },
+  { id: 5, left: "85%", delay: "1s", duration: "17s", size: "15px", content: "❤" },
   { id: 6, left: "92%", delay: "6s", duration: "14s", size: "10px", content: "✿" },
-  { id: 7, left: "97%", delay: "2s", duration: "17s", size: "16px", content: "❤" },
-  { id: 8, left: "89%", delay: "4s", duration: "18s", size: "11px", content: "✿" },
+  { id: 7, left: "97%", delay: "3s", duration: "18s", size: "16px", content: "❤" },
+  { id: 8, left: "89%", delay: "5s", duration: "19s", size: "11px", content: "✿" },
 ];
 
 const FOREST_FLOWERS = [
@@ -29,13 +30,6 @@ const FOREST_FLOWERS = [
   { id: 10, src: "/Hoa.png", left: "75%", bottom: "-105px", width: "250px", rotate: "22deg", duration: "6.8s", delay: "0.9s" },
   { id: 11, src: "/Hoa.png", left: "85%", bottom: "-140px", width: "180px", rotate: "25deg", duration: "4.5s", delay: "2.2s" },
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s" },
-];
-
-const BG_WATERMARK = [
-  { id: 1, src: "/Hoa.png", top: "2%", left: "-10%", width: "200px", rotate: "10deg" },
-  { id: 2, src: "/Hoa.png", top: "25%", right: "-15%", width: "250px", rotate: "-20deg" },
-  { id: 3, src: "/Hoa.png", top: "50%", left: "-5%", width: "220px", rotate: "170deg" },
-  { id: 4, src: "/Hoa.png", bottom: "10%", right: "-10%", width: "240px", rotate: "45deg" },
 ];
 
 const DRESS_SPARKLES = [
@@ -89,11 +83,14 @@ export default function WeddingCardPage() {
   const [showSplash, setShowSplash] = useState(true); 
   
   const [isOpen, setIsOpen] = useState(false); 
-  const [isCardDisappeared, setIsCardDisappeared] = useState(false); // Quản lý việc bìa tan biến hẳn
+  const [isCardDisappeared, setIsCardDisappeared] = useState(false); 
   
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const requestRef = useRef<number>();
+  
+  // Bộ tích lũy pixel cuộn (Khắc phục lỗi không cuộn trên Mobile Safari)
+  const fractionalScroll = useRef(0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -101,15 +98,30 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Ngăn cuộn trang khi thiệp chưa mở
+  // Sửa lỗi khóa màn hình triệt để trên iOS
   useEffect(() => {
-    if (!isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+    if (!isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [isOpen]);
 
+  // Thuật toán cuộn hỗ trợ Mobile
   const scroll = () => {
     if (isAutoScrolling) {
-      window.scrollBy(0, 0.6); // Tốc độ cuộn mượt mà
+      fractionalScroll.current += 0.8; // Tốc độ cuộn
+      if (fractionalScroll.current >= 1) {
+        const step = Math.floor(fractionalScroll.current);
+        window.scrollBy(0, step);
+        fractionalScroll.current -= step;
+      }
       requestRef.current = requestAnimationFrame(scroll);
     }
   };
@@ -120,19 +132,17 @@ export default function WeddingCardPage() {
     return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
   }, [isAutoScrolling]);
 
-  // CHUỖI SỰ KIỆN MỞ THIỆP (TIMING HOÀN HẢO)
   const handleOpenCard = () => {
-    setIsOpen(true); // 1. Bìa bắt đầu lật
+    setIsOpen(true); 
     
     setTimeout(() => {
-      setIsCardDisappeared(true); // 2. Bìa bị gỡ hoàn toàn khỏi màn hình sau khi lật xong
+      setIsCardDisappeared(true); 
     }, 1400);
 
     setTimeout(() => {
-      // 3. Thiệp hiện ra xong, chờ thêm 2 giây rồi mới bắt đầu tự trượt
       setIsAutoScrolling(true);
       setShowHint(true);
-      setTimeout(() => setShowHint(false), 4000); // Tắt dòng chữ gợi ý sau 4 giây
+      setTimeout(() => setShowHint(false), 5000); 
     }, 3400); 
   };
 
@@ -140,10 +150,10 @@ export default function WeddingCardPage() {
     if (isOpen && isCardDisappeared) setIsAutoScrolling(prev => !prev);
   };
 
-  if (!isMounted) return <div className="min-h-screen bg-[#8C8076]"></div>;
+  if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
-    <div className="relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] min-h-screen bg-[#8C8076] cursor-pointer" onClick={toggleAutoScroll}>
+    <div className="relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] min-h-[100dvh] bg-[#8C8076] cursor-pointer" onClick={toggleAutoScroll}>
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -185,12 +195,13 @@ export default function WeddingCardPage() {
          </div>
       </div>
 
-      <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2 rounded-full backdrop-blur-sm text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none ${showHint ? 'opacity-100' : 'opacity-0'}`}>
-          Chạm màn hình để dừng / cuộn
+      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${showHint ? 'opacity-100' : 'opacity-0'}`}>
+          <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+          Chạm màn hình để Dừng / Cuộn
       </div>
 
       {/* ============================================== */}
-      {/* LỚP BÌA 3D (LẬT MỞ VÀO HƯ KHÔNG RỒI BIẾN MẤT) */}
+      {/* LỚP BÌA 3D (ĐÃ ĐƯỢC CHỈNH LẠI TỶ LỆ CÂN ĐỐI CHO MOBILE) */}
       {/* ============================================== */}
       {!isCardDisappeared && (
       <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-[1500ms] ${isOpen ? 'pointer-events-none' : ''}`} style={{ perspective: '2000px' }}>
@@ -199,7 +210,7 @@ export default function WeddingCardPage() {
               style={{
                   transformOrigin: 'left center',
                   transform: isOpen ? 'rotateY(-110deg)' : 'rotateY(0deg)',
-                  opacity: isOpen ? 0 : 1, // Chờ lật xong 0.8s mới từ từ mờ đi
+                  opacity: isOpen ? 0 : 1, 
                   transition: 'transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s 0.8s ease-out'
               }}
           >
@@ -224,25 +235,27 @@ export default function WeddingCardPage() {
                  ))}
               </div>
 
-              <div className="relative z-40 flex flex-col items-center justify-center text-center px-6 w-full h-full pt-8 pb-32">
-                <div className="bg-[#8C7A6B] w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-6 pointer-events-none">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              {/* NỘI DUNG BÌA TRƯỚC - CĂN CHỈNH HOÀN HẢO */}
+              <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pb-20 md:pb-28 pt-6">
+                
+                <div className="bg-[#8C7A6B] w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-md mb-4 pointer-events-none shrink-0">
+                  <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 </div>
 
-                <h1 className="text-4xl font-serif text-[#5C4F44] font-light">Đỗ Trung</h1>
+                <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] font-light mb-1">Đỗ Trung</h1>
                 <span className="text-xl font-serif text-[#8C7A6B] italic my-1">&</span>
-                <h1 className="text-4xl font-serif text-[#5C4F44] font-light">Đặng Hải</h1>
+                <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] font-light mt-1">Đặng Hải</h1>
 
-                <div className="flex items-center gap-2 my-5 text-[#A09386]">
+                <div className="flex items-center gap-2 my-4 text-[#A09386] pointer-events-none">
                   <span className="w-10 h-[1px] bg-[#D5C7B8]"></span>
                   <span className="text-lg font-serif">❦</span>
                   <span className="w-10 h-[1px] bg-[#D5C7B8]"></span>
                 </div>
 
-                <p className="text-[#8C7A6B] text-lg font-serif tracking-wide mb-1">3 tháng 1, 2027</p>
-                <p className="text-[#8C7A6B] text-sm mt-2 mb-10 uppercase tracking-[0.2em] font-medium">Thân Mời</p>
+                <p className="text-[#8C7A6B] text-base md:text-lg font-serif tracking-wide mb-1">3 tháng 1, 2027</p>
+                <p className="text-[#8C7A6B] text-xs md:text-sm mt-2 mb-8 md:mb-10 uppercase tracking-[0.2em] font-medium">Thân Mời</p>
 
-                <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-10 py-3.5 bg-[#8C7A6B] text-white text-[13px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] transition-all duration-300 relative z-50">
+                <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-8 md:px-10 py-3 md:py-3.5 bg-[#8C7A6B] text-white text-[12px] md:text-[13px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] transition-all duration-300 relative z-50">
                     Mở thiệp
                 </button>
               </div>
@@ -252,16 +265,15 @@ export default function WeddingCardPage() {
 
       {/* ============================================== */}
       {/* CUỘN GIẤY THIỆP CHÍNH (RUỘT THIỆP NẰM DƯỚI) */}
-      {/* Đợi bìa lật nửa đường (0.6s) mới bắt đầu hiện ra từ hư không */}
       {/* ============================================== */}
-      <div className="w-full flex justify-center py-10 min-h-screen">
+      <div className="w-full flex justify-center py-10 min-h-[100dvh]">
           <div 
               className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.25,1,0.5,1)]
                   ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
               `}
               style={{
                   transformOrigin: 'top center',
-                  transitionDelay: isOpen ? '0.6s' : '0s' // Đây chính là bí quyết giúp giấu kín hoàn toàn lúc ban đầu
+                  transitionDelay: isOpen ? '0.6s' : '0s' 
               }}
           >
              <WatermarkLeaves />
