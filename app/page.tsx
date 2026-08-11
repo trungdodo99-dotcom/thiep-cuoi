@@ -89,7 +89,7 @@ export default function WeddingCardPage() {
   const [showSplash, setShowSplash] = useState(true); 
   
   const [isOpen, setIsOpen] = useState(false); 
-  const [isCardDisappeared, setIsCardDisappeared] = useState(false); // Trạng thái bìa đã lật và tan biến
+  const [isCardDisappeared, setIsCardDisappeared] = useState(false); // Quản lý việc bìa tan biến hẳn
   
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [showHint, setShowHint] = useState(false);
@@ -101,6 +101,7 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Ngăn cuộn trang khi thiệp chưa mở
   useEffect(() => {
     if (!isOpen) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = 'auto';
@@ -108,7 +109,7 @@ export default function WeddingCardPage() {
 
   const scroll = () => {
     if (isAutoScrolling) {
-      window.scrollBy(0, 0.6);
+      window.scrollBy(0, 0.6); // Tốc độ cuộn mượt mà
       requestRef.current = requestAnimationFrame(scroll);
     }
   };
@@ -119,19 +120,19 @@ export default function WeddingCardPage() {
     return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
   }, [isAutoScrolling]);
 
-  // LUỒNG MỞ THIỆP MỚI
+  // CHUỖI SỰ KIỆN MỞ THIỆP (TIMING HOÀN HẢO)
   const handleOpenCard = () => {
-    setIsOpen(true); // 1. Kích hoạt hiệu ứng lật bìa và phóng to ruột thiệp
+    setIsOpen(true); // 1. Bìa bắt đầu lật
     
     setTimeout(() => {
-      setIsCardDisappeared(true); // 2. Sau khi lật xong (1.4s), bìa biến mất hẳn
+      setIsCardDisappeared(true); // 2. Bìa bị gỡ hoàn toàn khỏi màn hình sau khi lật xong
     }, 1400);
 
     setTimeout(() => {
-      // 3. Chờ thêm 2 giây sau khi phóng to hoàn tất rồi mới bắt đầu cuộn
+      // 3. Thiệp hiện ra xong, chờ thêm 2 giây rồi mới bắt đầu tự trượt
       setIsAutoScrolling(true);
       setShowHint(true);
-      setTimeout(() => setShowHint(false), 4000);
+      setTimeout(() => setShowHint(false), 4000); // Tắt dòng chữ gợi ý sau 4 giây
     }, 3400); 
   };
 
@@ -184,7 +185,7 @@ export default function WeddingCardPage() {
          </div>
       </div>
 
-      <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[60] bg-black/30 text-white px-5 py-2 rounded-full backdrop-blur-sm text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none ${showHint ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2 rounded-full backdrop-blur-sm text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none ${showHint ? 'opacity-100' : 'opacity-0'}`}>
           Chạm màn hình để dừng / cuộn
       </div>
 
@@ -198,8 +199,8 @@ export default function WeddingCardPage() {
               style={{
                   transformOrigin: 'left center',
                   transform: isOpen ? 'rotateY(-110deg)' : 'rotateY(0deg)',
-                  opacity: isOpen ? 0 : 1, // Bìa mờ đi rất từ từ
-                  transition: 'transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 1s 0.2s ease-out'
+                  opacity: isOpen ? 0 : 1, // Chờ lật xong 0.8s mới từ từ mờ đi
+                  transition: 'transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s 0.8s ease-out'
               }}
           >
               <LuxuryCorner className="top-4 left-4" />
@@ -251,12 +252,17 @@ export default function WeddingCardPage() {
 
       {/* ============================================== */}
       {/* CUỘN GIẤY THIỆP CHÍNH (RUỘT THIỆP NẰM DƯỚI) */}
+      {/* Đợi bìa lật nửa đường (0.6s) mới bắt đầu hiện ra từ hư không */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div 
               className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.8] h-[550px] aspect-[3/4]'} 
+                  ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
               `}
+              style={{
+                  transformOrigin: 'top center',
+                  transitionDelay: isOpen ? '0.6s' : '0s' // Đây chính là bí quyết giúp giấu kín hoàn toàn lúc ban đầu
+              }}
           >
              <WatermarkLeaves />
 
