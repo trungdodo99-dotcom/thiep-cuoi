@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from "react";
 // ==========================================
 // 1. DỮ LIỆU TĨNH & COMPONENT TRANG TRÍ
 // ==========================================
-// Đã đẩy tọa độ left lấn vào trong thiệp hơn để trái tim bay ngang qua giấy
 const PARTICLES = [
   { id: 1, left: "12%", delay: "0s", duration: "18s", size: "12px", content: "❤" },
   { id: 2, left: "20%", delay: "4s", duration: "22s", size: "10px", content: "✿" },
@@ -75,6 +74,37 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
+// Component cảm biến hiện chữ khi cuộn (FadeIn on Scroll)
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Chỉ chạy hiệu ứng 1 lần
+        }
+      },
+      { threshold: 0.15 } // Hiện khi khối lọt vào màn hình 15%
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div 
+      ref={ref} 
+      className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center
+        ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} 
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
 // ==========================================
 // 2. TRANG CHÍNH
 // ==========================================
@@ -87,7 +117,6 @@ export default function WeddingCardPage() {
   
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const requestRef = useRef<number>();
 
   useEffect(() => {
     setIsMounted(true);
@@ -106,7 +135,6 @@ export default function WeddingCardPage() {
         const deltaTime = time - lastTime;
         lastTime = time;
 
-        // Tốc độ cuộn: 0.05 pixel mỗi millisecond
         accumulator += deltaTime * 0.05;
 
         if (accumulator >= 1) {
@@ -152,7 +180,6 @@ export default function WeddingCardPage() {
             ${!isOpen ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'}`} 
         onClick={toggleAutoScroll}
     >
-      {/* ĐÃ XÓA scroll-behavior: smooth; ĐỂ KHÔNG BỊ LỖI CUỘN TRÊN MOBILE */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -163,6 +190,7 @@ export default function WeddingCardPage() {
         .animate-heart { animation: heart-blink 2s ease-in-out infinite; }
         
         @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+        @keyframes sway-slow { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(3deg); } }
 
         @keyframes sparkle {
            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
@@ -171,7 +199,7 @@ export default function WeddingCardPage() {
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
       `}} />
 
-      {/* MÀN HÌNH CHÀO (Z-100: Cao nhất) */}
+      {/* MÀN HÌNH CHÀO */}
       <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBF7] transition-all duration-1000 ease-in-out ${showSplash ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
          <div className="flex flex-col items-center justify-center text-center px-6">
             <span className="text-[#8C7A6B] text-4xl mb-4 animate-bounce">❦</span>
@@ -191,7 +219,7 @@ export default function WeddingCardPage() {
       </div>
 
       {/* ============================================== */}
-      {/* LỚP BÌA 3D (Z-50) */}
+      {/* LỚP BÌA 3D */}
       {/* ============================================== */}
       {!isCardDisappeared && (
       <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-[1500ms] ${isOpen ? 'pointer-events-none' : ''}`} style={{ perspective: '2000px' }}>
@@ -252,7 +280,7 @@ export default function WeddingCardPage() {
       )}
 
       {/* ============================================== */}
-      {/* TRÁI TIM RƠI (Z-30: Rơi TRÊN cuộn thiệp nhưng DƯỚI tấm bìa) */}
+      {/* TRÁI TIM RƠI (Z-30) */}
       {/* ============================================== */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[30]">
           {PARTICLES.map((p) => (
@@ -263,26 +291,32 @@ export default function WeddingCardPage() {
       </div>
 
       {/* ============================================== */}
-      {/* CUỘN GIẤY THIỆP CHÍNH (Z-10: NẰM DƯỚI CÙNG) */}
+      {/* CUỘN GIẤY THIỆP CHÍNH CÓ HIỆU ỨNG TILT & REVEAL */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div 
               className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
+                  ${isOpen ? 'opacity-100 scale-100 translate-y-0 rotate-0' : 'opacity-0 scale-[0.85] translate-y-32 -rotate-6'} 
               `}
               style={{
-                  transformOrigin: 'top center',
-                  transitionDelay: isOpen ? '0.6s' : '0s' 
+                  transformOrigin: 'bottom center',
+                  transitionDelay: isOpen ? '0.4s' : '0s' 
               }}
           >
              <WatermarkLeaves />
 
              <div className="relative w-full flex flex-col items-center pt-24 pb-32 z-20">
-                 <div className="w-full flex flex-col items-center px-4">
+                 
+                 <FadeIn delay={100}>
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
+                 </FadeIn>
+                 
+                 <FadeIn delay={300}>
                      <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
-                     
-                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg]">
+                 </FadeIn>
+                 
+                 <FadeIn delay={500}>
+                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
@@ -302,62 +336,81 @@ export default function WeddingCardPage() {
                             <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto origin-bottom-left" style={{ animation: 'sway-forest 6s ease-in-out infinite' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
-                 </div>
+                 </FadeIn>
 
-                 {/* Thẻ Thông Tin Lễ Cưới Nổi */}
+                 {/* Thẻ Thông Tin Lễ Cưới Nổi (Kèm hiệu ứng rung rinh cho lá) */}
                  <div className="relative w-[90%] max-w-[400px] bg-[#F5EFE6] rounded-sm shadow-[0_10px_40px_rgba(0,0,0,0.05)] mt-24 mb-10 border border-[#EAE3DB]">
                      
-                     <WaterColorLeafBranch className="absolute top-1/2 -left-[60px] -translate-y-1/2 w-[120px] h-[240px] z-30" />
+                     <WaterColorLeafBranch className="absolute top-1/2 -left-[60px] -translate-y-1/2 w-[120px] h-[240px] z-30" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} />
                      
-                     <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg">
+                     <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
                         <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                      </div>
 
                      <div className="px-6 py-14 flex flex-col items-center text-center relative z-20">
-                         <h3 className="text-[#5C4F44] font-serif text-lg tracking-[0.2em] uppercase font-bold mb-10">Thông Tin Lễ Cưới</h3>
+                         
+                         <FadeIn delay={100}>
+                            <h3 className="text-[#5C4F44] font-serif text-lg tracking-[0.2em] uppercase font-bold mb-10">Thông Tin Lễ Cưới</h3>
+                         </FadeIn>
 
-                         <div className="w-full flex justify-between items-start text-[#5C4F44] text-[10px] md:text-[11px] mb-10 relative px-2">
-                             <div className="w-[45%] flex flex-col items-center">
-                                 <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
-                                 <span className="font-bold mb-1">Võ Nhật Minh</span>
-                                 <span className="font-bold mb-2">Trần Thu Thảo</span>
-                                 <span className="text-[#8C7A6B] leading-relaxed">Quận 1, TP. HCM</span>
-                             </div>
-                             <div className="w-[45%] flex flex-col items-center">
-                                 <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
-                                 <span className="font-bold mb-1">Lê Văn Thành</span>
-                                 <span className="font-bold mb-2">Phạm Thị Lan</span>
-                                 <span className="text-[#8C7A6B] leading-relaxed">Quận 3, TP. HCM</span>
-                             </div>
-                         </div>
+                         <FadeIn delay={200}>
+                            <div className="w-full flex justify-between items-start text-[#5C4F44] text-[10px] md:text-[11px] mb-10 relative px-2">
+                                <div className="w-[45%] flex flex-col items-center">
+                                    <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
+                                    <span className="font-bold mb-1">Võ Nhật Minh</span>
+                                    <span className="font-bold mb-2">Trần Thu Thảo</span>
+                                    <span className="text-[#8C7A6B] leading-relaxed">Quận 1, TP. HCM</span>
+                                </div>
+                                <div className="w-[45%] flex flex-col items-center">
+                                    <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
+                                    <span className="font-bold mb-1">Lê Văn Thành</span>
+                                    <span className="font-bold mb-2">Phạm Thị Lan</span>
+                                    <span className="text-[#8C7A6B] leading-relaxed">Quận 3, TP. HCM</span>
+                                </div>
+                            </div>
+                         </FadeIn>
 
-                         <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+                         <FadeIn delay={300}>
+                            <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+                         </FadeIn>
 
-                         <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-2">Đỗ Trung</h1>
-                         <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-4">Trưởng Nam</span>
+                         <FadeIn delay={400}>
+                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-2">Đỗ Trung</h1>
+                            <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-4">Trưởng Nam</span>
+                         </FadeIn>
 
-                         <span className="text-xl font-serif text-[#C3B09B] italic my-2">❦</span>
+                         <FadeIn delay={500}>
+                            <span className="text-xl font-serif text-[#C3B09B] italic my-2">❦</span>
+                         </FadeIn>
 
-                         <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-2">Đặng Hải</h1>
-                         <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-10">Út Nữ</span>
+                         <FadeIn delay={600}>
+                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-2">Đặng Hải</h1>
+                            <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-10">Út Nữ</span>
+                         </FadeIn>
 
-                         <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
+                         <FadeIn delay={700}>
+                            <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
+                            <div className="text-2xl font-serif text-[#5C4F44] mb-6">09:00</div>
+                         </FadeIn>
 
-                         <div className="text-2xl font-serif text-[#5C4F44] mb-6">09:00</div>
+                         <FadeIn delay={800}>
+                            <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
+                                <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Chủ Nhật</span>
+                                <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
+                                <span className="text-4xl font-serif">03</span>
+                                <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
+                                <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Tháng 01</span>
+                            </div>
+                            <span className="text-lg font-serif text-[#5C4F44] mb-2">2027</span>
+                            <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.1em]">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
+                         </FadeIn>
 
-                         <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
-                             <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Chủ Nhật</span>
-                             <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
-                             <span className="text-4xl font-serif">03</span>
-                             <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
-                             <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Tháng 01</span>
-                         </div>
-                         <span className="text-lg font-serif text-[#5C4F44] mb-2">2027</span>
-                         <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.1em]">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
                      </div>
                  </div>
 
-                 <p className="mt-10 text-[#5C4F44] font-serif text-sm tracking-[0.3em] uppercase opacity-80">Album Ảnh</p>
+                 <FadeIn delay={300}>
+                    <p className="mt-10 text-[#5C4F44] font-serif text-sm tracking-[0.3em] uppercase opacity-80">Album Ảnh</p>
+                 </FadeIn>
              </div>
           </div>
       </div>
