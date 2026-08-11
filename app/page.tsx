@@ -59,43 +59,86 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
 
 
 // ==========================================
-// COMPONENT DẢI NƠ LỤA TÍM (PURPLE SILK BOW)
+// COMPONENT NƠ LỤA 3D (SOFT SILK BOW)
 // ==========================================
-const PurpleSilkBow = ({ isUntying }: { isUntying: boolean }) => (
-  <div className="absolute inset-x-0 bottom-20 h-[80px] z-[25] pointer-events-none overflow-visible">
-     {/* Cánh nơ bên trái */}
-     <div 
-        className="absolute left-0 top-0 h-full w-1/2 flex justify-end transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-        style={{ transform: isUntying ? 'translateX(-120%) opacity-0' : 'translateX(0) opacity-100' }}
-     >
-        {/* Dải ruy băng trái */}
-        <div className="absolute right-0 top-[35px] w-[1000px] h-[10px] bg-gradient-to-r from-[#4B366B] to-[#845EC2] shadow-sm opacity-90"></div>
-        {/* Vector lụa trái */}
-        <svg width="50" height="80" viewBox="0 0 50 80" className="relative drop-shadow-md overflow-visible">
-           <path d="M 50 40 L 15 75 L 35 78 Z" fill="#6B4C9A" />
-           <path d="M 50 40 C -10 10, -10 70, 50 40 Z" fill="#845EC2" />
-           <path d="M 50 40 C 5 20, 5 60, 50 40 Z" fill="#9B72CF" opacity="0.6"/>
-        </svg>
-     </div>
+const SoftSilkBow = ({ bowState }: { bowState: 'idle' | 'pulling' | 'untying' | 'hidden' }) => {
+  return (
+    <div className="absolute inset-x-0 bottom-[125px] h-[40px] z-[35] flex items-center justify-center pointer-events-none">
+       
+       {/* DẢI BĂNG TRÁI (Trượt sang trái khi tuột) */}
+       <div
+          className={`absolute left-0 w-1/2 h-[18px] bg-gradient-to-b from-[#6b4c9a] via-[#845EC2] to-[#593d7c] shadow-sm transition-transform duration-[700ms] ease-[cubic-bezier(0.5,0,0.2,1)] origin-left ${bowState === 'untying' || bowState === 'hidden' ? 'scale-x-0' : 'scale-x-100'}`}
+       />
+       
+       {/* DẢI BĂNG PHẢI (Trượt sang phải khi tuột) */}
+       <div
+          className={`absolute right-0 w-1/2 h-[18px] bg-gradient-to-b from-[#6b4c9a] via-[#845EC2] to-[#593d7c] shadow-sm transition-transform duration-[700ms] ease-[cubic-bezier(0.5,0,0.2,1)] origin-right ${bowState === 'untying' || bowState === 'hidden' ? 'scale-x-0' : 'scale-x-100'}`}
+       />
 
-     {/* Cánh nơ bên phải */}
-     <div 
-        className="absolute right-0 top-0 h-full w-1/2 flex justify-start transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-        style={{ transform: isUntying ? 'translateX(120%) opacity-0' : 'translateX(0) opacity-100' }}
-     >
-        {/* Dải ruy băng phải */}
-        <div className="absolute left-0 top-[35px] w-[1000px] h-[10px] bg-gradient-to-l from-[#4B366B] to-[#845EC2] shadow-sm opacity-90"></div>
-        {/* Vector lụa phải & nút thắt */}
-        <svg width="50" height="80" viewBox="50 0 50 80" className="relative drop-shadow-md overflow-visible z-10">
-           <path d="M 50 40 L 85 75 L 65 78 Z" fill="#6B4C9A" />
-           <path d="M 50 40 C 110 10, 110 70, 50 40 Z" fill="#845EC2" />
-           <path d="M 50 40 C 95 20, 95 60, 50 40 Z" fill="#9B72CF" opacity="0.6"/>
-           <rect x="42" y="32" width="16" height="16" rx="5" fill="#4B366B" />
-           <path d="M 46 32 V 48 M 54 32 V 48" stroke="#6B4C9A" strokeWidth="1"/>
-        </svg>
-     </div>
-  </div>
-);
+       {/* CỤM NƠ GIỮA */}
+       <div className={`relative transition-opacity duration-300 ${bowState === 'hidden' ? 'opacity-0' : 'opacity-100'}`}>
+          <svg width="180" height="150" viewBox="0 0 160 140" className="overflow-visible drop-shadow-xl -translate-y-6">
+             
+             {/* ĐUÔI TRÁI */}
+             <path d="M 70 45 C 50 70, 30 110, 25 130 C 45 120, 60 90, 80 50 Z" fill="url(#silk-dark)"
+                   className="transition-transform duration-500 origin-top"
+                   style={{ transform: bowState === 'untying' ? 'scaleY(0)' : 'scaleY(1)' }} />
+
+             {/* ĐUÔI PHẢI (Sẽ bị giật chéo lên mô phỏng bị kéo) */}
+             <path d="M 90 45 C 110 70, 130 110, 135 130 C 115 120, 100 90, 80 50 Z" fill="url(#silk-dark)"
+                   className="transition-transform duration-[400ms] ease-out origin-top"
+                   style={{
+                       transform: bowState === 'pulling' ? 'translate(25px, -5px) rotate(-25deg) scaleY(1.15)'
+                                : bowState === 'untying' ? 'scaleY(0)' : 'scaleY(1)'
+                   }} />
+
+             {/* CÁC VÒNG LẶP NƠ (LOOPS) */}
+             <g className="transition-transform duration-[500ms] ease-in-out origin-center"
+                style={{
+                    transform: bowState === 'pulling' ? 'scale(0.85)' // Thắt chặt lại do bị kéo
+                             : bowState === 'untying' ? 'scale(0)' // Tan biến vào giữa
+                             : 'scale(1)'
+                }}>
+                
+                {/* Cánh nơ trái */}
+                <path d="M 75 35 C 5 -15, -25 60, 75 45 Z" fill="url(#silk-light)" />
+                {/* Lõi rỗng (bên trong nơ trái tạo 3D) */}
+                <path d="M 70 37 C 20 5, 10 50, 70 42 Z" fill="#4a3272" opacity="0.6" />
+
+                {/* Cánh nơ phải */}
+                <path d="M 85 35 C 155 -15, 185 60, 85 45 Z" fill="url(#silk-light)" />
+                {/* Lõi rỗng (bên trong nơ phải tạo 3D) */}
+                <path d="M 90 37 C 140 5, 150 50, 90 42 Z" fill="#4a3272" opacity="0.6" />
+
+                {/* Nút thắt chính giữa (Knot) */}
+                <rect x="68" y="24" width="24" height="26" rx="8" fill="url(#silk-grad)" className="drop-shadow-md" />
+                {/* Các nếp nhăn lụa trên nút thắt */}
+                <path d="M 74 24 C 78 30, 78 40, 74 50" stroke="#4a3272" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                <path d="M 86 24 C 82 30, 82 40, 86 50" stroke="#4a3272" strokeWidth="1.5" fill="none" opacity="0.6"/>
+             </g>
+
+             {/* BỘ GRADIENT MÀU LỤA SATIN */}
+             <defs>
+                <linearGradient id="silk-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                   <stop offset="0%" stopColor="#A585D9" />
+                   <stop offset="50%" stopColor="#845EC2" />
+                   <stop offset="100%" stopColor="#593D7C" />
+                </linearGradient>
+                <linearGradient id="silk-light" x1="0%" y1="0%" x2="0%" y2="100%">
+                   <stop offset="0%" stopColor="#B69CE2" />
+                   <stop offset="50%" stopColor="#845EC2" />
+                   <stop offset="100%" stopColor="#4a3272" />
+                </linearGradient>
+                <linearGradient id="silk-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+                   <stop offset="0%" stopColor="#7552A8" />
+                   <stop offset="100%" stopColor="#3d2763" />
+                </linearGradient>
+             </defs>
+          </svg>
+       </div>
+    </div>
+  );
+}
 
 
 // ==========================================
@@ -105,9 +148,9 @@ export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true); 
   
-  // State điều khiển 2 nhịp animation
-  const [isUntying, setIsUntying] = useState(false); // Nhịp 1: Cởi nơ
-  const [isOpen, setIsOpen] = useState(false);       // Nhịp 2: Lật thiệp
+  // Trạng thái Animation nhiều nhịp
+  const [bowState, setBowState] = useState<'idle' | 'pulling' | 'untying' | 'hidden'>('idle');
+  const [isOpen, setIsOpen] = useState(false); 
 
   useEffect(() => {
     setIsMounted(true);
@@ -117,20 +160,28 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Hàm xử lý Mở thiệp (Mở nơ trước -> Lật sau)
+  // XỬ LÝ CLICK MỞ THIỆP - CHUỖI ANIMATION LOGIC
   const handleOpenCard = () => {
-    setIsUntying(true);
+    // Bước 1: Kéo một cánh lụa
+    setBowState('pulling');
+    
+    // Bước 2: Tuột nơ và ruy băng trượt sang 2 bên
     setTimeout(() => {
+      setBowState('untying');
+    }, 400); // 0.4s sau khi kéo
+    
+    // Bước 3: Lật mở bìa thiệp ra
+    setTimeout(() => {
+      setBowState('hidden');
       setIsOpen(true);
-    }, 700); // Đợi 0.7s cho nơ bay ra rồi mới lật
+    }, 1100); // Đợi nơ hoàn toàn biến mất mới lật bìa (tổng 1.1s)
   };
 
-  // Hàm xử lý Đóng thiệp (Lật về trước -> Thắt nơ lại)
   const handleCloseCard = () => {
     setIsOpen(false);
     setTimeout(() => {
-      setIsUntying(false);
-    }, 1000); // Đợi thiệp lật úp lại xong mới kéo nơ vào
+      setBowState('idle'); // Trả lại nơ nguyên vẹn sau khi thiệp gấp lại
+    }, 1200); 
   };
 
   if (!isMounted) return <div className="min-h-screen bg-[#8C8076]"></div>;
@@ -269,8 +320,8 @@ export default function WeddingCardPage() {
               {/* --- MẶT TRƯỚC --- */}
               <div className="absolute inset-0 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] backface-hidden overflow-hidden">
                   
-                  {/* NƠ LỤA TÍM Ở ĐÂY (Nằm giữa rừng hoa) */}
-                  <PurpleSilkBow isUntying={isUntying} />
+                  {/* NƠ LỤA TÍM Ở ĐÂY */}
+                  <SoftSilkBow bowState={bowState} />
 
                   <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
                     {PARTICLES.slice(0, 8).map((p) => (
@@ -321,7 +372,7 @@ export default function WeddingCardPage() {
                     <p className="text-[#8C7A6B] text-sm mt-2 mb-10 uppercase tracking-[0.2em] font-medium pointer-events-none">Thân Mời</p>
 
                     <button 
-                        onClick={handleOpenCard} // Gọi hàm xử lý mở nơ -> lật thiệp
+                        onClick={handleOpenCard}
                         className="px-10 py-3.5 bg-[#8C7A6B] text-white text-[13px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#6A5A4E] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer relative z-50"
                     >
                         Mở thiệp
