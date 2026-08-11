@@ -74,7 +74,7 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
-// Cảm biến hiện chữ THÔNG THƯỜNG
+// Component cảm biến hiện chữ THÔNG THƯỜNG
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -100,7 +100,7 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// Cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Bùng nổ)
+// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Bùng nổ)
 const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -165,7 +165,6 @@ export default function WeddingCardPage() {
   
   const [isOpen, setIsOpen] = useState(false); 
   const [isCardDisappeared, setIsCardDisappeared] = useState(false); 
-  const [isInnerVisible, setIsInnerVisible] = useState(false);
   
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [showHint, setShowHint] = useState(false);
@@ -185,6 +184,7 @@ export default function WeddingCardPage() {
       if (isAutoScrolling) {
         const deltaTime = time - lastTime;
         lastTime = time;
+
         accumulator += deltaTime * 0.04;
 
         if (accumulator >= 1) {
@@ -205,18 +205,17 @@ export default function WeddingCardPage() {
   }, [isAutoScrolling]);
 
   const handleOpenCard = () => {
-    setIsOpen(true); // Bìa lật 3D
+    setIsOpen(true); // Bìa lập tức lật, ruột thiệp bên dưới đã HIỆN SẴN y nguyên kích thước
     
     setTimeout(() => {
-      setIsCardDisappeared(true); 
-      setIsInnerVisible(true); // Bìa lật xong thì ruột thiệp mới hiện và phóng to lên
-    }, 1200); 
+      setIsCardDisappeared(true); // Gỡ thẻ bìa ra khỏi màn hình cho nhẹ máy sau khi lật xong
+    }, 1400); 
 
     setTimeout(() => {
       setIsAutoScrolling(true);
       setShowHint(true);
       setTimeout(() => setShowHint(false), 4500); 
-    }, 3200); 
+    }, 3000); 
   };
 
   const toggleAutoScroll = () => {
@@ -272,7 +271,7 @@ export default function WeddingCardPage() {
            -webkit-background-clip: text;
            background-clip: text;
         }
-        /* Chỉ kích hoạt Sweep khi thẻ cha có class animate-text-pop */
+        /* Chỉ chạy animation 1 lần duy nhất bằng thuộc tính 'forwards' */
         .animate-text-pop .text-sweep-once {
            animation: text-sweep 2.5s ease-in-out 0.2s forwards;
         }
@@ -296,68 +295,7 @@ export default function WeddingCardPage() {
           Chạm màn hình để Dừng / Cuộn
       </div>
 
-      {/* ============================================== */}
-      {/* LỚP BÌA LẬT 3D NHƯ CŨ (Đã khôi phục) */}
-      {/* ============================================== */}
-      {!isCardDisappeared && (
-      <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-[1200ms] ${isOpen ? 'pointer-events-none' : ''}`} style={{ perspective: '2000px' }}>
-          <div 
-              className="relative w-[92%] sm:w-full max-w-[420px] aspect-[3/4] min-h-[550px] shadow-2xl bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] overflow-hidden"
-              style={{
-                  transformOrigin: 'left center',
-                  transform: isOpen ? 'rotateY(-110deg)' : 'rotateY(0deg)',
-                  opacity: isOpen ? 0 : 1, 
-                  transition: 'transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.4s 0.8s ease-out'
-              }}
-          >
-              <LuxuryCorner className="top-4 left-4" />
-              <LuxuryCorner className="top-4 right-4 rotate-90" />
-              <LuxuryCorner className="bottom-4 right-4 rotate-180" />
-              <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
-
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
-                 <div className="absolute flex items-center justify-center">
-                    <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
-                    <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
-                 </div>
-                 <div className="text-[130px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
-              </div>
-              
-              <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[15]">
-                 {FOREST_FLOWERS.map((flower) => (
-                    <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, transform: `rotate(${flower.rotate})`, animation: `sway-forest ${flower.duration} ease-in-out infinite`, animationDelay: flower.delay }}>
-                        <img src={flower.src} alt="Flower" className="w-full h-auto origin-bottom opacity-90" />
-                    </div>
-                 ))}
-              </div>
-
-              <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pb-20 md:pb-28 pt-6">
-                <div className="bg-[#8C7A6B] w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-md mb-4 pointer-events-none shrink-0">
-                  <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                </div>
-
-                <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] font-light mb-1">Đỗ Trung</h1>
-                <span className="text-xl font-serif text-[#8C7A6B] italic my-1">&</span>
-                <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] font-light mt-1">Đặng Hải</h1>
-
-                <div className="flex items-center gap-2 my-4 text-[#A09386] pointer-events-none">
-                  <span className="w-10 h-[1px] bg-[#D5C7B8]"></span>
-                  <span className="text-lg font-serif">❦</span>
-                  <span className="w-10 h-[1px] bg-[#D5C7B8]"></span>
-                </div>
-
-                <p className="text-[#8C7A6B] text-base md:text-lg font-serif tracking-wide mb-1">3 tháng 1, 2027</p>
-                <p className="text-[#8C7A6B] text-xs md:text-sm mt-2 mb-8 md:mb-10 uppercase tracking-[0.2em] font-medium">Thân Mời</p>
-
-                <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-8 md:px-10 py-3 md:py-3.5 bg-[#8C7A6B] text-white text-[12px] md:text-[13px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] transition-all duration-300 relative z-50">
-                    Mở thiệp
-                </button>
-              </div>
-          </div>
-      </div>
-      )}
-
-      {/* TRÁI TIM RƠI */}
+      {/* TRÁI TIM RƠI (Z-30) */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[30]">
           {PARTICLES.map((p) => (
             <div key={`bg-${p.id}`} className="absolute top-[-5%]" style={{ left: p.left, width: p.size, height: p.size, animation: `fall ${p.duration} linear infinite`, animationDelay: p.delay }}>
@@ -367,124 +305,178 @@ export default function WeddingCardPage() {
       </div>
 
       {/* ============================================== */}
-      {/* CUỘN GIẤY THIỆP CHÍNH */}
+      {/* TỔ HỢP THIỆP ĐỒNG NHẤT (BÌA & RUỘT) */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
-          <div 
-              className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isInnerVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
-              `}
-              style={{
-                  transformOrigin: 'top center',
-                  transitionDelay: isInnerVisible ? '0.2s' : '0s' 
-              }}
-          >
-             <WatermarkLeaves />
+          <div className="relative w-[92%] sm:w-full max-w-[460px] mx-auto" style={{ perspective: '2000px' }}>
+              
+              {/* === RUỘT THIỆP (NẰM DƯỚI, LUÔN HIỆN SẴN) === */}
+              <div className="w-full bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] overflow-hidden relative z-10 pb-32">
+                 <WatermarkLeaves />
 
-             <div className="relative w-full flex flex-col items-center pt-24 pb-32 z-20">
-                 
-                 <FadeIn delay={100}>
-                     <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
-                 </FadeIn>
-                 
-                 <FadeIn delay={300}>
-                     <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
-                 </FadeIn>
-                 
-                 <FadeIn delay={500}>
-                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto">
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
-                        
-                        <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
-                            <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
-                            <div className="absolute inset-0 pointer-events-none z-10">
-                                {DRESS_SPARKLES.map((sparkle) => (
-                                    <svg key={`sp-${sparkle.id}`} className="absolute text-white animate-sparkle drop-shadow-md" style={{ bottom: sparkle.bottom, left: sparkle.left, width: sparkle.size, height: sparkle.size, animationDelay: sparkle.delay }} viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-                                    </svg>
-                                ))}
+                 <div className="relative w-full flex flex-col items-center pt-24 z-20">
+                     <FadeIn delay={100}>
+                         <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
+                     </FadeIn>
+                     
+                     <FadeIn delay={300}>
+                         <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
+                     </FadeIn>
+                     
+                     <FadeIn delay={500}>
+                         <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
+                            
+                            <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
+                                <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
+                                <div className="absolute inset-0 pointer-events-none z-10">
+                                    {DRESS_SPARKLES.map((sparkle) => (
+                                        <svg key={`sp-${sparkle.id}`} className="absolute text-white animate-sparkle drop-shadow-md" style={{ bottom: sparkle.bottom, left: sparkle.left, width: sparkle.size, height: sparkle.size, animationDelay: sparkle.delay }} viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                                        </svg>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
-                        <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
-                        
-                        <div className="absolute -bottom-10 -left-12 w-40 z-20 pointer-events-none drop-shadow-lg" style={{ transform: 'rotate(-12deg)' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto origin-bottom-left" style={{ animation: 'sway-forest 6s ease-in-out infinite' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
-                        </div>
-                     </div>
-                 </FadeIn>
+                            <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
+                            
+                            <div className="absolute -bottom-10 -left-12 w-40 z-20 pointer-events-none drop-shadow-lg" style={{ transform: 'rotate(-12deg)' }}>
+                                <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto origin-bottom-left" style={{ animation: 'sway-forest 6s ease-in-out infinite' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                            </div>
+                         </div>
+                     </FadeIn>
 
-                 <div className="relative w-[90%] max-w-[400px] bg-[#F5EFE6] rounded-sm shadow-[0_10px_40px_rgba(0,0,0,0.05)] mt-24 mb-10 border border-[#EAE3DB]">
-                     
-                     <WaterColorLeafBranch className="absolute top-1/2 -left-[60px] -translate-y-1/2 w-[120px] h-[240px] z-30" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} />
-                     
-                     <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
-                        <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
-                     </div>
-
-                     <div className="px-6 py-14 flex flex-col items-center text-center relative z-20 w-full">
+                     <div className="relative w-[90%] max-w-[400px] bg-[#F5EFE6] rounded-sm shadow-[0_10px_40px_rgba(0,0,0,0.05)] mt-24 mb-10 border border-[#EAE3DB]">
+                         <WaterColorLeafBranch className="absolute top-1/2 -left-[60px] -translate-y-1/2 w-[120px] h-[240px] z-30" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} />
                          
-                         <FadeIn delay={100}>
-                            <h3 className="text-[#5C4F44] font-serif text-lg tracking-[0.2em] uppercase font-bold mb-10">Thông Tin Lễ Cưới</h3>
-                         </FadeIn>
+                         <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                         </div>
 
-                         <FadeIn delay={200}>
-                            <div className="w-full flex justify-between items-start text-[#5C4F44] text-[10px] md:text-[11px] mb-10 relative px-2">
-                                <div className="w-[45%] flex flex-col items-center">
-                                    <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
-                                    <span className="font-bold mb-1">Võ Nhật Minh</span>
-                                    <span className="font-bold mb-2">Trần Thu Thảo</span>
-                                    <span className="text-[#8C7A6B] leading-relaxed">Quận 1, TP. HCM</span>
+                         <div className="px-6 py-14 flex flex-col items-center text-center relative z-20 w-full">
+                             <FadeIn delay={100}>
+                                <h3 className="text-[#5C4F44] font-serif text-lg tracking-[0.2em] uppercase font-bold mb-10">Thông Tin Lễ Cưới</h3>
+                             </FadeIn>
+
+                             <FadeIn delay={200}>
+                                <div className="w-full flex justify-between items-start text-[#5C4F44] text-[10px] md:text-[11px] mb-10 relative px-2">
+                                    <div className="w-[45%] flex flex-col items-center">
+                                        <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
+                                        <span className="font-bold mb-1">Võ Nhật Minh</span>
+                                        <span className="font-bold mb-2">Trần Thu Thảo</span>
+                                        <span className="text-[#8C7A6B] leading-relaxed">Quận 1, TP. HCM</span>
+                                    </div>
+                                    <div className="w-[45%] flex flex-col items-center">
+                                        <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
+                                        <span className="font-bold mb-1">Lê Văn Thành</span>
+                                        <span className="font-bold mb-2">Phạm Thị Lan</span>
+                                        <span className="text-[#8C7A6B] leading-relaxed">Quận 3, TP. HCM</span>
+                                    </div>
                                 </div>
-                                <div className="w-[45%] flex flex-col items-center">
-                                    <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
-                                    <span className="font-bold mb-1">Lê Văn Thành</span>
-                                    <span className="font-bold mb-2">Phạm Thị Lan</span>
-                                    <span className="text-[#8C7A6B] leading-relaxed">Quận 3, TP. HCM</span>
+                             </FadeIn>
+
+                             <FadeIn delay={300}>
+                                <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+                             </FadeIn>
+
+                             {/* XUẤT HIỆN TÊN BÙNG NỔ & QUÉT SÁNG 1 LẦN */}
+                             <ExplosiveNameReveal delay={200} className="w-full">
+                                <h1 className="text-4xl md:text-5xl font-serif mb-2 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đỗ Trung</h1>
+                                {/* Đã tăng khoảng cách margin cho Trưởng Nam & Út Nữ */}
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
+                                
+                                <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
+                                
+                                <h1 className="text-4xl md:text-5xl font-serif mt-4 mb-2 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đặng Hải</h1>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-3 mb-12">Út Nữ</span>
+                             </ExplosiveNameReveal>
+
+                             <FadeIn delay={600}>
+                                <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6 mt-2">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
+                                <div className="text-2xl font-serif text-[#5C4F44] mb-6">09:00</div>
+                             </FadeIn>
+
+                             <FadeIn delay={700}>
+                                <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
+                                    <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Chủ Nhật</span>
+                                    <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
+                                    <span className="text-4xl font-serif">03</span>
+                                    <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
+                                    <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Tháng 01</span>
                                 </div>
-                            </div>
-                         </FadeIn>
+                                <span className="text-lg font-serif text-[#5C4F44] mb-2">2027</span>
+                                <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.1em]">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
+                             </FadeIn>
 
-                         <FadeIn delay={300}>
-                            <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
-                         </FadeIn>
-
-                         {/* =============== KHỐI XUẤT HIỆN TÊN BÙNG NỔ & VIỀN SÁNG CHẠY 1 LẦN =============== */}
-                         <ExplosiveNameReveal delay={200} className="w-full">
-                            <h1 className="text-4xl md:text-5xl font-serif mb-3 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đỗ Trung</h1>
-                            <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-1 mb-5">Trưởng Nam</span>
-                            
-                            <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
-                            
-                            <h1 className="text-4xl md:text-5xl font-serif mt-4 mb-3 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đặng Hải</h1>
-                            <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-1 mb-10">Út Nữ</span>
-                         </ExplosiveNameReveal>
-                         {/* ============================================================== */}
-
-                         <FadeIn delay={600}>
-                            <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
-                            <div className="text-2xl font-serif text-[#5C4F44] mb-6">09:00</div>
-                         </FadeIn>
-
-                         <FadeIn delay={700}>
-                            <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
-                                <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Chủ Nhật</span>
-                                <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
-                                <span className="text-4xl font-serif">03</span>
-                                <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
-                                <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Tháng 01</span>
-                            </div>
-                            <span className="text-lg font-serif text-[#5C4F44] mb-2">2027</span>
-                            <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.1em]">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
-                         </FadeIn>
-
+                         </div>
                      </div>
-                 </div>
 
-                 <FadeIn delay={300}>
-                    <p className="mt-10 text-[#5C4F44] font-serif text-sm tracking-[0.3em] uppercase opacity-80">Album Ảnh</p>
-                 </FadeIn>
-             </div>
+                     <FadeIn delay={300}>
+                        <p className="mt-10 text-[#5C4F44] font-serif text-sm tracking-[0.3em] uppercase opacity-80">Album Ảnh</p>
+                     </FadeIn>
+                 </div>
+              </div>
+
+              {/* === BÌA THIỆP 3D (NẰM TRÊN, CÙNG KÍCH THƯỚC CHIỀU NGANG VỚI RUỘT) === */}
+              {!isCardDisappeared && (
+              <div 
+                  className="absolute top-0 left-0 w-full h-[550px] md:h-[650px] bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] z-50 overflow-hidden"
+                  style={{
+                      transformOrigin: 'left center',
+                      transform: isOpen ? 'rotateY(-110deg)' : 'rotateY(0deg)',
+                      opacity: isOpen ? 0 : 1, 
+                      transition: 'transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s 0.7s ease-out'
+                  }}
+              >
+                  <LuxuryCorner className="top-4 left-4" />
+                  <LuxuryCorner className="top-4 right-4 rotate-90" />
+                  <LuxuryCorner className="bottom-4 right-4 rotate-180" />
+                  <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
+
+                  {/* Vẫn giữ cành lá màu nước siêu đẹp ở bìa */}
+                  <WaterColorLeafBranch className="absolute -top-16 -left-10 w-[200px] h-[400px] opacity-70" style={{ transform: 'rotate(145deg)', animation: 'sway-slow 8s ease-in-out infinite' }} />
+
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
+                     <div className="absolute flex items-center justify-center">
+                        <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
+                        <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
+                     </div>
+                     <div className="text-[130px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
+                  </div>
+                  
+                  <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[15]">
+                     {FOREST_FLOWERS.map((flower) => (
+                        <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, transform: `rotate(${flower.rotate})`, animation: `sway-forest ${flower.duration} ease-in-out infinite`, animationDelay: flower.delay }}>
+                            <img src={flower.src} alt="Flower" className="w-full h-auto origin-bottom opacity-90" />
+                        </div>
+                     ))}
+                  </div>
+
+                  <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pb-20 md:pb-28 pt-6">
+                    <div className="bg-[#8C7A6B] w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-md mb-4 pointer-events-none shrink-0">
+                      <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </div>
+
+                    <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] font-light mb-1">Đỗ Trung</h1>
+                    <span className="text-xl font-serif text-[#8C7A6B] italic my-1">&</span>
+                    <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] font-light mt-1">Đặng Hải</h1>
+
+                    <div className="flex items-center gap-2 my-4 text-[#A09386] pointer-events-none">
+                      <span className="w-10 h-[1px] bg-[#D5C7B8]"></span>
+                      <span className="text-lg font-serif">❦</span>
+                      <span className="w-10 h-[1px] bg-[#D5C7B8]"></span>
+                    </div>
+
+                    <p className="text-[#8C7A6B] text-base md:text-lg font-serif tracking-wide mb-1">3 tháng 1, 2027</p>
+                    <p className="text-[#8C7A6B] text-xs md:text-sm mt-2 mb-8 md:mb-10 uppercase tracking-[0.2em] font-medium">Thân Mời</p>
+
+                    <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-8 md:px-10 py-3 md:py-3.5 bg-[#8C7A6B] text-white text-[12px] md:text-[13px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] transition-all duration-300 relative z-50 cursor-pointer">
+                        Mở thiệp
+                    </button>
+                  </div>
+              </div>
+              )}
+
           </div>
       </div>
 
