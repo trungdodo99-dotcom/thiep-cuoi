@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 
 // ==========================================
-// 1. DỮ LIỆU TĨNH
+// 1. DỮ LIỆU TĨNH & COMPONENT PHỤ TRỢ
 // ==========================================
 const PARTICLES = [
   { id: 1, left: "5%", delay: "0s", duration: "7s", size: "12px", content: "❤" },
@@ -19,7 +19,6 @@ const PARTICLES = [
   { id: 11, left: "85%", delay: "3.5s", duration: "7s", size: "17px", content: "❤" },
 ];
 
-// RỪNG HOA: Đã được kéo thấp xuống thêm 30px để nhường không gian cho chữ
 const FOREST_FLOWERS = [
   { id: 1, src: "/Hoa.png", left: "-15%", bottom: "-110px", width: "240px", rotate: "-20deg", duration: "5s", delay: "0s", zIndex: 12 },
   { id: 2, src: "/Hoa.png", left: "-5%", bottom: "-130px", width: "200px", rotate: "-10deg", duration: "6.5s", delay: "1.2s", zIndex: 10 },
@@ -35,6 +34,29 @@ const FOREST_FLOWERS = [
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
+// COMPONENT SVG GÓC VIỀN SANG TRỌNG (LUXURY CORNER)
+const LuxuryCorner = ({ className }: { className?: string }) => (
+  <svg className={`absolute w-14 h-14 md:w-16 md:h-16 pointer-events-none opacity-90 z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Lớp ngoài cùng (Dày) */}
+    <path d="M2 98 V2 H98" stroke="#C3B09B" strokeWidth="2"/>
+    {/* Lớp giữa (Mỏng) */}
+    <path d="M14 98 V14 H98" stroke="#C3B09B" strokeWidth="1"/>
+    {/* Lớp trong cùng (Rất mỏng) */}
+    <path d="M26 98 V26 H98" stroke="#C3B09B" strokeWidth="0.5"/>
+    {/* Các thanh chốt ngang/dọc (Cross bridges) */}
+    <path d="M2 38 H14" stroke="#C3B09B" strokeWidth="2"/>
+    <path d="M38 2 V14" stroke="#C3B09B" strokeWidth="2"/>
+    <path d="M14 54 H26" stroke="#C3B09B" strokeWidth="1"/>
+    <path d="M54 14 V26" stroke="#C3B09B" strokeWidth="1"/>
+    {/* Họa tiết hình thoi (Diamond) */}
+    <rect x="11" y="11" width="6" height="6" transform="rotate(45 14 14)" fill="#C3B09B"/>
+  </svg>
+);
+
+
+// ==========================================
+// 2. TRANG CHÍNH
+// ==========================================
 export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   
@@ -85,12 +107,12 @@ export default function WeddingCardPage() {
           </div>
 
           {/* ============================================== */}
-          {/* CÁC GÓC VIỀN HIỆN ĐẠI (MODERN CORNERS) */}
+          {/* GÓC VIỀN CAO CẤP (LUXURY CORNERS) */}
           {/* ============================================== */}
-          <div className="absolute top-5 left-5 w-12 h-12 border-t-[1.5px] border-l-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
-          <div className="absolute top-5 right-5 w-12 h-12 border-t-[1.5px] border-r-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
-          <div className="absolute bottom-5 left-5 w-12 h-12 border-b-[1.5px] border-l-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
-          <div className="absolute bottom-5 right-5 w-12 h-12 border-b-[1.5px] border-r-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
+          <LuxuryCorner className="top-4 left-4" />
+          <LuxuryCorner className="top-4 right-4 rotate-90" />
+          <LuxuryCorner className="bottom-4 right-4 rotate-180" />
+          <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
 
           {/* ============================================== */}
           {/* HỌA TIẾT IN CHÌM (WATERMARK) */}
