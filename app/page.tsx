@@ -74,13 +74,6 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
-const FlyingLeafSVG = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
-  <svg className={`absolute pointer-events-none drop-shadow-sm opacity-[0.55] ${className}`} style={style} viewBox="0 0 24 24" fill="#8A9A86" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21,3C21,3,16,2,10,7C4,12,3,21,3,21s5,1,11-4C20,12,21,3,21,3z" />
-    <path d="M3,21l9-9" stroke="#EAE3DB" strokeWidth="0.5" />
-  </svg>
-);
-
 // Component cảm biến hiện chữ THÔNG THƯỜNG (Trồi lên từ dưới)
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -107,10 +100,21 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Hiệu ứng lấy nét ống kính Điện ảnh)
-const CinematicNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Bùng nổ Điểm sáng lấp lánh)
+const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  
+  // Tạo ngẫu nhiên 30 hạt sáng bay ra nhiều hướng
+  const [particles] = useState(() => Array.from({ length: 30 }).map((_, i) => {
+      const angle = (Math.PI * 2 * i) / 30 + (Math.random() * 0.5);
+      const distance = 60 + Math.random() * 80; 
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      const size = 2 + Math.random() * 4; 
+      const delayObj = Math.random() * 0.2; 
+      return { id: i, tx, ty, size, delayObj };
+  }));
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -120,17 +124,39 @@ const CinematicNameReveal = ({ children, delay = 0, className = "" }: { children
           observer.disconnect();
         }
       },
-      { threshold: 0.2 } // Chờ tên hiện vào khung hình 20% mới bắt đầu chiếu
+      { threshold: 0.3 } 
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div ref={ref} className={`transition-all duration-[2000ms] ease-out w-full flex flex-col items-center 
-        ${isVisible ? 'opacity-100 scale-100 blur-none' : 'opacity-0 scale-[1.15] blur-[8px]'} ${className}`} 
-        style={{ transitionDelay: `${delay}ms` }}>
-      {children}
+    <div ref={ref} className={`relative w-full flex flex-col items-center ${className}`}>
+      {/* Lớp điểm sáng bùng nổ */}
+      <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
+         {isVisible && particles.map((p) => (
+            <div
+              key={p.id}
+              className="absolute rounded-full bg-[#FFF3E3] opacity-0 animate-particle-burst"
+              style={{
+                width: p.size,
+                height: p.size,
+                '--tx': `${p.tx}px`,
+                '--ty': `${p.ty}px`,
+                boxShadow: '0 0 10px 2px rgba(255, 243, 227, 0.8)',
+                animationDelay: `${delay + p.delayObj * 1000}ms`
+              } as React.CSSProperties}
+            />
+         ))}
+      </div>
+
+      {/* Lớp chữ (Bật "Pop" lên) */}
+      <div 
+        className={`relative z-10 flex flex-col items-center opacity-0 ${isVisible ? 'animate-text-pop' : ''}`}
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -154,7 +180,7 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // THUẬT TOÁN CUỘN MỚI CHO MOBILE (Delta-time Algorithm)
+  // THUẬT TOÁN CUỘN NHANH HƠN CHO MOBILE
   useEffect(() => {
     let animationFrameId: number;
     let accumulator = 0;
@@ -165,8 +191,8 @@ export default function WeddingCardPage() {
         const deltaTime = time - lastTime;
         lastTime = time;
 
-        // Tốc độ cuộn: 0.075 pixel mỗi millisecond (Lướt nhanh vừa đủ, rất mượt)
-        accumulator += deltaTime * 0.075;
+        // Tốc độ cuộn đã tăng lên xíu: 0.08
+        accumulator += deltaTime * 0.08;
 
         if (accumulator >= 1) {
           const step = Math.floor(accumulator);
@@ -225,21 +251,21 @@ export default function WeddingCardPage() {
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
-        /* Animation cho lá bay ngang */
-        @keyframes blow-right {
-           0% { left: -20%; transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-           20% { opacity: 1; }
-           80% { opacity: 1; }
-           100% { left: 120%; transform: translateY(-50px) rotate(270deg) scale(1.2); opacity: 0; }
+        /* Animation cho Điểm sáng bùng nổ */
+        @keyframes particle-burst {
+           0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+           15% { opacity: 1; transform: translate(calc(var(--tx) * 0.3), calc(var(--ty) * 0.3)) scale(1.5); }
+           100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
-        @keyframes blow-left {
-           0% { left: 120%; transform: translateY(50px) rotate(45deg) scale(1); opacity: 0; }
-           20% { opacity: 1; }
-           80% { opacity: 1; }
-           100% { left: -20%; transform: translateY(-30px) rotate(-180deg) scale(0.9); opacity: 0; }
+        .animate-particle-burst { animation: particle-burst 1.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
+
+        /* Animation cho Text giật Pop ra */
+        @keyframes text-pop {
+           0% { opacity: 0; transform: scale(0.85); filter: blur(3px); }
+           40% { opacity: 1; transform: scale(1.05); filter: blur(0px); }
+           100% { opacity: 1; transform: scale(1); filter: blur(0px); }
         }
-        .animate-blow-right { animation: blow-right linear infinite; }
-        .animate-blow-left { animation: blow-left linear infinite; }
+        .animate-text-pop { animation: text-pop 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
       `}} />
 
       {/* MÀN HÌNH CHÀO */}
@@ -335,11 +361,12 @@ export default function WeddingCardPage() {
 
       {/* ============================================== */}
       {/* CUỘN GIẤY THIỆP CHÍNH */}
+      {/* (Lúc mở ra phẳng phiu thẳng đứng, không nghiêng) */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div 
               className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
+                  ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.95] translate-y-16'} 
               `}
               style={{
                   transformOrigin: 'top center',
@@ -391,16 +418,6 @@ export default function WeddingCardPage() {
                         <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                      </div>
 
-                     {/* LỚP LÁ BAY ĐỘNG XUYÊN QUA THẺ */}
-                     <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-sm z-10">
-                         <FlyingLeafSVG className="animate-blow-right w-6 h-6" style={{ top: '25%', animationDuration: '7s', animationDelay: '0s' }} />
-                         <FlyingLeafSVG className="animate-blow-left w-5 h-5" style={{ top: '45%', animationDuration: '9s', animationDelay: '2s' }} />
-                         <FlyingLeafSVG className="animate-blow-right w-7 h-7" style={{ top: '35%', animationDuration: '8.5s', animationDelay: '4s' }} />
-                         <FlyingLeafSVG className="animate-blow-left w-6 h-6" style={{ top: '65%', animationDuration: '10s', animationDelay: '1s' }} />
-                         <FlyingLeafSVG className="animate-blow-right w-5 h-5" style={{ top: '15%', animationDuration: '11s', animationDelay: '3s' }} />
-                         <FlyingLeafSVG className="animate-blow-left w-8 h-8" style={{ top: '75%', animationDuration: '8s', animationDelay: '5s' }} />
-                     </div>
-
                      <div className="px-6 py-14 flex flex-col items-center text-center relative z-20">
                          
                          <FadeIn delay={100}>
@@ -428,24 +445,24 @@ export default function WeddingCardPage() {
                             <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
                          </FadeIn>
 
-                         {/* =============== KHỐI XUẤT HIỆN TÊN ĐIỆN ẢNH =============== */}
-                         <CinematicNameReveal delay={500}>
-                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-1 drop-shadow-sm">Đỗ Trung</h1>
+                         {/* =============== KHỐI XUẤT HIỆN TÊN BÙNG NỔ =============== */}
+                         <ExplosiveNameReveal delay={200}>
+                            <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] mb-1 drop-shadow-sm">Đỗ Trung</h1>
                             <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-3">Trưởng Nam</span>
                             
                             <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
                             
-                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-1 drop-shadow-sm">Đặng Hải</h1>
+                            <h1 className="text-4xl md:text-5xl font-serif text-[#5C4F44] mt-2 mb-1 drop-shadow-sm">Đặng Hải</h1>
                             <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-10">Út Nữ</span>
-                         </CinematicNameReveal>
+                         </ExplosiveNameReveal>
                          {/* ============================================================== */}
 
-                         <FadeIn delay={700}>
-                            <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
+                         <FadeIn delay={600}>
+                            <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
                             <div className="text-2xl font-serif text-[#5C4F44] mb-6">09:00</div>
                          </FadeIn>
 
-                         <FadeIn delay={800}>
+                         <FadeIn delay={700}>
                             <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
                                 <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Chủ Nhật</span>
                                 <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
