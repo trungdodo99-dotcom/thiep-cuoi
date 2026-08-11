@@ -74,7 +74,6 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
-// SVG Chiếc lá bay
 const FlyingLeafSVG = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
   <svg className={`absolute pointer-events-none drop-shadow-sm opacity-[0.55] ${className}`} style={style} viewBox="0 0 24 24" fill="#8A9A86" xmlns="http://www.w3.org/2000/svg">
     <path d="M21,3C21,3,16,2,10,7C4,12,3,21,3,21s5,1,11-4C20,12,21,3,21,3z" />
@@ -82,7 +81,7 @@ const FlyingLeafSVG = ({ className, style }: { className?: string, style?: React
   </svg>
 );
 
-// Component cảm biến hiện chữ
+// Component cảm biến hiện chữ THÔNG THƯỜNG (Trồi lên từ dưới)
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -103,6 +102,34 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 
   return (
     <div ref={ref} className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+      {children}
+    </div>
+  );
+};
+
+// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Hiệu ứng lấy nét ống kính Điện ảnh)
+const CinematicNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 } // Chờ tên hiện vào khung hình 20% mới bắt đầu chiếu
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={`transition-all duration-[2000ms] ease-out w-full flex flex-col items-center 
+        ${isVisible ? 'opacity-100 scale-100 blur-none' : 'opacity-0 scale-[1.15] blur-[8px]'} ${className}`} 
+        style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
@@ -138,7 +165,7 @@ export default function WeddingCardPage() {
         const deltaTime = time - lastTime;
         lastTime = time;
 
-        // Đã TĂNG tốc độ cuộn lên một chút (từ 0.05 -> 0.075)
+        // Tốc độ cuộn: 0.075 pixel mỗi millisecond (Lướt nhanh vừa đủ, rất mượt)
         accumulator += deltaTime * 0.075;
 
         if (accumulator >= 1) {
@@ -308,7 +335,6 @@ export default function WeddingCardPage() {
 
       {/* ============================================== */}
       {/* CUỘN GIẤY THIỆP CHÍNH */}
-      {/* LƯU Ý: Đã chỉnh lại hiệu ứng mở thẳng thớm (không nghiêng) */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div 
@@ -355,7 +381,7 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* Thẻ Thông Tin Lễ Cưới Nổi (Kèm hiệu ứng rung rinh cho lá) */}
+                 {/* Thẻ Thông Tin Lễ Cưới Nổi */}
                  <div className="relative w-[90%] max-w-[400px] bg-[#F5EFE6] rounded-sm shadow-[0_10px_40px_rgba(0,0,0,0.05)] mt-24 mb-10 border border-[#EAE3DB]">
                      
                      {/* Lá tĩnh rung rinh bên ngoài */}
@@ -402,19 +428,17 @@ export default function WeddingCardPage() {
                             <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
                          </FadeIn>
 
-                         <FadeIn delay={400}>
-                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-2 drop-shadow-sm">Đỗ Trung</h1>
-                            <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-4">Trưởng Nam</span>
-                         </FadeIn>
-
-                         <FadeIn delay={500}>
-                            <span className="text-xl font-serif text-[#C3B09B] italic my-2">❦</span>
-                         </FadeIn>
-
-                         <FadeIn delay={600}>
-                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-2 drop-shadow-sm">Đặng Hải</h1>
+                         {/* =============== KHỐI XUẤT HIỆN TÊN ĐIỆN ẢNH =============== */}
+                         <CinematicNameReveal delay={500}>
+                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mb-1 drop-shadow-sm">Đỗ Trung</h1>
+                            <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-3">Trưởng Nam</span>
+                            
+                            <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
+                            
+                            <h1 className="text-3xl md:text-4xl font-serif text-[#5C4F44] mt-2 mb-1 drop-shadow-sm">Đặng Hải</h1>
                             <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mb-10">Út Nữ</span>
-                         </FadeIn>
+                         </CinematicNameReveal>
+                         {/* ============================================================== */}
 
                          <FadeIn delay={700}>
                             <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
