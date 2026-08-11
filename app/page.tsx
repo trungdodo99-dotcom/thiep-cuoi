@@ -52,63 +52,12 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
   </svg>
 );
 
-
-// ==========================================
-// COMPONENT NƠ TRƯỢT (ELEGANT PARTING BOW)
-// Đã được kéo lên vị trí eo thiệp (bottom-[180px])
-// ==========================================
-const ElegantPartingBow = ({ isUntying }: { isUntying: boolean }) => {
-  return (
-    <div className="absolute inset-x-0 bottom-[180px] md:bottom-[200px] h-[60px] z-[35] pointer-events-none overflow-hidden rounded-lg">
-       
-       {/* NỬA BÊN TRÁI (Sẽ lướt sang trái khi mở) */}
-       <div 
-          className="absolute left-0 top-0 h-full w-1/2 flex items-center justify-end transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-          style={{ transform: isUntying ? 'translateX(-110%)' : 'translateX(0)' }}
-       >
-          {/* Ruy băng ngang trái */}
-          <div className="absolute right-0 w-[500px] h-[16px] bg-gradient-to-r from-[#4a3272] to-[#7552A8] shadow-md"></div>
-          {/* Cánh nơ trái */}
-          <svg width="60" height="60" viewBox="0 0 60 60" className="relative z-10 translate-x-[4px]">
-             <path d="M 60 30 C 20 10, 0 10, 10 30 C 0 50, 20 50, 60 30 Z" fill="#845EC2" className="drop-shadow-md"/>
-             <path d="M 55 30 C 25 18, 15 20, 20 30 C 15 40, 25 42, 55 30 Z" fill="#4a3272" opacity="0.5"/>
-             {/* Đuôi lụa rủ xuống bên trái */}
-             <path d="M 45 35 C 30 50, 15 55, 10 70 C 25 60, 40 45, 55 35 Z" fill="#6b4c9a" />
-          </svg>
-       </div>
-
-       {/* NỬA BÊN PHẢI (Sẽ lướt sang phải khi mở) */}
-       <div 
-          className="absolute right-0 top-0 h-full w-1/2 flex items-center justify-start transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-          style={{ transform: isUntying ? 'translateX(110%)' : 'translateX(0)' }}
-       >
-          {/* Ruy băng ngang phải */}
-          <div className="absolute left-0 w-[500px] h-[16px] bg-gradient-to-l from-[#4a3272] to-[#7552A8] shadow-md"></div>
-          {/* Cánh nơ phải */}
-          <svg width="60" height="60" viewBox="0 0 60 60" className="relative z-10 -translate-x-[4px]">
-             <path d="M 0 30 C 40 10, 60 10, 50 30 C 60 50, 40 50, 0 30 Z" fill="#845EC2" className="drop-shadow-md"/>
-             <path d="M 5 30 C 35 18, 45 20, 40 30 C 45 40, 35 42, 5 30 Z" fill="#4a3272" opacity="0.5"/>
-             {/* Đuôi lụa rủ xuống bên phải */}
-             <path d="M 15 35 C 30 50, 45 55, 50 70 C 35 60, 20 45, 5 35 Z" fill="#6b4c9a" />
-             {/* Nút thắt (Knot) dính liền với nửa phải */}
-             <rect x="-8" y="20" width="16" height="20" rx="6" fill="#593D7C" className="drop-shadow-lg" />
-             <path d="M -2 20 V 40 M 2 20 V 40" stroke="#3d2763" strokeWidth="1"/>
-          </svg>
-       </div>
-
-    </div>
-  );
-};
-
-
 // ==========================================
 // 2. TRANG CHÍNH
 // ==========================================
 export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true); 
-  
-  const [isUntying, setIsUntying] = useState(false);
   const [isOpen, setIsOpen] = useState(false); 
 
   useEffect(() => {
@@ -119,20 +68,8 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // XỬ LÝ MỞ: Nơ trượt mượt mà sang 2 bên -> Sau đó lật thiệp
-  const handleOpenCard = () => {
-    setIsUntying(true);
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 600);
-  };
-
-  const handleCloseCard = () => {
-    setIsOpen(false);
-    setTimeout(() => {
-      setIsUntying(false);
-    }, 1200); 
-  };
+  const handleOpenCard = () => setIsOpen(true);
+  const handleCloseCard = () => setIsOpen(false);
 
   if (!isMounted) return <div className="min-h-screen bg-[#8C8076]"></div>;
 
@@ -185,24 +122,25 @@ export default function WeddingCardPage() {
           ))}
         </div>
 
-        {/* CUỐN SÁCH TỔNG */}
+        {/* CONTAINER CHÍNH */}
         <div 
             className="relative preserve-3d w-[92%] sm:w-full max-w-[420px] aspect-[3/4] min-h-[550px] md:min-h-[600px] shadow-2xl transition-all duration-[1200ms] ease-in-out"
             style={{ 
-                transform: isOpen ? 'scale(1.12) translateX(4%)' : 'scale(1) translateX(0)',
-                transitionDelay: isOpen ? '0.2s' : '0s'
+                transform: isOpen ? 'scale(1.12) translateX(6%)' : 'scale(1) translateX(0)',
+                transitionDelay: isOpen ? '0.1s' : '0s'
             }}
         >
             
           {/* ============================================== */}
-          {/* RUỘT THIỆP BÊN TRONG */}
+          {/* RUỘT THIỆP (NẰM DƯỚI BÌA, HIỆN RA KHI LẬT VÀO HƯ KHÔNG) */}
           {/* ============================================== */}
-          <div className="absolute inset-0 z-10 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] flex flex-col items-center pt-10 pb-6 px-4 overflow-hidden">
-             <p className="uppercase tracking-[0.25em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-2">The Wedding Of</p>
-             <h2 className="text-3xl md:text-4xl font-serif italic text-[#5C4F44] mb-8">Đỗ Trung & Đặng Hải</h2>
+          <div className="absolute inset-0 z-10 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] flex flex-col items-center pt-8 pb-6 px-4 overflow-hidden shadow-2xl">
+             <p className="uppercase tracking-[0.25em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-1">The Wedding Of</p>
+             <h2 className="text-3xl md:text-4xl font-serif italic text-[#5C4F44] mb-4">Đỗ Trung & Đặng Hải</h2>
              
-             <div className="relative w-[85%] max-w-[300px] bg-white p-3 md:p-4 pb-12 md:pb-14 shadow-xl rotate-[2deg] mt-2">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-20 md:w-24 h-6 md:h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
+             {/* Khung Polaroid */}
+             <div className="relative w-[80%] max-w-[280px] bg-white p-2.5 md:p-3 pb-10 shadow-xl rotate-[2deg] mt-1">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                 
                 <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
                     <img 
@@ -224,11 +162,11 @@ export default function WeddingCardPage() {
                 <img 
                     src="/Con_dau1.png" 
                     alt="Wax Seal" 
-                    className="absolute -bottom-6 -right-5 md:-bottom-8 md:-right-6 w-16 h-16 md:w-20 md:h-20 z-30 drop-shadow-md object-contain"
+                    className="absolute -bottom-5 -right-4 w-14 h-14 md:w-18 md:h-18 z-30 drop-shadow-md object-contain"
                     onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }}
                 />
                 
-                <div className="absolute -bottom-8 -left-8 md:-bottom-10 md:-left-12 w-32 md:w-40 z-20 pointer-events-none drop-shadow-lg" style={{ transform: 'rotate(-12deg)' }}>
+                <div className="absolute -bottom-6 -left-6 w-28 md:w-36 z-20 pointer-events-none drop-shadow-lg" style={{ transform: 'rotate(-12deg)' }}>
                     <img 
                         src="/HoaT1.png" 
                         alt="Hoa Polaroid"
@@ -241,14 +179,14 @@ export default function WeddingCardPage() {
 
              <button 
                  onClick={handleCloseCard}
-                 className="mt-auto px-6 py-2 border border-[#D5C7B8] rounded-full text-[10px] uppercase tracking-widest text-[#8C7A6B] hover:bg-[#F9F6F0] transition-colors cursor-pointer"
+                 className="mt-auto px-6 py-1.5 border border-[#D5C7B8] rounded-full text-[10px] uppercase tracking-widest text-[#8C7A6B] hover:bg-[#F9F6F0] transition-colors cursor-pointer"
              >
-                 ← Đóng thiệp
+                 ← Đóng bìa thiệp
              </button>
           </div>
 
           {/* ============================================== */}
-          {/* CỤM BÌA THIỆP & NƠ LỤA */}
+          {/* BÌA THIỆP (LẬT SANG TRÁI VÀO HƯ KHÔNG) */}
           {/* ============================================== */}
           <div 
               className="absolute inset-0 z-40 preserve-3d"
@@ -259,7 +197,7 @@ export default function WeddingCardPage() {
                   pointerEvents: isOpen ? 'none' : 'auto'
               }}
           >
-              {/* --- MẶT SAU --- */}
+              {/* --- MẶT SAU CỦA BÌA --- */}
               <div 
                   className="absolute inset-0 bg-[#F4EFEA] rounded-lg border border-[#D5C7B8] backface-hidden shadow-inner flex items-center justify-center"
                   style={{ transform: 'rotateY(180deg)' }}
@@ -267,12 +205,9 @@ export default function WeddingCardPage() {
                   <div className="text-[120px] font-serif text-[#D5C7B8] opacity-30">囍</div>
               </div>
 
-              {/* --- MẶT TRƯỚC --- */}
+              {/* --- MẶT TRƯỚC CỦA BÌA --- */}
               <div className="absolute inset-0 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] backface-hidden overflow-hidden">
                   
-                  {/* NƠ LỤA MƯỢT MÀ TÁCH ĐÔI */}
-                  <ElegantPartingBow isUntying={isUntying} />
-
                   <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
                     {PARTICLES.slice(0, 8).map((p) => (
                       <div key={`card-${p.id}`} className="absolute top-[-5%]" style={{ left: p.left, width: p.size, height: p.size, animation: `fall ${p.duration} linear infinite`, animationDelay: p.delay }}>
