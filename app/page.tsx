@@ -31,7 +31,6 @@ const FOREST_FLOWERS = [
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
-// TỌA ĐỘ CÁC VỊ TRÍ LẤP LÁNH TRÊN VÁY CÔ DÂU
 const DRESS_SPARKLES = [
   { id: 1, bottom: "10%", left: "30%", delay: "0s", size: "12px" },
   { id: 2, bottom: "25%", left: "55%", delay: "0.5s", size: "8px" },
@@ -65,8 +64,16 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
 export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false); 
+  const [showSplash, setShowSplash] = useState(true); // Trạng thái hiển thị Màn hình chào
   
-  useEffect(() => setIsMounted(true), []);
+  useEffect(() => {
+    setIsMounted(true);
+    // Giữ màn hình chào trong 2.5 giây để các hình ảnh load xong ngầm bên dưới
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!isMounted) return <div className="min-h-screen bg-[#8C8076]"></div>;
 
@@ -85,18 +92,35 @@ export default function WeddingCardPage() {
         
         @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
 
-        /* HIỆU ỨNG NGÔI SAO LẤP LÁNH */
         @keyframes sparkle {
            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
            50% { opacity: 0.9; transform: scale(1) rotate(90deg); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
-        /* MÔI TRƯỜNG 3D */
         .perspective-2000 { perspective: 2000px; -webkit-perspective: 2000px; }
         .preserve-3d { transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       `}} />
+
+      {/* ============================================== */}
+      {/* MÀN HÌNH CHÀO (SPLASH SCREEN) PHỦ LÊN TRÊN CÙNG */}
+      {/* ============================================== */}
+      <div 
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#F4EFEA] transition-all duration-1000 ease-in-out
+          ${showSplash ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+        `}
+      >
+         <div className="flex flex-col items-center justify-center text-center px-6">
+            <span className="text-[#8C7A6B] text-4xl mb-4 animate-bounce">❦</span>
+            <h2 className="text-3xl md:text-4xl font-serif text-[#5C4F44] italic mb-6 leading-relaxed">Chào mừng bạn đến với<br/>Lễ Cưới của chúng tôi</h2>
+            <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping"></div>
+                <p className="text-[10px] md:text-xs text-[#8C7A6B] tracking-[0.3em] uppercase">Đang mở thiệp mời</p>
+                <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping delay-150"></div>
+            </div>
+         </div>
+      </div>
 
       {/* Bao bọc toàn bộ bằng Không gian 3D */}
       <section className="perspective-2000 w-full min-h-screen relative flex items-center justify-center p-4 bg-[#8C8076] z-20 overflow-hidden">
@@ -147,7 +171,7 @@ export default function WeddingCardPage() {
                         }} 
                     />
                     
-                    {/* Hiệu ứng lấp lánh váy cô dâu */}
+                    {/* Hiệu ứng lấp lánh */}
                     <div className="absolute inset-0 pointer-events-none z-10">
                         {DRESS_SPARKLES.map((sparkle) => (
                             <svg 
@@ -201,19 +225,19 @@ export default function WeddingCardPage() {
 
 
           {/* ============================================== */}
-          {/* CỤM BÌA THIỆP (Nằm trên cùng): Lật 140 độ */}
+          {/* CỤM BÌA THIỆP (Nằm trên cùng) */}
           {/* ============================================== */}
           <div 
               className="absolute inset-0 z-40 preserve-3d"
               style={{
-                  transformOrigin: 'left center', // Bản lề lật ở mép trái thiệp
-                  transform: isOpen ? 'rotateY(-140deg)' : 'rotateY(0deg)', // Lật 140 độ sang trái
+                  transformOrigin: 'left center', 
+                  transform: isOpen ? 'rotateY(-140deg)' : 'rotateY(0deg)',
                   transition: 'transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1)',
                   pointerEvents: isOpen ? 'none' : 'auto'
               }}
           >
               
-              {/* --- MẶT SAU CỦA BÌA --- */}
+              {/* --- MẶT SAU --- */}
               <div 
                   className="absolute inset-0 bg-[#F4EFEA] rounded-lg border border-[#D5C7B8] backface-hidden shadow-inner flex items-center justify-center"
                   style={{ transform: 'rotateY(180deg)' }}
@@ -221,10 +245,10 @@ export default function WeddingCardPage() {
                   <div className="text-[120px] font-serif text-[#D5C7B8] opacity-30">囍</div>
               </div>
 
-              {/* --- MẶT TRƯỚC CỦA BÌA --- */}
+              {/* --- MẶT TRƯỚC --- */}
               <div className="absolute inset-0 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] backface-hidden overflow-hidden">
                   
-                  {/* Hạt rơi bên trong bìa */}
+                  {/* Hạt rơi */}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
                     {PARTICLES.slice(0, 8).map((p) => (
                       <div key={`card-${p.id}`} className="absolute top-[-5%]" style={{ left: p.left, width: p.size, height: p.size, animation: `fall ${p.duration} linear infinite`, animationDelay: p.delay }}>
@@ -248,7 +272,7 @@ export default function WeddingCardPage() {
                      <div className="text-[130px] md:text-[160px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
                   
-                  {/* Rừng hoa đong đưa ngoài bìa (vẫn dùng Hoa.png) */}
+                  {/* Rừng hoa đong đưa */}
                   <div className="absolute inset-x-0 bottom-0 pointer-events-none z-30">
                      {FOREST_FLOWERS.map((flower) => (
                         <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, zIndex: flower.zIndex, transform: `rotate(${flower.rotate})`, transformOrigin: 'bottom center' }}>
@@ -257,7 +281,7 @@ export default function WeddingCardPage() {
                      ))}
                   </div>
 
-                  {/* Chữ và Nút Bìa Thiệp */}
+                  {/* Chữ và Nút */}
                   <div className="relative z-40 flex flex-col items-center justify-center text-center px-6 w-full h-full pt-8 pb-32 md:pb-36">
                     <div className="bg-[#6A5A4E] w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-6 pointer-events-none">
                       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
