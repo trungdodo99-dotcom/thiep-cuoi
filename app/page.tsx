@@ -55,11 +55,11 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
 
 // ==========================================
 // COMPONENT NƠ TRƯỢT (ELEGANT PARTING BOW)
-// Thiết kế tĩnh đẹp mắt, hiệu ứng là trượt tách đôi
+// Đã được kéo lên vị trí eo thiệp (bottom-[180px])
 // ==========================================
 const ElegantPartingBow = ({ isUntying }: { isUntying: boolean }) => {
   return (
-    <div className="absolute inset-x-0 bottom-[125px] h-[60px] z-[35] pointer-events-none overflow-hidden rounded-lg">
+    <div className="absolute inset-x-0 bottom-[180px] md:bottom-[200px] h-[60px] z-[35] pointer-events-none overflow-hidden rounded-lg">
        
        {/* NỬA BÊN TRÁI (Sẽ lướt sang trái khi mở) */}
        <div 
@@ -124,13 +124,13 @@ export default function WeddingCardPage() {
     setIsUntying(true);
     setTimeout(() => {
       setIsOpen(true);
-    }, 600); // Đợi nơ tách ra một chút rồi bìa thiệp bắt đầu lật
+    }, 600);
   };
 
   const handleCloseCard = () => {
     setIsOpen(false);
     setTimeout(() => {
-      setIsUntying(false); // Thiệp đóng xong thì nơ trượt lại vào giữa
+      setIsUntying(false);
     }, 1200); 
   };
 
