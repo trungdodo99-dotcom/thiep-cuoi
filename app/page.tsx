@@ -5,16 +5,16 @@ import React, { useState, useEffect, useRef } from "react";
 // ==========================================
 // 1. DỮ LIỆU TĨNH & COMPONENT TRANG TRÍ
 // ==========================================
-// Trái tim nổi lên trên thiệp, dạt 2 lề và rơi cực kỳ chậm (16-25s)
+// Đã đẩy tọa độ left lấn vào trong thiệp hơn để trái tim bay ngang qua giấy
 const PARTICLES = [
-  { id: 1, left: "2%", delay: "0s", duration: "18s", size: "12px", content: "❤" },
-  { id: 2, left: "7%", delay: "4s", duration: "22s", size: "10px", content: "✿" },
-  { id: 3, left: "11%", delay: "8s", duration: "16s", size: "14px", content: "❤" },
-  { id: 4, left: "4%", delay: "2s", duration: "25s", size: "12px", content: "✿" },
-  { id: 5, left: "86%", delay: "1s", duration: "20s", size: "15px", content: "❤" },
-  { id: 6, left: "93%", delay: "6s", duration: "18s", size: "10px", content: "✿" },
-  { id: 7, left: "98%", delay: "3s", duration: "24s", size: "16px", content: "❤" },
-  { id: 8, left: "89%", delay: "5s", duration: "21s", size: "11px", content: "✿" },
+  { id: 1, left: "12%", delay: "0s", duration: "18s", size: "12px", content: "❤" },
+  { id: 2, left: "20%", delay: "4s", duration: "22s", size: "10px", content: "✿" },
+  { id: 3, left: "5%", delay: "8s", duration: "16s", size: "14px", content: "❤" },
+  { id: 4, left: "80%", delay: "2s", duration: "25s", size: "12px", content: "✿" },
+  { id: 5, left: "88%", delay: "1s", duration: "20s", size: "15px", content: "❤" },
+  { id: 6, left: "75%", delay: "6s", duration: "18s", size: "10px", content: "✿" },
+  { id: 7, left: "95%", delay: "3s", duration: "24s", size: "16px", content: "❤" },
+  { id: 8, left: "15%", delay: "5s", duration: "21s", size: "11px", content: "✿" },
 ];
 
 const FOREST_FLOWERS = [
@@ -106,8 +106,8 @@ export default function WeddingCardPage() {
         const deltaTime = time - lastTime;
         lastTime = time;
 
-        // Tốc độ cuộn: 0.04 pixel mỗi millisecond (Rất mượt trên điện thoại)
-        accumulator += deltaTime * 0.04;
+        // Tốc độ cuộn: 0.05 pixel mỗi millisecond
+        accumulator += deltaTime * 0.05;
 
         if (accumulator >= 1) {
           const step = Math.floor(accumulator);
@@ -147,12 +147,12 @@ export default function WeddingCardPage() {
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
-    // Dùng class CSS để khóa cuộn an toàn trên iOS thay vì can thiệp document.body
     <div 
         className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] cursor-pointer w-full
             ${!isOpen ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'}`} 
         onClick={toggleAutoScroll}
     >
+      {/* ĐÃ XÓA scroll-behavior: smooth; ĐỂ KHÔNG BỊ LỖI CUỘN TRÊN MOBILE */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -169,7 +169,6 @@ export default function WeddingCardPage() {
            50% { opacity: 0.9; transform: scale(1) rotate(90deg); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
-        html { scroll-behavior: smooth; }
       `}} />
 
       {/* MÀN HÌNH CHÀO (Z-100: Cao nhất) */}
