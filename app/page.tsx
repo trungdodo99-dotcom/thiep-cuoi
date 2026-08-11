@@ -19,19 +19,20 @@ const PARTICLES = [
   { id: 11, left: "85%", delay: "3.5s", duration: "7s", size: "17px", content: "❤" },
 ];
 
+// RỪNG HOA: Đã được kéo thấp xuống thêm 30px để nhường không gian cho chữ
 const FOREST_FLOWERS = [
-  { id: 1, src: "/Hoa.png", left: "-15%", bottom: "-80px", width: "240px", rotate: "-20deg", duration: "5s", delay: "0s", zIndex: 12 },
-  { id: 2, src: "/Hoa.png", left: "-5%", bottom: "-100px", width: "200px", rotate: "-10deg", duration: "6.5s", delay: "1.2s", zIndex: 10 },
-  { id: 3, src: "/Hoa.png", left: "5%", bottom: "-70px", width: "260px", rotate: "-5deg", duration: "4.5s", delay: "0.5s", zIndex: 13 },
-  { id: 4, src: "/Hoa.png", left: "15%", bottom: "-90px", width: "220px", rotate: "2deg", duration: "7s", delay: "2.1s", zIndex: 11 },
-  { id: 5, src: "/Hoa.png", left: "25%", bottom: "-60px", width: "280px", rotate: "8deg", duration: "5.5s", delay: "1.5s", zIndex: 14 },
-  { id: 6, src: "/Hoa.png", left: "35%", bottom: "-85px", width: "210px", rotate: "-3deg", duration: "6s", delay: "0.8s", zIndex: 12 },
-  { id: 7, src: "/Hoa.png", left: "45%", bottom: "-105px", width: "190px", rotate: "5deg", duration: "4.8s", delay: "2.5s", zIndex: 10 },
-  { id: 8, src: "/Hoa.png", left: "55%", bottom: "-65px", width: "270px", rotate: "12deg", duration: "7.2s", delay: "0.3s", zIndex: 15 },
-  { id: 9, src: "/Hoa.png", left: "65%", bottom: "-95px", width: "230px", rotate: "18deg", duration: "5.2s", delay: "1.8s", zIndex: 11 },
-  { id: 10, src: "/Hoa.png", left: "75%", bottom: "-75px", width: "250px", rotate: "22deg", duration: "6.8s", delay: "0.9s", zIndex: 13 },
-  { id: 11, src: "/Hoa.png", left: "85%", bottom: "-110px", width: "180px", rotate: "25deg", duration: "4.5s", delay: "2.2s", zIndex: 10 },
-  { id: 12, src: "/Hoa.png", left: "95%", bottom: "-80px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
+  { id: 1, src: "/Hoa.png", left: "-15%", bottom: "-110px", width: "240px", rotate: "-20deg", duration: "5s", delay: "0s", zIndex: 12 },
+  { id: 2, src: "/Hoa.png", left: "-5%", bottom: "-130px", width: "200px", rotate: "-10deg", duration: "6.5s", delay: "1.2s", zIndex: 10 },
+  { id: 3, src: "/Hoa.png", left: "5%", bottom: "-100px", width: "260px", rotate: "-5deg", duration: "4.5s", delay: "0.5s", zIndex: 13 },
+  { id: 4, src: "/Hoa.png", left: "15%", bottom: "-120px", width: "220px", rotate: "2deg", duration: "7s", delay: "2.1s", zIndex: 11 },
+  { id: 5, src: "/Hoa.png", left: "25%", bottom: "-90px", width: "280px", rotate: "8deg", duration: "5.5s", delay: "1.5s", zIndex: 14 },
+  { id: 6, src: "/Hoa.png", left: "35%", bottom: "-115px", width: "210px", rotate: "-3deg", duration: "6s", delay: "0.8s", zIndex: 12 },
+  { id: 7, src: "/Hoa.png", left: "45%", bottom: "-135px", width: "190px", rotate: "5deg", duration: "4.8s", delay: "2.5s", zIndex: 10 },
+  { id: 8, src: "/Hoa.png", left: "55%", bottom: "-95px", width: "270px", rotate: "12deg", duration: "7.2s", delay: "0.3s", zIndex: 15 },
+  { id: 9, src: "/Hoa.png", left: "65%", bottom: "-125px", width: "230px", rotate: "18deg", duration: "5.2s", delay: "1.8s", zIndex: 11 },
+  { id: 10, src: "/Hoa.png", left: "75%", bottom: "-105px", width: "250px", rotate: "22deg", duration: "6.8s", delay: "0.9s", zIndex: 13 },
+  { id: 11, src: "/Hoa.png", left: "85%", bottom: "-140px", width: "180px", rotate: "25deg", duration: "4.5s", delay: "2.2s", zIndex: 10 },
+  { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
 export default function WeddingCardPage() {
@@ -71,7 +72,7 @@ export default function WeddingCardPage() {
           ))}
         </div>
 
-        {/* Khung Bìa Thư - Tinh chỉnh tỷ lệ cho Mobile để không bao giờ bị lùn */}
+        {/* Khung Bìa Thư */}
         <div className="relative bg-[#FDFBF7] w-[92%] sm:w-full max-w-md aspect-[3/4] min-h-[550px] md:min-h-[600px] rounded-lg shadow-2xl overflow-hidden flex flex-col items-center justify-center border border-[#EAE3DB]">
           
           {/* Hạt rơi bên trong bìa */}
@@ -84,7 +85,15 @@ export default function WeddingCardPage() {
           </div>
 
           {/* ============================================== */}
-          {/* HỌA TIẾT IN CHÌM CĂN GIỮA TUYỆT ĐỐI (z-10) */}
+          {/* CÁC GÓC VIỀN HIỆN ĐẠI (MODERN CORNERS) */}
+          {/* ============================================== */}
+          <div className="absolute top-5 left-5 w-12 h-12 border-t-[1.5px] border-l-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
+          <div className="absolute top-5 right-5 w-12 h-12 border-t-[1.5px] border-r-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
+          <div className="absolute bottom-5 left-5 w-12 h-12 border-b-[1.5px] border-l-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
+          <div className="absolute bottom-5 right-5 w-12 h-12 border-b-[1.5px] border-r-[1.5px] border-[#D5C7B8] z-40 pointer-events-none opacity-80"></div>
+
+          {/* ============================================== */}
+          {/* HỌA TIẾT IN CHÌM (WATERMARK) */}
           {/* ============================================== */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
              {/* Vòng tròn nhẫn */}
@@ -126,10 +135,7 @@ export default function WeddingCardPage() {
              ))}
           </div>
 
-          {/* ============================================== */}
-          {/* CHỮ VÀ NÚT (z-40) - Thiết kế lại khung đệm (Padding) */}
-          {/* Đệm dưới (pb-32) để né hoa, đệm trên (pt-8) để né viền trên */}
-          {/* ============================================== */}
+          {/* CHỮ VÀ NÚT (z-40) */}
           <div className="relative z-40 flex flex-col items-center justify-center text-center px-6 w-full h-full pt-8 pb-32 md:pb-36">
             <div className="bg-[#6A5A4E] w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-6 pointer-events-none">
               <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
