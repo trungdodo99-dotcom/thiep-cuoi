@@ -74,7 +74,7 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
-// Component cảm biến hiện chữ
+// Component cảm biến hiện chữ THÔNG THƯỜNG (Trồi lên từ dưới)
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -100,12 +100,11 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Bùng nổ)
+// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Bùng nổ Điểm sáng lấp lánh)
 const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   
-  // Tạo 30 hạt sáng bay ra
   const [particles] = useState(() => Array.from({ length: 30 }).map((_, i) => {
       const angle = (Math.PI * 2 * i) / 30 + (Math.random() * 0.5);
       const distance = 60 + Math.random() * 80; 
@@ -132,7 +131,6 @@ const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children
 
   return (
     <div ref={ref} className={`relative w-full flex flex-col items-center ${className}`}>
-      {/* Điểm sáng bùng nổ */}
       <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
          {isVisible && particles.map((p) => (
             <div
@@ -150,7 +148,6 @@ const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children
          ))}
       </div>
 
-      {/* Lớp chữ bật lên */}
       <div className={`relative z-10 flex flex-col items-center opacity-0 w-full ${isVisible ? 'animate-text-pop' : ''}`} style={{ animationDelay: `${delay}ms` }}>
         {children}
       </div>
@@ -167,7 +164,7 @@ export default function WeddingCardPage() {
   
   const [isOpen, setIsOpen] = useState(false); 
   const [isCardDisappeared, setIsCardDisappeared] = useState(false); 
-  const [isInnerVisible, setIsInnerVisible] = useState(false); // State mới để quản lý lúc ruột thiệp bắt đầu hiện
+  const [isInnerVisible, setIsInnerVisible] = useState(false);
   
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const [showHint, setShowHint] = useState(false);
@@ -178,7 +175,6 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // THUẬT TOÁN CUỘN NHẸ NHÀNG (Giảm tốc độ)
   useEffect(() => {
     let animationFrameId: number;
     let accumulator = 0;
@@ -189,7 +185,6 @@ export default function WeddingCardPage() {
         const deltaTime = time - lastTime;
         lastTime = time;
 
-        // Tốc độ cuộn giảm xuống 0.04 để đọc chữ thoải mái
         accumulator += deltaTime * 0.04;
 
         if (accumulator >= 1) {
@@ -209,20 +204,19 @@ export default function WeddingCardPage() {
     return () => cancelAnimationFrame(animationFrameId);
   }, [isAutoScrolling]);
 
-  // CHUỖI SỰ KIỆN MỞ THIỆP ĐÃ ĐƯỢC FIX
   const handleOpenCard = () => {
-    setIsOpen(true); // 1. Bìa lật sang trái
+    setIsOpen(true); // Bìa bắt đầu trượt sang trái
+    setIsInnerVisible(true); // Cùng lúc, ruột thiệp bắt đầu hiện mờ lên
     
     setTimeout(() => {
-      setIsCardDisappeared(true); // 2. Sau khi lật xong (1.2s), bìa biến mất 
-      setIsInnerVisible(true); // 3. CÙNG LÚC ĐÓ, ruột thiệp bên trong mới bắt đầu hiện ra và phóng to
-    }, 1200);
+      setIsCardDisappeared(true); 
+    }, 1200); // Khớp với thời gian transition của Slide-out
 
     setTimeout(() => {
       setIsAutoScrolling(true);
       setShowHint(true);
       setTimeout(() => setShowHint(false), 4500); 
-    }, 3800); // Đợi ruột thiệp hiện lên xong xuôi mới bắt đầu trượt
+    }, 3200); 
   };
 
   const toggleAutoScroll = () => {
@@ -232,7 +226,7 @@ export default function WeddingCardPage() {
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
-    <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] cursor-pointer w-full ${!isOpen ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'}`} onClick={toggleAutoScroll}>
+    <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] cursor-pointer w-full overflow-x-hidden ${!isOpen ? 'h-[100dvh] overflow-y-hidden' : 'min-h-[100dvh]'}`} onClick={toggleAutoScroll}>
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -274,7 +268,7 @@ export default function WeddingCardPage() {
            background: linear-gradient(
                to right, 
                #5C4F44 20%, 
-               #DBCBB5 50%, /* Màu sáng quét qua */
+               #DBCBB5 50%, 
                #5C4F44 80%
            );
            background-size: 200% auto;
@@ -298,48 +292,60 @@ export default function WeddingCardPage() {
          </div>
       </div>
 
-      {/* GỢI Ý CHẠM ĐỂ DỪNG */}
       <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${showHint ? 'opacity-100' : 'opacity-0'}`}>
           <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
           Chạm màn hình để Dừng / Cuộn
       </div>
 
       {/* ============================================== */}
-      {/* LỚP BÌA 3D */}
+      {/* LỚP BÌA TRƯỢT NGANG (SLIDE-OUT) */}
       {/* ============================================== */}
       {!isCardDisappeared && (
-      <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-[1200ms] ${isOpen ? 'pointer-events-none' : ''}`} style={{ perspective: '2000px' }}>
+      <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-[1200ms] ${isOpen ? 'pointer-events-none' : ''}`}>
           <div 
-              className="relative w-[92%] sm:w-full max-w-[420px] aspect-[3/4] min-h-[550px] shadow-2xl bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] overflow-hidden"
+              className="relative w-[92%] sm:w-full max-w-[420px] aspect-[3/4] min-h-[550px] shadow-2xl bg-[#FDFBF7] rounded-lg border border-[#EAE3DB]"
               style={{
-                  transformOrigin: 'left center',
-                  transform: isOpen ? 'rotateY(-110deg)' : 'rotateY(0deg)',
+                  transform: isOpen ? 'translateX(-120vw)' : 'translateX(0)', // Trượt thẳng sang mép trái màn hình
                   opacity: isOpen ? 0 : 1, 
-                  transition: 'transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.4s 0.8s ease-out'
+                  transition: 'transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 1s 0.2s ease-out'
               }}
           >
+              {/* Vùng giới hạn để hoa lá không lòi ra mép ngoài */}
+              <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none z-10">
+                 {/* Bổ sung thêm cành hoa đung đưa trên Bìa (Góc trên trái) */}
+                 <WaterColorLeafBranch className="absolute -top-16 -left-10 w-[200px] h-[400px] opacity-70" style={{ transform: 'rotate(145deg)', animation: 'sway-slow 8s ease-in-out infinite' }} />
+
+                 <div className="absolute flex items-center justify-center inset-0">
+                    <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
+                    <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
+                 </div>
+                 <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-[130px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
+                 </div>
+
+                 {/* Hoa đáy thiệp bìa */}
+                 <div className="absolute inset-x-0 bottom-0 pointer-events-none">
+                    {FOREST_FLOWERS.map((flower) => (
+                        <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, transform: `rotate(${flower.rotate})`, animation: `sway-forest ${flower.duration} ease-in-out infinite`, animationDelay: flower.delay }}>
+                            <img src={flower.src} alt="Flower" className="w-full h-auto origin-bottom opacity-90" />
+                        </div>
+                    ))}
+                 </div>
+              </div>
+
               <LuxuryCorner className="top-4 left-4" />
               <LuxuryCorner className="top-4 right-4 rotate-90" />
               <LuxuryCorner className="bottom-4 right-4 rotate-180" />
               <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
 
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
-                 <div className="absolute flex items-center justify-center">
-                    <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
-                    <div className="absolute w-[200px] h-[200px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
-                 </div>
-                 <div className="text-[130px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
-              </div>
-              
-              <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[15]">
-                 {FOREST_FLOWERS.map((flower) => (
-                    <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, transform: `rotate(${flower.rotate})`, animation: `sway-forest ${flower.duration} ease-in-out infinite`, animationDelay: flower.delay }}>
-                        <img src={flower.src} alt="Flower" className="w-full h-auto origin-bottom opacity-90" />
-                    </div>
-                 ))}
-              </div>
+              {/* ============================================== */}
+              {/* ĐƯỜNG DỌC & CON DẤU MÉP PHẢI (MÔ PHỎNG SLIDING DOOR) */}
+              {/* ============================================== */}
+              <div className="absolute top-6 bottom-6 right-8 w-[1px] bg-[#D5C7B8] opacity-80 z-20 pointer-events-none"></div>
+              <img src="/Con_dau1.png" alt="Wax Seal" className="absolute top-1/2 -right-10 md:-right-12 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 z-50 drop-shadow-xl object-contain hover:scale-105 transition-transform" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
+              {/* ============================================== */}
 
-              <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pb-20 md:pb-28 pt-6">
+              <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pb-20 md:pb-28 pt-6 pr-8">
                 <div className="bg-[#8C7A6B] w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-md mb-4 pointer-events-none shrink-0">
                   <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 </div>
@@ -365,9 +371,7 @@ export default function WeddingCardPage() {
       </div>
       )}
 
-      {/* ============================================== */}
-      {/* TRÁI TIM RƠI (Z-30) */}
-      {/* ============================================== */}
+      {/* TRÁI TIM RƠI */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[30]">
           {PARTICLES.map((p) => (
             <div key={`bg-${p.id}`} className="absolute top-[-5%]" style={{ left: p.left, width: p.size, height: p.size, animation: `fall ${p.duration} linear infinite`, animationDelay: p.delay }}>
@@ -378,15 +382,15 @@ export default function WeddingCardPage() {
 
       {/* ============================================== */}
       {/* CUỘN GIẤY THIỆP CHÍNH */}
-      {/* Khắc phục: Lật xong (isInnerVisible) mới bắt đầu phóng to */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div 
               className={`relative z-10 w-[92%] sm:w-full max-w-[500px] bg-[#FDFBF7] shadow-2xl mx-auto overflow-hidden transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)]
-                  ${isInnerVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.8] translate-y-16'} 
+                  ${isInnerVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.9] translate-y-16'} 
               `}
               style={{
-                  transformOrigin: 'top center'
+                  transformOrigin: 'top center',
+                  transitionDelay: isInnerVisible ? '0.2s' : '0s' 
               }}
           >
              <WatermarkLeaves />
@@ -463,9 +467,7 @@ export default function WeddingCardPage() {
 
                          {/* =============== KHỐI XUẤT HIỆN TÊN BÙNG NỔ VÀ CÓ VIỀN SÁNG =============== */}
                          <ExplosiveNameReveal delay={200} className="w-full">
-                            {/* Class text-sweep tạo luồng sáng chạy ngang qua chữ */}
                             <h1 className="text-4xl md:text-5xl font-serif mb-3 text-sweep" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đỗ Trung</h1>
-                            {/* Đã tăng margin cho các dòng chữ lót (Trưởng nam, Út nữ) */}
                             <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-1 mb-5">Trưởng Nam</span>
                             
                             <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
