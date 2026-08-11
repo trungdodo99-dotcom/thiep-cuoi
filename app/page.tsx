@@ -74,7 +74,7 @@ const WatermarkLeaves = () => (
   </svg>
 );
 
-// Component cảm biến hiện chữ THÔNG THƯỜNG
+// Component cảm biến hiện chữ THÔNG THƯỜNG (Có sẵn)
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -100,8 +100,8 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// Component cảm biến hiện TÊN CÔ DÂU CHÚ RỂ (Bùng nổ)
-const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+// Component TÊN CÔ DÂU CHÚ RỂ (Bùng nổ rồi quét sáng)
+const ExplosiveNameReveal = ({ children, delay = 0, active = false, className = "" }: { children: React.ReactNode, delay?: number, active?: boolean, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   
@@ -116,6 +116,9 @@ const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children
   }));
 
   useEffect(() => {
+    // Chỉ kích hoạt khi isOpen (mở thiệp) = true, tránh việc nó bùng nổ ẩn ở sau bìa
+    if (!active) return;
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -127,7 +130,7 @@ const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [active]);
 
   return (
     <div ref={ref} className={`relative w-full flex flex-col items-center ${className}`}>
@@ -148,7 +151,6 @@ const ExplosiveNameReveal = ({ children, delay = 0, className = "" }: { children
          ))}
       </div>
 
-      {/* Khi isVisible = true, class animate-text-pop được kích hoạt */}
       <div className={`relative z-10 flex flex-col items-center opacity-0 w-full ${isVisible ? 'animate-text-pop' : ''}`} style={{ animationDelay: `${delay}ms` }}>
         {children}
       </div>
@@ -205,17 +207,17 @@ export default function WeddingCardPage() {
   }, [isAutoScrolling]);
 
   const handleOpenCard = () => {
-    setIsOpen(true); // Bìa lập tức lật, ruột thiệp bên dưới đã HIỆN SẴN y nguyên kích thước
+    setIsOpen(true); // Bìa bắt đầu lật. Ruột thiệp đã HIỆN SẴN y nguyên
     
     setTimeout(() => {
-      setIsCardDisappeared(true); // Gỡ thẻ bìa ra khỏi màn hình cho nhẹ máy sau khi lật xong
-    }, 1400); 
+      setIsCardDisappeared(true); 
+    }, 1400);
 
     setTimeout(() => {
       setIsAutoScrolling(true);
       setShowHint(true);
       setTimeout(() => setShowHint(false), 4500); 
-    }, 3000); 
+    }, 2500); 
   };
 
   const toggleAutoScroll = () => {
@@ -258,22 +260,23 @@ export default function WeddingCardPage() {
         }
         .animate-text-pop { animation: text-pop 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
-        /* HIỆU ỨNG QUÉT ÁNH SÁNG 1 LẦN DUY NHẤT */
+        /* HIỆU ỨNG QUÉT ÁNH SÁNG 1 LẦN - CHỜ HIỆN ĐỦ MỚI QUÉT RỒI VỀ ĐEN */
         @keyframes text-sweep {
-           0% { background-position: -200% center; }
-           100% { background-position: 200% center; }
+           0% { background-position: -150% center; }
+           100% { background-position: 150% center; }
         }
         .text-sweep-once {
-           background: linear-gradient(to right, #5C4F44 20%, #DBCBB5 50%, #5C4F44 80%);
-           background-size: 200% auto;
-           background-position: -200% center; /* Ẩn ánh sáng trước khi kích hoạt */
+           /* Đảm bảo 2 đầu gradient là màu ĐEN/NÂU TRẦM gốc (#5C4F44) */
+           background: linear-gradient(to right, #5C4F44 35%, #FDE4C3 50%, #5C4F44 65%);
+           background-size: 300% auto;
+           background-position: -150% center; /* Ẩn ánh sáng ở bên trái */
            color: transparent;
            -webkit-background-clip: text;
            background-clip: text;
         }
-        /* Chỉ chạy animation 1 lần duy nhất bằng thuộc tính 'forwards' */
+        /* Phải chờ hiệu ứng nảy chữ (1.2s) xong mới quét (1.5s) */
         .animate-text-pop .text-sweep-once {
-           animation: text-sweep 2.5s ease-in-out 0.2s forwards;
+           animation: text-sweep 1.8s ease-in-out 1.2s forwards;
         }
       `}} />
 
@@ -305,12 +308,12 @@ export default function WeddingCardPage() {
       </div>
 
       {/* ============================================== */}
-      {/* TỔ HỢP THIỆP ĐỒNG NHẤT (BÌA & RUỘT) */}
+      {/* TỔ HỢP THIỆP ĐỒNG NHẤT (BÌA & RUỘT TRONG CÙNG 1 KHUNG) */}
       {/* ============================================== */}
       <div className="w-full flex justify-center py-10 min-h-screen">
           <div className="relative w-[92%] sm:w-full max-w-[460px] mx-auto" style={{ perspective: '2000px' }}>
               
-              {/* === RUỘT THIỆP (NẰM DƯỚI, LUÔN HIỆN SẴN) === */}
+              {/* === 1. RUỘT THIỆP (NẰM DƯỚI, LUÔN HIỆN SẴN ĐẦY ĐỦ 100%) === */}
               <div className="w-full bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] overflow-hidden relative z-10 pb-32">
                  <WatermarkLeaves />
 
@@ -379,16 +382,17 @@ export default function WeddingCardPage() {
                                 <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
                              </FadeIn>
 
-                             {/* XUẤT HIỆN TÊN BÙNG NỔ & QUÉT SÁNG 1 LẦN */}
-                             <ExplosiveNameReveal delay={200} className="w-full">
+                             {/* XUẤT HIỆN TÊN BÙNG NỔ & QUÉT SÁNG 1 LẦN DUY NHẤT */}
+                             {/* Truyền biến isOpen vào active để đảm bảo nó chỉ nổ khi thiệp đã được mở và cuộn xuống tới nơi */}
+                             <ExplosiveNameReveal delay={200} active={isOpen} className="w-full">
                                 <h1 className="text-4xl md:text-5xl font-serif mb-2 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đỗ Trung</h1>
-                                {/* Đã tăng khoảng cách margin cho Trưởng Nam & Út Nữ */}
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
+                                {/* Căn chỉnh khoảng cách chữ lót rộng ra */}
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-6">Trưởng Nam</span>
                                 
                                 <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
                                 
                                 <h1 className="text-4xl md:text-5xl font-serif mt-4 mb-2 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đặng Hải</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-3 mb-12">Út Nữ</span>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-12">Út Nữ</span>
                              </ExplosiveNameReveal>
 
                              <FadeIn delay={600}>
@@ -417,24 +421,22 @@ export default function WeddingCardPage() {
                  </div>
               </div>
 
-              {/* === BÌA THIỆP 3D (NẰM TRÊN, CÙNG KÍCH THƯỚC CHIỀU NGANG VỚI RUỘT) === */}
+              {/* === 2. BÌA THIỆP 3D (NẰM TRÊN, CÙNG KÍCH THƯỚC CHIỀU NGANG VỚI RUỘT) === */}
+              {/* Lật bìa cũ (Không có lá màu nước trên bìa, giữ nguyên thiết kế sạch sẽ) */}
               {!isCardDisappeared && (
               <div 
-                  className="absolute top-0 left-0 w-full h-[550px] md:h-[650px] bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] z-50 overflow-hidden"
+                  className="absolute top-0 left-0 w-full aspect-[3/4] min-h-[550px] bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] z-50 overflow-hidden"
                   style={{
                       transformOrigin: 'left center',
                       transform: isOpen ? 'rotateY(-110deg)' : 'rotateY(0deg)',
                       opacity: isOpen ? 0 : 1, 
-                      transition: 'transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s 0.7s ease-out'
+                      transition: 'transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s 0.8s ease-out'
                   }}
               >
                   <LuxuryCorner className="top-4 left-4" />
                   <LuxuryCorner className="top-4 right-4 rotate-90" />
                   <LuxuryCorner className="bottom-4 right-4 rotate-180" />
                   <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
-
-                  {/* Vẫn giữ cành lá màu nước siêu đẹp ở bìa */}
-                  <WaterColorLeafBranch className="absolute -top-16 -left-10 w-[200px] h-[400px] opacity-70" style={{ transform: 'rotate(145deg)', animation: 'sway-slow 8s ease-in-out infinite' }} />
 
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
                      <div className="absolute flex items-center justify-center">
