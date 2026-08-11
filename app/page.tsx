@@ -31,6 +31,13 @@ const FOREST_FLOWERS = [
   { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s", zIndex: 12 },
 ];
 
+// DATA MỚI: CÁC CÀNH HOA IN CHÌM (WATERMARK) CHO RUỘT THIỆP
+const BG_WATERMARK = [
+  { id: 1, src: "/Hoa.png", top: "5%", left: "-10%", width: "200px", rotate: "10deg" },
+  { id: 2, src: "/Hoa.png", top: "40%", right: "-15%", width: "250px", rotate: "-20deg" },
+  { id: 3, src: "/Hoa.png", bottom: "5%", left: "-5%", width: "220px", rotate: "170deg" },
+];
+
 const DRESS_SPARKLES = [
   { id: 1, bottom: "10%", left: "30%", delay: "0s", size: "12px" },
   { id: 2, bottom: "25%", left: "55%", delay: "0.5s", size: "8px" },
@@ -135,11 +142,32 @@ export default function WeddingCardPage() {
           {/* RUỘT THIỆP (NẰM DƯỚI BÌA, HIỆN RA KHI LẬT VÀO HƯ KHÔNG) */}
           {/* ============================================== */}
           <div className="absolute inset-0 z-10 bg-[#FDFBF7] rounded-lg border border-[#EAE3DB] flex flex-col items-center pt-8 pb-6 px-4 overflow-hidden shadow-2xl">
-             <p className="uppercase tracking-[0.25em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-1">The Wedding Of</p>
-             <h2 className="text-3xl md:text-4xl font-serif italic text-[#5C4F44] mb-4">Đỗ Trung & Đặng Hải</h2>
+             
+             {/* LỚP HOA IN CHÌM (WATERMARK) MỚI THÊM VÀO */}
+             <div className="absolute inset-0 pointer-events-none z-0">
+                {BG_WATERMARK.map((flower) => (
+                    <img 
+                        key={`wm-${flower.id}`} 
+                        src={flower.src} 
+                        className="absolute opacity-[0.07] pointer-events-none" 
+                        style={{ 
+                            top: flower.top, 
+                            left: flower.left, 
+                            right: flower.right, 
+                            bottom: flower.bottom, 
+                            width: flower.width, 
+                            transform: `rotate(${flower.rotate})` 
+                        }} 
+                    />
+                ))}
+             </div>
+
+             {/* Thêm z-20 cho các nội dung để nổi lên trên hoa in chìm */}
+             <p className="uppercase tracking-[0.25em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-1 z-20">The Wedding Of</p>
+             <h2 className="text-3xl md:text-4xl font-serif italic text-[#5C4F44] mb-4 z-20">Đỗ Trung & Đặng Hải</h2>
              
              {/* Khung Polaroid */}
-             <div className="relative w-[80%] max-w-[280px] bg-white p-2.5 md:p-3 pb-10 shadow-xl rotate-[2deg] mt-1">
+             <div className="relative w-[80%] max-w-[280px] bg-white p-2.5 md:p-3 pb-10 shadow-xl rotate-[2deg] mt-1 z-20">
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                 
                 <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
@@ -179,7 +207,7 @@ export default function WeddingCardPage() {
 
              <button 
                  onClick={handleCloseCard}
-                 className="mt-auto px-6 py-1.5 border border-[#D5C7B8] rounded-full text-[10px] uppercase tracking-widest text-[#8C7A6B] hover:bg-[#F9F6F0] transition-colors cursor-pointer"
+                 className="mt-auto px-6 py-1.5 border border-[#D5C7B8] rounded-full text-[10px] uppercase tracking-widest text-[#8C7A6B] hover:bg-[#F9F6F0] transition-colors cursor-pointer z-20"
              >
                  ← Đóng bìa thiệp
              </button>
