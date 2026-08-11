@@ -71,8 +71,8 @@ export default function WeddingCardPage() {
           ))}
         </div>
 
-        {/* Khung Bìa Thư */}
-        <div className="relative bg-[#FDFBF7] w-full max-w-md aspect-[4/5] md:aspect-[3/4] rounded-lg shadow-2xl overflow-hidden flex flex-col items-center justify-center border border-[#EAE3DB]">
+        {/* Khung Bìa Thư - Tinh chỉnh tỷ lệ cho Mobile để không bao giờ bị lùn */}
+        <div className="relative bg-[#FDFBF7] w-[92%] sm:w-full max-w-md aspect-[3/4] min-h-[550px] md:min-h-[600px] rounded-lg shadow-2xl overflow-hidden flex flex-col items-center justify-center border border-[#EAE3DB]">
           
           {/* Hạt rơi bên trong bìa */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
@@ -84,16 +84,16 @@ export default function WeddingCardPage() {
           </div>
 
           {/* ============================================== */}
-          {/* HỌA TIẾT IN CHÌM (WATERMARK) HIỆN ĐẠI (z-10) */}
+          {/* HỌA TIẾT IN CHÌM CĂN GIỮA TUYỆT ĐỐI (z-10) */}
           {/* ============================================== */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
-             {/* Vòng tròn nhẫn đan xen tinh tế */}
-             <div className="absolute flex items-center justify-center -translate-y-24">
-                <div className="absolute w-[260px] h-[260px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-6"></div>
-                <div className="absolute w-[260px] h-[260px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-6"></div>
+             {/* Vòng tròn nhẫn */}
+             <div className="absolute flex items-center justify-center">
+                <div className="absolute w-[200px] h-[200px] md:w-[240px] md:h-[240px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4 md:-translate-x-6"></div>
+                <div className="absolute w-[200px] h-[200px] md:w-[240px] md:h-[240px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4 md:translate-x-6"></div>
              </div>
-             {/* Chữ Hỷ lớn, làm mờ ảo vào nền */}
-             <div className="text-[180px] font-serif text-[#D5C7B8] opacity-[0.12] select-none -translate-y-24">
+             {/* Chữ Hỷ */}
+             <div className="text-[130px] md:text-[160px] font-serif text-[#D5C7B8] opacity-20 select-none">
                 囍
              </div>
           </div>
@@ -126,8 +126,11 @@ export default function WeddingCardPage() {
              ))}
           </div>
 
-          {/* CHỮ VÀ NÚT (z-40) - Đã sửa -mt-32 để kéo cao hẳn lên */}
-          <div className="relative z-40 flex flex-col items-center text-center px-6 w-full -mt-32">
+          {/* ============================================== */}
+          {/* CHỮ VÀ NÚT (z-40) - Thiết kế lại khung đệm (Padding) */}
+          {/* Đệm dưới (pb-32) để né hoa, đệm trên (pt-8) để né viền trên */}
+          {/* ============================================== */}
+          <div className="relative z-40 flex flex-col items-center justify-center text-center px-6 w-full h-full pt-8 pb-32 md:pb-36">
             <div className="bg-[#6A5A4E] w-12 h-12 rounded-full flex items-center justify-center shadow-md mb-6 pointer-events-none">
               <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </div>
