@@ -39,7 +39,6 @@ const DRESS_SPARKLES = [
   { id: 5, bottom: "5%", left: "50%", delay: "1.5s", size: "16px" },
 ];
 
-// Pháo hoa hồng nhạt lãng mạn
 const GENTLE_CONFETTI = Array.from({ length: 30 }).map((_, i) => {
   const shapes = ['heart', 'star', 'bubble'];
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
@@ -78,7 +77,6 @@ const WaterColorLeafBranch = ({ className, style }: { className?: string, style?
   </svg>
 );
 
-// Mẫu hoa chìm được rải dọc toàn bộ chiều cao của ruột thiệp
 const WatermarkPurpleFlowers = () => (
   <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.1]">
       <img src="/Hoa_chim.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
@@ -90,7 +88,6 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-// Cảm biến hiện phần tử đơn lẻ
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -116,7 +113,7 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// Cảm biến quét sáng Kim Loại 1 Lần CHẬM
+// ĐÃ SỬA LỖI: Luôn hiển thị nội dung 100% opacity, không làm ẩn layout gây kẹt cuộn
 const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -137,7 +134,8 @@ const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: Re
 
   return (
     <div ref={ref} className={`relative w-full flex flex-col items-center ${className}`}>
-      <div className={`relative z-10 flex flex-col items-center w-full ${isVisible ? 'animate-slow-sweep' : ''}`} style={{ animationDelay: `${delay}ms` }}>
+      {/* Luôn giữ opacity-100 để không phá vỡ chiều cao trang, chỉ kích hoạt animation kim loại */}
+      <div className={`relative z-10 flex flex-col items-center w-full opacity-100 ${isVisible ? 'animate-slow-sweep' : ''}`} style={{ animationDelay: `${delay}ms` }}>
         {children}
       </div>
     </div>
@@ -151,7 +149,6 @@ export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true); 
   
-  // Trạng thái kịch bản chuyển cảnh
   const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'done'>('idle');
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -163,50 +160,57 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // AUTO-SCROLL AN TOÀN TUYỆT ĐỐI KHÔNG GÂY CRASH (Sử dụng setInterval)
+  // Xử lý tự cuộn bằng ScrollBy an toàn
   useEffect(() => {
-    let scrollInterval: NodeJS.Timeout;
+    let animationFrameId: number;
+    let accumulator = 0;
+    let lastTime = performance.now();
 
-    if (isAutoScrolling && scrollRef.current) {
-        // Cuộn 1 pixel mỗi 20ms tạo cảm giác mượt mà và an toàn
-        scrollInterval = setInterval(() => {
-            if (scrollRef.current) {
-                scrollRef.current.scrollBy({ top: 1, left: 0 });
-                // Dừng tự cuộn nếu đã cuộn tới đáy
-                if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight) {
-                    setIsAutoScrolling(false);
-                }
-            }
-        }, 20); 
+    const performScroll = (time: number) => {
+      if (isAutoScrolling && scrollRef.current) {
+        const deltaTime = time - lastTime;
+        lastTime = time;
+
+        accumulator += deltaTime * 0.04;
+
+        if (accumulator >= 1) {
+          const step = Math.floor(accumulator);
+          scrollRef.current.scrollBy({ top: step, behavior: "auto" }); 
+          accumulator -= step;
+          
+          if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight) {
+             setIsAutoScrolling(false);
+          }
+        }
+        animationFrameId = requestAnimationFrame(performScroll);
+      }
+    };
+
+    if (isAutoScrolling) {
+      lastTime = performance.now();
+      animationFrameId = requestAnimationFrame(performScroll);
     }
 
-    return () => {
-        if (scrollInterval) clearInterval(scrollInterval);
-    };
+    return () => cancelAnimationFrame(animationFrameId);
   }, [isAutoScrolling]);
 
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
     
-    // 1. Phóng to bìa
     setCardState('scaling');
     
-    // 2. Tim đập & Pháo hoa
     setTimeout(() => {
       setCardState('bursting');
     }, 800); 
 
-    // 3. Lật 3D và biến mất
     setTimeout(() => {
       setCardState('opening'); 
     }, 2200);
 
-    // 4. Kích hoạt tự cuộn an toàn sau khi đã lật xong 3 giây
     setTimeout(() => {
       setCardState('done');
       setIsAutoScrolling(true);
-      // Chỉ cuộn tự động trong 6 giây rồi nhường lại cho người dùng
-      setTimeout(() => setIsAutoScrolling(false), 6000); 
+      setTimeout(() => setIsAutoScrolling(false), 5500); 
     }, 5200); 
   };
 
@@ -269,7 +273,6 @@ export default function WeddingCardPage() {
            animation: text-sweep-slow 2.5s ease-in-out forwards;
         }
 
-        /* Ẩn scrollbar để giao diện sạch sẽ, nhưng vẫn cuộn được */
         .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         
         .art-paper-bg {
@@ -386,7 +389,7 @@ export default function WeddingCardPage() {
               )}
 
               {/* === RUỘT THIỆP (Z-10) === */}
-              {/* Ruột thiệp luôn render 100% để sẵn sàng cuộn */}
+              {/* Luôn render ngay từ đầu, không dùng Opacity ẩn nữa */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
@@ -417,7 +420,6 @@ export default function WeddingCardPage() {
                         </div>
                      </div>
 
-                     {/* THẺ THÔNG TIN LỄ CƯỚI: Không dùng FadeIn, hiện sẵn 100% */}
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-10 mb-10 border border-[#EAE3DB]">
                          
                          <img src="/Hoa3.png" alt="Hoa" className="absolute top-1/2 -left-[40px] -translate-y-1/2 w-[120px] z-30 drop-shadow-md opacity-90" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa3.jpg"; }} />
@@ -446,7 +448,7 @@ export default function WeddingCardPage() {
 
                              <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-10">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
-                             {/* QUÉT SÁNG KIM LOẠI 1 LẦN */}
+                             {/* Hiệu ứng quét sáng Kim Loại đã được làm rõ nét 100% */}
                              <SweepNameReveal className="w-full">
                                 <h1 className="text-5xl md:text-6xl font-serif mb-2 text-sweep-target drop-shadow-sm">Đỗ Trung</h1>
                                 <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
