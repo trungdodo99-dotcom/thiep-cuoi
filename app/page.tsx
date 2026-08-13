@@ -39,7 +39,6 @@ const DRESS_SPARKLES = [
   { id: 5, bottom: "5%", left: "50%", delay: "1.5s", size: "16px" },
 ];
 
-// Pháo hoa hồng nhạt lãng mạn
 const GENTLE_CONFETTI = Array.from({ length: 30 }).map((_, i) => {
   const shapes = ['heart', 'star', 'bubble'];
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
@@ -78,18 +77,19 @@ const WaterColorLeafBranch = ({ className, style }: { className?: string, style?
   </svg>
 );
 
-// Hoa Tím Chìm làm nền ruột thiệp
+// HOẠ TIẾT HOA TÍM CHÌM RẢI RÁC (Nhỏ hơn & lặp lại dọc thiệp)
 const WatermarkPurpleFlowers = () => (
-  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.15]">
-      {/* Rải rác vài bông hoa tím làm hình nền chìm */}
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[5%] -left-[10%] w-[350px] opacity-60 -rotate-12" />
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[35%] -right-[15%] w-[400px] opacity-50 rotate-45" />
-      <img src="/Hoa_chim.png" alt="" className="absolute bottom-[20%] -left-[20%] w-[500px] opacity-40 -rotate-45" />
-      <img src="/Hoa_chim.png" alt="" className="absolute bottom-0 -right-[10%] w-[300px] opacity-60 rotate-12" />
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.1]">
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[18%] -right-[5%] w-[150px] opacity-50 rotate-45" />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[35%] -left-[10%] w-[180px] opacity-40 -rotate-45" />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[50%] -right-[8%] w-[140px] opacity-60 rotate-12" />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[70%] -left-[5%] w-[160px] opacity-45 -rotate-12" />
+      <img src="/Hoa_chim.png" alt="" className="absolute bottom-[5%] -right-[5%] w-[130px] opacity-55 rotate-45" />
   </div>
 );
 
-// Cảm biến quét sáng Kim Loại 1 Lần CHẬM cho Tên Cô Dâu Chú Rể
+// KÍCH HOẠT QUÉT SÁNG KHI CUỘN TỚI (Sửa lỗi Gradient kẹt)
 const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -102,7 +102,7 @@ const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: Re
           observer.disconnect();
         }
       },
-      { threshold: 0.5 } // Đợi kéo tới giữa khối tên mới quét sáng
+      { threshold: 0.8 } // Đợi kéo gần qua hết tên mới quét
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -110,7 +110,7 @@ const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: Re
 
   return (
     <div ref={ref} className={`relative w-full flex flex-col items-center ${className}`}>
-      {/* Kích hoạt class quét sáng khi cuộn tới */}
+      {/* Lớp chứa Gradient quét sáng */}
       <div className={`relative z-10 flex flex-col items-center w-full ${isVisible ? 'animate-slow-sweep' : ''}`} style={{ animationDelay: `${delay}ms` }}>
         {children}
       </div>
@@ -126,8 +126,9 @@ export default function WeddingCardPage() {
   const [showSplash, setShowSplash] = useState(true); 
   
   // Trạng thái kịch bản chuyển cảnh
-  const [cardState, setCardState] = useState<'idle' | 'bursting' | 'opening' | 'done'>('idle');
-  const scrollRef = useRef<HTMLDivElement>(null); // Ref để tự động cuộn nội bộ
+  const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'done'>('idle');
+  
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
 
   useEffect(() => {
@@ -136,7 +137,7 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Thuật toán tự cuộn (Nhưng lần này cuộn bên trong thẻ div ruột thiệp)
+  // Xử lý tự cuộn nội bộ êm ái
   useEffect(() => {
     let animationFrameId: number;
     let accumulator = 0;
@@ -151,7 +152,7 @@ export default function WeddingCardPage() {
 
         if (accumulator >= 1) {
           const step = Math.floor(accumulator);
-          scrollRef.current.scrollBy(0, step); // Cuộn nội bộ
+          scrollRef.current.scrollBy(0, step); 
           accumulator -= step;
         }
         animationFrameId = requestAnimationFrame(performScroll);
@@ -166,25 +167,32 @@ export default function WeddingCardPage() {
     return () => cancelAnimationFrame(animationFrameId);
   }, [isAutoScrolling]);
 
-  // Kịch bản Mở Thiệp
+  // ==========================================
+  // KỊCH BẢN CHUYỂN CẢNH MƯỢT MÀ
+  // ==========================================
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
     
-    // 1. Tim đập & Pháo hoa nổ
-    setCardState('bursting');
+    // 1. Phóng to bìa bằng với kích thước ruột
+    setCardState('scaling');
+    
+    // 2. Tim đập & bung hạt màu hồng lãng mạn
+    setTimeout(() => {
+      setCardState('bursting');
+    }, 800); 
 
-    // 2. Lật bìa thiệp và làm mờ biến mất
+    // 3. Bìa lật 3D và tan biến. Lộ ra ruột thiệp nguyên vẹn.
     setTimeout(() => {
       setCardState('opening'); 
-    }, 1500);
+    }, 2200);
 
-    // 3. Xóa bìa và tự động cuộn từ từ xuống
+    // 4. Đứng chờ đúng 3s để ngắm ảnh rồi cuộn mượt mà
     setTimeout(() => {
       setCardState('done');
       setIsAutoScrolling(true);
       // Dừng tự cuộn sau 5 giây
       setTimeout(() => setIsAutoScrolling(false), 5000); 
-    }, 3000); 
+    }, 5200); 
   };
 
   const toggleAutoScroll = () => {
@@ -230,28 +238,32 @@ export default function WeddingCardPage() {
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
-        /* HIỆU ỨNG QUÉT ÁNH SÁNG 1 LẦN CHẬM RÃI DÀNH CHO TÊN */
+        /* HIỆU ỨNG QUÉT ÁNH SÁNG ĐÃ FIX: Chạy mượt từ trái sang phải, không bị kẹt */
         @keyframes text-sweep-slow {
-           0% { background-position: -200% center; }
-           100% { background-position: 200% center; }
+           0% { background-position: 200% center; }
+           100% { background-position: -200% center; }
         }
         .text-sweep-target {
-           background: linear-gradient(to right, #5C4F44 40%, #FDE4C3 50%, #5C4F44 60%);
-           background-size: 300% auto;
-           background-position: -200% center; /* Mặc định là chữ màu đen/nâu */
+           background: linear-gradient(to right, #5C4F44 35%, #FDE4C3 50%, #5C4F44 65%);
+           background-size: 200% auto;
+           background-position: 200% center; 
            color: transparent;
            -webkit-background-clip: text;
            background-clip: text;
         }
-        /* Chỉ kích hoạt khi cuộn tới, kéo dài 3s */
         .animate-slow-sweep .text-sweep-target {
-           animation: text-sweep-slow 3s ease-in-out forwards;
+           animation: text-sweep-slow 2.5s ease-in-out forwards;
         }
 
-        /* Tùy chỉnh thanh cuộn nội bộ cho đẹp */
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D5C7B8; border-radius: 10px; }
+        
+        /* Background Giấy mỹ thuật cho thẻ Thông tin lễ cưới */
+        .art-paper-bg {
+           background-color: #F8F4ED;
+           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
       `}} />
 
       {/* MÀN HÌNH CHÀO */}
@@ -281,7 +293,6 @@ export default function WeddingCardPage() {
       {/* ============================================== */}
       <div className="w-full h-[100dvh] flex justify-center items-center p-2 sm:p-6 relative">
           
-          {/* KHUNG THIỆP (Cố định chiều cao và bề rộng, cuộn ở bên trong) */}
           <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl rounded-lg border border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
               {/* === BÌA THIỆP (Z-50) === */}
@@ -360,15 +371,15 @@ export default function WeddingCardPage() {
               </div>
               )}
 
-              {/* === RUỘT THIỆP (Z-10) CUỘN BÊN TRONG === */}
-              {/* Ruột thiệp luôn full width/height của khung cha, hiển thị scrollbar ảo để lướt */}
+              {/* === RUỘT THIỆP (Z-10) === */}
+              {/* Ruột thiệp luôn full width/height, KHÔNG thay đổi max-height để chống khựng, chỉ dùng opacity chuyển cảnh */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
                   `}
-                  onClick={toggleAutoScroll} // Bấm vào ruột để dừng cuộn
+                  onClick={toggleAutoScroll}
               >
-                 <WatermarkPurpleFlowers /> {/* Hoa tím chìm làm nền ruột thiệp */}
+                 <WatermarkPurpleFlowers />
 
                  <div className="relative w-full flex flex-col items-center pt-24 z-20">
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
@@ -392,54 +403,54 @@ export default function WeddingCardPage() {
                         </div>
                      </div>
 
-                     {/* Các chữ đã hiện sẵn 100%, bỏ hiệu ứng FadeIn */}
-                     <div className="relative w-[90%] max-w-[400px] bg-[#F5EFE6] rounded-sm shadow-[0_10px_40px_rgba(0,0,0,0.05)] mt-10 mb-10 border border-[#EAE3DB]">
+                     {/* THẺ THÔNG TIN LỄ CƯỚI: Nền giấy mỹ thuật (art-paper-bg), chữ luôn hiện sẵn 100% */}
+                     <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-10 mb-10 border border-[#EAE3DB]">
                          <WaterColorLeafBranch className="absolute top-1/2 -left-[60px] -translate-y-1/2 w-[120px] h-[240px] z-30" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} />
                          <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         <div className="px-6 py-14 flex flex-col items-center text-center relative z-20 w-full">
-                             <h3 className="text-[#5C4F44] font-serif text-lg tracking-[0.2em] uppercase font-bold mb-10">Thông Tin Lễ Cưới</h3>
+                         <div className="px-6 py-16 flex flex-col items-center text-center relative z-20 w-full">
+                             <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-12">Thông Tin Lễ Cưới</h3>
 
-                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[10px] md:text-[11px] mb-10 relative px-2">
+                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-12 relative px-2">
                                  <div className="w-[45%] flex flex-col items-center">
-                                     <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
-                                     <span className="font-bold mb-1">Võ Nhật Minh</span>
-                                     <span className="font-bold mb-2">Trần Thu Thảo</span>
-                                     <span className="text-[#8C7A6B] leading-relaxed">Quận 1, TP. HCM</span>
+                                     <span className="text-[#8C7A6B] mb-2 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
+                                     <span className="font-bold mb-1.5">Võ Nhật Minh</span>
+                                     <span className="font-bold mb-3">Trần Thu Thảo</span>
+                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90">Quận 1, TP. HCM</span>
                                  </div>
                                  <div className="w-[45%] flex flex-col items-center">
-                                     <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[8px]">Ông Bà</span>
-                                     <span className="font-bold mb-1">Lê Văn Thành</span>
-                                     <span className="font-bold mb-2">Phạm Thị Lan</span>
-                                     <span className="text-[#8C7A6B] leading-relaxed">Quận 3, TP. HCM</span>
+                                     <span className="text-[#8C7A6B] mb-2 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
+                                     <span className="font-bold mb-1.5">Lê Văn Thành</span>
+                                     <span className="font-bold mb-3">Phạm Thị Lan</span>
+                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90">Quận 3, TP. HCM</span>
                                  </div>
                              </div>
 
-                             <p className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.15em] leading-loose mb-8">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-10">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
-                             {/* Cảm biến cuộn tới Tên: Quét sáng kim loại duy nhất 1 lần thật chậm */}
+                             {/* QUÉT SÁNG KIM LOẠI 1 LẦN */}
                              <SweepNameReveal className="w-full">
-                                <h1 className="text-4xl md:text-5xl font-serif mb-2 text-sweep-target drop-shadow-sm">Đỗ Trung</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-6">Trưởng Nam</span>
-                                <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
-                                <h1 className="text-4xl md:text-5xl font-serif mt-4 mb-2 text-sweep-target drop-shadow-sm">Đặng Hải</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-12">Út Nữ</span>
+                                <h1 className="text-5xl md:text-6xl font-serif mb-2 text-sweep-target drop-shadow-sm">Đỗ Trung</h1>
+                                <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
+                                <span className="text-3xl font-serif text-[#C3B09B] italic my-2">❦</span>
+                                <h1 className="text-5xl md:text-6xl font-serif mt-5 mb-2 text-sweep-target drop-shadow-sm">Đặng Hải</h1>
+                                <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-12">Út Nữ</span>
                              </SweepNameReveal>
 
-                             <p className="text-[#5C4F44] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6 mt-2">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-sm md:text-base">Tư Gia</span><br/>Vào lúc</p>
-                             <div className="text-2xl font-serif text-[#5C4F44] mb-6">09:00</div>
+                             <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-6 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
+                             <div className="text-3xl font-serif text-[#5C4F44] mb-8">09:00</div>
 
-                             <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
-                                 <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Chủ Nhật</span>
-                                 <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
-                                 <span className="text-4xl font-serif">03</span>
-                                 <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
-                                 <span className="uppercase tracking-[0.2em] text-[9px] font-medium">Tháng 01</span>
+                             <div className="flex items-center justify-center gap-5 text-[#5C4F44] mb-5">
+                                 <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Chủ Nhật</span>
+                                 <div className="h-8 w-[1px] bg-[#C3B09B]"></div>
+                                 <span className="text-5xl font-serif">03</span>
+                                 <div className="h-8 w-[1px] bg-[#C3B09B]"></div>
+                                 <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Tháng 01</span>
                              </div>
-                             <span className="text-lg font-serif text-[#5C4F44] mb-2">2027</span>
-                             <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.1em]">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
+                             <span className="text-xl font-serif text-[#5C4F44] mb-3">2027</span>
+                             <span className="text-[#8C7A6B] text-[10px] uppercase tracking-[0.1em] opacity-90">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
                          </div>
                      </div>
 
