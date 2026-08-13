@@ -203,7 +203,7 @@ export default function WeddingCardPage() {
            70% { opacity: 0.8; }
            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
-        .animate-gentle-burst { animation: gentle-burst 2.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+        .animate-gentle-burst { animation: gentle-burst 2.5s ease-out forwards; }
         
         @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
         
@@ -269,7 +269,7 @@ export default function WeddingCardPage() {
               {cardState !== 'done' && (
               <div 
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col
-                      ${cardState === 'opening' ? 'rotate-y-[-110deg] opacity-0 transition-all duration-[1500ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
+                      ${cardState === 'opening' ? 'rotate-y-[-110deg] opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
                   `}
                   style={{ transformOrigin: 'left center' }}
               >
@@ -346,7 +346,7 @@ export default function WeddingCardPage() {
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
                   `}
-                  onClick={toggleAutoScroll} 
+                  onClick={toggleAutoScroll}
               >
                  <WatermarkPurpleFlowers />
 
@@ -374,22 +374,21 @@ export default function WeddingCardPage() {
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
                          
-                         {/* THAY ĐỔI: Goc1 hạ thấp xuống 15px và đẩy nhẹ sang phải */}
-                         <div className="absolute top-[10px] -right-[45px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
-                             <img src="/goc1.png" alt="Hoa goc" className="w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         {/* THAY ĐỔI: Goc1 tràn viền lên trên một chút (top-[-35px]) và dịch ra ngoài phải (-right-[40px]) */}
+                         <div className="absolute top-[-35px] -right-[40px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
 
-                         <div className="absolute top-1/2 -left-[140px] -translate-y-1/2 z-30 pointer-events-none" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                             <img src="/hoa3.png" alt="Hoa" className="w-[380px] h-auto opacity-95" style={{ filter: 'drop-shadow(6px 15px 12px rgba(0,0,0,0.35))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
+                         {/* THAY ĐỔI: Thu nhỏ cành hoa 3 bên trái lại cho cân đối (w-[210px]) */}
+                         <div className="absolute top-1/2 -left-[80px] -translate-y-1/2 z-30 pointer-events-none" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                             <img src="/hoa3.png" alt="Hoa" className="w-[210px] h-auto opacity-95" style={{ filter: 'drop-shadow(6px 15px 12px rgba(0,0,0,0.35))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
                          </div>
                          
-                         {/* THAY ĐỔI: Đẩy lá HoaT1 góc phải lùi sâu xuống dưới để không đè vào chữ */}
                          <div className="absolute -bottom-[85px] -right-[55px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite reverse' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[160px] h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)', filter: 'drop-shadow(-4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         {/* THAY ĐỔI: Tăng padding-bottom (pb-16) tạo không gian rộng phía dưới để chữ cách xa cái lá */}
-                         <div className="px-6 pt-14 pb-16 flex flex-col items-center text-center relative z-20 w-full">
+                         <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
                              <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-8 relative px-2">
