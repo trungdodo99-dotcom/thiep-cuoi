@@ -217,7 +217,7 @@ export default function WeddingCardPage() {
   }, [isAutoScrolling]);
 
   // ==========================================
-  // KỊCH BẢN CHUYỂN CẢNH MỚI (Lật 3D vô hình -> Đợi 3s -> Bung ruột từ hư không)
+  // KỊCH BẢN CHUYỂN CẢNH MỚI
   // ==========================================
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
@@ -230,7 +230,7 @@ export default function WeddingCardPage() {
       setCardState('bursting');
     }, 800); 
 
-    // 3. Bìa lật 3D và tan biến. Lúc này ruột thiệp hiện ra nhưng CHỈ CAO BẰNG BÌA (không lòi ruột)
+    // 3. Bìa lật 3D và tan biến. Lúc này ruột thiệp đã có sẵn nhưng CHỈ CAO BẰNG BÌA (không lòi ruột)
     setTimeout(() => {
       setCardState('opening'); 
     }, 2200);
@@ -309,7 +309,7 @@ export default function WeddingCardPage() {
         }
         .animate-text-pop { animation: text-pop 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
-        /* HIỆU ỨNG QUÉT ÁNH SÁNG 1 LẦN DÀNH CHO TÊN */
+        /* HIỆU ỨNG QUÉT ÁNH SÁNG 1 LẦN */
         @keyframes text-sweep {
            0% { background-position: -150% center; }
            100% { background-position: 150% center; }
@@ -355,19 +355,17 @@ export default function WeddingCardPage() {
       </div>
 
       {/* ============================================== */}
-      {/* KHUNG CĂN GIỮA ĐỒNG NHẤT CẢ BÌA & RUỘT */}
+      {/* TỔ HỢP THIỆP CHÍNH */}
       {/* ============================================== */}
+      {/* Cố định chiều cao vùng chứa để không lòi ruột ra khi chưa mở thiệp */}
       <div className="w-full flex justify-center py-10 min-h-screen relative">
           <div className="relative w-[92%] sm:w-full max-w-[460px] mx-auto flex flex-col items-center" style={{ perspective: '2000px' }}>
               
               {/* === BÌA THIỆP (Z-50) === */}
-              {/* Khóa cứng w-full max-w-[460px] để luôn bằng kích thước ruột thiệp, chống lệch */}
+              {cardState !== 'done' && cardState !== 'revealing' && (
               <div 
-                  className={`absolute top-0 left-0 right-0 w-full max-w-[460px] mx-auto aspect-[3/4] min-h-[550px] bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] z-50 overflow-hidden
-                      ${cardState === 'idle' ? 'scale-[0.85] transition-transform duration-700' : ''}
-                      ${(cardState === 'scaling' || cardState === 'bursting') ? 'scale-100 transition-transform duration-[1000ms] ease-in-out' : ''}
-                      ${cardState === 'opening' ? 'scale-100 rotate-y-[-110deg] opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
-                      ${['revealing', 'done'].includes(cardState) ? 'hidden' : ''}
+                  className={`absolute top-0 left-0 right-0 w-full min-h-[550px] bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] z-50 overflow-hidden
+                      ${cardState === 'opening' ? 'rotate-y-[-110deg] opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
                   `}
                   style={{ transformOrigin: 'left center' }}
               >
@@ -440,18 +438,16 @@ export default function WeddingCardPage() {
               )}
 
               {/* === RUỘT THIỆP (Z-10) === */}
-              {/* Giới hạn độ cao bằng max-height. Lúc đầu chỉ cao 550px bằng đúng tờ bìa, chống "lòi ruột". */}
               <div 
-                  className={`w-full bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] relative z-10 pb-32 mx-auto overflow-hidden
-                      transition-all duration-[3000ms] ease-in-out min-h-[550px]
-                      ${['idle', 'scaling', 'bursting'].includes(cardState) ? 'opacity-0 max-h-[550px]' : ''}
-                      ${cardState === 'opening' ? 'opacity-100 max-h-[550px]' : ''}
-                      ${['revealing', 'done'].includes(cardState) ? 'opacity-100 max-h-[3500px]' : ''}
+                  className={`w-full bg-[#FDFBF7] shadow-2xl rounded-lg border border-[#EAE3DB] relative z-10 transition-all duration-[3000ms] ease-in-out min-h-[550px] mx-auto
+                      ${['idle', 'scaling', 'bursting'].includes(cardState) ? 'h-[550px] overflow-hidden' : ''}
+                      ${cardState === 'opening' ? 'h-[550px] overflow-hidden' : ''}
+                      ${['revealing', 'done'].includes(cardState) ? 'pb-32 h-[3500px] overflow-visible' : ''}
                   `}
               >
                  <WatermarkLeaves />
 
-                 {/* Nội dung bên trong từ từ trồi lên khỏi hư không khi max-height bung ra */}
+                 {/* Nội dung bên trong từ từ trồi lên khỏi hư không khi thiệp dài ra */}
                  <div className="relative w-full flex flex-col items-center pt-24 z-20">
                      <FadeIn delay={100}>
                          <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
@@ -518,12 +514,10 @@ export default function WeddingCardPage() {
 
                              <ExplosiveNameReveal delay={200} className="w-full">
                                 <h1 className="text-4xl md:text-5xl font-serif mb-2 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đỗ Trung</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
-                                
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-6">Trưởng Nam</span>
                                 <span className="text-2xl font-serif text-[#C3B09B] italic my-2">❦</span>
-                                
                                 <h1 className="text-4xl md:text-5xl font-serif mt-4 mb-2 text-sweep-once" style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))' }}>Đặng Hải</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-3 mb-12">Út Nữ</span>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-12">Út Nữ</span>
                              </ExplosiveNameReveal>
 
                              <FadeIn delay={600}>
