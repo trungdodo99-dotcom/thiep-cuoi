@@ -66,17 +66,6 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const WaterColorLeafBranch = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
-  <svg viewBox="0 0 200 400" className={`pointer-events-none drop-shadow-md ${className}`} style={style} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M100 400 Q80 250 120 0" stroke="#8A9A86" strokeWidth="3" fill="none" />
-    <path d="M105 320 Q50 300 20 250 Q60 260 105 320" fill="#A9B5A3" opacity="0.8" />
-    <path d="M98 260 Q150 240 180 180 Q140 210 98 260" fill="#8A9A86" opacity="0.8" />
-    <path d="M110 200 Q40 160 10 90 Q60 130 110 200" fill="#C2C9BE" opacity="0.9" />
-    <path d="M105 130 Q160 100 190 30 Q140 70 105 130" fill="#A9B5A3" opacity="0.8" />
-    <path d="M115 60 Q70 20 50 -30 Q80 0 115 60" fill="#8A9A86" opacity="0.7" />
-  </svg>
-);
-
 const WatermarkPurpleFlowers = () => (
   <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.1]">
       <img src="/Hoa_chim.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
@@ -113,35 +102,6 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// ĐÃ SỬA LỖI: Luôn hiển thị nội dung 100% opacity, không làm ẩn layout gây kẹt cuộn
-const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.8 } 
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className={`relative w-full flex flex-col items-center ${className}`}>
-      {/* Luôn giữ opacity-100 để không phá vỡ chiều cao trang, chỉ kích hoạt animation kim loại */}
-      <div className={`relative z-10 flex flex-col items-center w-full opacity-100 ${isVisible ? 'animate-slow-sweep' : ''}`} style={{ animationDelay: `${delay}ms` }}>
-        {children}
-      </div>
-    </div>
-  );
-};
-
 // ==========================================
 // 2. TRANG CHÍNH
 // ==========================================
@@ -160,7 +120,6 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Xử lý tự cuộn bằng ScrollBy an toàn
   useEffect(() => {
     let animationFrameId: number;
     let accumulator = 0;
@@ -210,7 +169,6 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('done');
       setIsAutoScrolling(true);
-      setTimeout(() => setIsAutoScrolling(false), 5500); 
     }, 5200); 
   };
 
@@ -257,22 +215,6 @@ export default function WeddingCardPage() {
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
-        @keyframes text-sweep-slow {
-           0% { background-position: 200% center; }
-           100% { background-position: -200% center; }
-        }
-        .text-sweep-target {
-           background: linear-gradient(to right, #5C4F44 40%, #FDE4C3 50%, #5C4F44 60%);
-           background-size: 300% auto;
-           background-position: 200% center; 
-           color: transparent;
-           -webkit-background-clip: text;
-           background-clip: text;
-        }
-        .animate-slow-sweep .text-sweep-target {
-           animation: text-sweep-slow 2.5s ease-in-out forwards;
-        }
-
         .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         
         .art-paper-bg {
@@ -294,9 +236,13 @@ export default function WeddingCardPage() {
          </div>
       </div>
 
-      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}>
+      {/* NÚT BẤM DỪNG / CUỘN TRÊN CÙNG ĐỂ KHÔNG BỊ TRÙNG SỰ KIỆN CLICK */}
+      <div 
+        onClick={toggleAutoScroll}
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 cursor-pointer flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}
+      >
           <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
-          Chạm màn hình để Dừng / Cuộn
+          Chạm vào đây để Dừng / Cuộn
       </div>
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[30]">
@@ -388,13 +334,10 @@ export default function WeddingCardPage() {
               </div>
               )}
 
-              {/* === RUỘT THIỆP (Z-10) === */}
-              {/* Luôn render ngay từ đầu, không dùng Opacity ẩn nữa */}
+              {/* === RUỘT THIỆP CHÍNH CÓ THỂ CUỘN === */}
               <div 
                   ref={scrollRef}
-                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
-                  `}
-                  onClick={toggleAutoScroll}
+                  className="absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32"
               >
                  <WatermarkPurpleFlowers />
 
@@ -422,7 +365,8 @@ export default function WeddingCardPage() {
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-10 mb-10 border border-[#EAE3DB]">
                          
-                         <img src="/Hoa3.png" alt="Hoa" className="absolute top-1/2 -left-[40px] -translate-y-1/2 w-[120px] z-30 drop-shadow-md opacity-90" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa3.jpg"; }} />
+                         {/* FIX TÊN HOA3 BẰNG CHỮ THƯỜNG hoa3.png ĐỂ KHÔNG BỊ LỖI TRÊN VERCEL */}
+                         <img src="/hoa3.png" alt="Hoa" className="absolute top-1/2 -left-[40px] -translate-y-1/2 w-[120px] z-30 drop-shadow-md opacity-90" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
                          
                          <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
@@ -448,14 +392,13 @@ export default function WeddingCardPage() {
 
                              <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-10">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
-                             {/* Hiệu ứng quét sáng Kim Loại đã được làm rõ nét 100% */}
-                             <SweepNameReveal className="w-full">
-                                <h1 className="text-5xl md:text-6xl font-serif mb-2 text-sweep-target drop-shadow-sm">Đỗ Trung</h1>
+                             <div className="w-full flex flex-col items-center">
+                                <h1 className="text-5xl md:text-6xl font-serif mb-2 text-[#5C4F44] drop-shadow-sm">Đỗ Trung</h1>
                                 <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
                                 <span className="text-3xl font-serif text-[#C3B09B] italic my-2">❦</span>
-                                <h1 className="text-5xl md:text-6xl font-serif mt-5 mb-2 text-sweep-target drop-shadow-sm">Đặng Hải</h1>
+                                <h1 className="text-5xl md:text-6xl font-serif mt-5 mb-2 text-[#5C4F44] drop-shadow-sm">Đặng Hải</h1>
                                 <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-12">Út Nữ</span>
-                             </SweepNameReveal>
+                             </div>
 
                              <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-6 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
                              <div className="text-3xl font-serif text-[#5C4F44] mb-8">09:00</div>
@@ -480,7 +423,6 @@ export default function WeddingCardPage() {
 
           </div>
       </div>
-
     </div>
   );
 }
