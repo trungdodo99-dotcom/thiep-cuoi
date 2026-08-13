@@ -204,7 +204,7 @@ export default function WeddingCardPage() {
             50% { transform: translateY(-15px); } 
         }
 
-        /* HIỆU ỨNG HOA NỔI LÊN XUỐNG NGẮN (CHO HOA T1 BÉ) */
+        /* HIỆU ỨNG HOA NỔI LÊN XUỐNG NGẮN (CHO HOA T1 BÉ VÀ GÓC) */
         @keyframes float-up-down-small { 
             0%, 100% { transform: translateY(0); } 
             50% { transform: translateY(-6px); } 
@@ -216,6 +216,8 @@ export default function WeddingCardPage() {
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
+        /* Khóa scrollbar hiển thị nhưng vẫn cuộn được mượt */
+        .custom-scrollbar { scroll-behavior: smooth; }
         .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         
         .art-paper-bg {
@@ -290,7 +292,20 @@ export default function WeddingCardPage() {
                   <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pt-10 pb-32">
                     
                     <div className="relative mb-6 mt-2">
-                        {cardState !== 'idle' && cardState !== 'scaling' && GENTLE_CONFETTI.map((p) => (
+                        {/* Ẩn pháo hoa khi ở trạng thái idle */}
+                        {cardState !== 'idle' && cardState !== 'scaling' && Array.from({ length: 30 }).map((_, i) => {
+                            const shapes = ['heart', 'star', 'bubble'];
+                            const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
+                            const p = {
+                                id: i,
+                                shape: shapes[Math.floor(Math.random() * shapes.length)],
+                                color: colors[Math.floor(Math.random() * colors.length)],
+                                tx: (Math.random() - 0.5) * 200, 
+                                ty: (Math.random() - 0.5) * 200 - 50, 
+                                scale: 0.6 + Math.random() * 1,
+                                delay: Math.random() * 0.3 
+                            };
+                            return (
                             <div key={`cf-${p.id}`} className="absolute top-1/2 left-1/2 pointer-events-none z-0" style={{ transform: 'translate(-50%, -50%)' }}>
                                 <svg 
                                     className="animate-gentle-burst drop-shadow-sm"
@@ -307,7 +322,7 @@ export default function WeddingCardPage() {
                                     {p.shape === 'bubble' && <circle cx="12" cy="12" r="8" opacity="0.8"/>}
                                 </svg>
                             </div>
-                        ))}
+                        )})}
 
                         <div className="relative z-10 bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.15)] shrink-0">
                           <svg className={`w-5 h-5 md:w-6 md:h-6 text-white ${cardState === 'bursting' ? 'animate-fast-beat text-[#FF99C2]' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -339,7 +354,7 @@ export default function WeddingCardPage() {
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
                   `}
-                  onClick={toggleAutoScroll}
+                  onClick={toggleAutoScroll} 
               >
                  <WatermarkPurpleFlowers />
 
@@ -360,25 +375,31 @@ export default function WeddingCardPage() {
                             </div>
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
-                        <div className="absolute -bottom-10 -left-12 w-40 z-20 pointer-events-none drop-shadow-lg" style={{ transform: 'rotate(-12deg)' }}>
-                            {/* HOA ĐẦU TIÊN (HOAT1) DÙNG FLOAT NHỎ: Biên độ cực ngắn (-6px) để khỏi che chữ */}
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[180px] h-auto origin-bottom-left opacity-90" style={{ animation: 'float-up-down-small 4s ease-in-out infinite', filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        
+                        <div className="absolute -bottom-10 -left-12 z-20 pointer-events-none" style={{ animation: 'float-up-down-small 4s ease-in-out infinite' }}>
+                            {/* HOA ĐẦU TIÊN (HOAT1) DÙNG FLOAT NHỎ */}
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[180px] h-auto origin-bottom-left opacity-90" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
                          
-                         {/* Cành hoa 3 phóng to và chuyển động lên xuống chậm rãi */}
-                         <div className="absolute top-1/2 -left-[45px] -translate-y-1/2 z-30 pointer-events-none" style={{ animation: 'float-up-down 5s ease-in-out infinite' }}>
-                             <img src="/hoa3.png" alt="Hoa" className="w-[140px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
+                         {/* THÊM HOA GÓC 1 (Góc trên bên phải) */}
+                         <div className="absolute -top-[35px] -right-[30px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         </div>
+
+                         {/* Cành hoa 3 phóng to (380px), chuyển động lên xuống */}
+                         <div className="absolute top-1/2 -left-[140px] -translate-y-1/2 z-30 pointer-events-none" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                             <img src="/hoa3.png" alt="Hoa" className="w-[380px] h-auto opacity-95" style={{ filter: 'drop-shadow(6px 15px 12px rgba(0,0,0,0.35))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
                          </div>
                          
-                         <div className="absolute -bottom-[70px] -right-[50px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 6s ease-in-out infinite reverse' }}>
+                         <div className="absolute -bottom-[50px] -right-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite reverse' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[160px] h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)', filter: 'drop-shadow(-4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         {/* DỒN LẠI KHOẢNG CÁCH DÒNG (CHỮ KHÔNG BỊ HOA CHE) */}
-                         <div className="px-6 pt-10 pb-16 flex flex-col items-center text-center relative z-20 w-full">
+                         {/* DỒN LẠI NGẮN HƠN: py-10 */}
+                         <div className="px-6 pt-12 pb-10 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
                              <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-8 relative px-2">
