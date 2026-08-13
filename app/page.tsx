@@ -168,12 +168,14 @@ export default function WeddingCardPage() {
 
     setTimeout(() => {
       setCardState('done');
-      setIsAutoScrolling(true);
     }, 5200); 
   };
 
+  // NẾU CHẠM VÀO THÌ CUỘN HOẶC DỪNG
   const toggleAutoScroll = () => {
-    if (cardState === 'done') setIsAutoScrolling(prev => !prev);
+    if (cardState === 'done') {
+      setIsAutoScrolling(prev => !prev);
+    }
   };
 
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
@@ -207,7 +209,12 @@ export default function WeddingCardPage() {
         .animate-gentle-burst { animation: gentle-burst 2.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
         
         @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
-        @keyframes sway-slow { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(3deg); } }
+        
+        /* HIỆU ỨNG HOA NỔI LÊN XUỐNG DÀNH CHO HOA 3 */
+        @keyframes float-up-down { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-15px); } 
+        }
 
         @keyframes sparkle {
            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
@@ -234,15 +241,6 @@ export default function WeddingCardPage() {
                 <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping delay-150"></div>
             </div>
          </div>
-      </div>
-
-      {/* NÚT BẤM DỪNG / CUỘN TRÊN CÙNG ĐỂ KHÔNG BỊ TRÙNG SỰ KIỆN CLICK */}
-      <div 
-        onClick={toggleAutoScroll}
-        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 cursor-pointer flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}
-      >
-          <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
-          Chạm vào đây để Dừng / Cuộn
       </div>
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[30]">
@@ -334,10 +332,13 @@ export default function WeddingCardPage() {
               </div>
               )}
 
-              {/* === RUỘT THIỆP CHÍNH CÓ THỂ CUỘN === */}
+              {/* === RUỘT THIỆP (Z-10) === */}
+              {/* Nếu đụng vào bất kì đâu sẽ kích hoạt việc cuộn */}
               <div 
                   ref={scrollRef}
-                  className="absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32"
+                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
+                  `}
+                  onClick={toggleAutoScroll} 
               >
                  <WatermarkPurpleFlowers />
 
@@ -365,10 +366,10 @@ export default function WeddingCardPage() {
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-10 mb-10 border border-[#EAE3DB]">
                          
-                         {/* FIX TÊN HOA3 BẰNG CHỮ THƯỜNG hoa3.png ĐỂ KHÔNG BỊ LỖI TRÊN VERCEL */}
-                         <img src="/hoa3.png" alt="Hoa" className="absolute top-1/2 -left-[40px] -translate-y-1/2 w-[120px] z-30 drop-shadow-md opacity-90" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
+                         {/* Cành hoa 3 phóng to và chuyển động Lên Xuống (float-up-down) êm ái */}
+                         <img src="/hoa3.png" alt="Hoa" className="absolute top-1/2 -left-[45px] -translate-y-1/2 w-[140px] z-30 drop-shadow-md opacity-90" style={{ animation: 'float-up-down 5s ease-in-out infinite' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
                          
-                         <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'sway-slow 8s ease-in-out infinite reverse', transformOrigin: 'bottom right' }}>
+                         <div className="absolute -bottom-[60px] -right-[40px] w-[140px] z-30 pointer-events-none drop-shadow-lg" style={{ animation: 'float-up-down 6s ease-in-out infinite reverse' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
@@ -393,10 +394,10 @@ export default function WeddingCardPage() {
                              <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-10">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
                              <div className="w-full flex flex-col items-center">
-                                <h1 className="text-5xl md:text-6xl font-serif mb-2 text-[#5C4F44] drop-shadow-sm">Đỗ Trung</h1>
+                                <h1 className="text-5xl md:text-6xl font-serif mb-2 drop-shadow-sm text-[#5C4F44]">Đỗ Trung</h1>
                                 <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
                                 <span className="text-3xl font-serif text-[#C3B09B] italic my-2">❦</span>
-                                <h1 className="text-5xl md:text-6xl font-serif mt-5 mb-2 text-[#5C4F44] drop-shadow-sm">Đặng Hải</h1>
+                                <h1 className="text-5xl md:text-6xl font-serif mt-5 mb-2 drop-shadow-sm text-[#5C4F44]">Đặng Hải</h1>
                                 <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-12">Út Nữ</span>
                              </div>
 
