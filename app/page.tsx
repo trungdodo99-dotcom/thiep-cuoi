@@ -39,6 +39,7 @@ const DRESS_SPARKLES = [
   { id: 5, bottom: "5%", left: "50%", delay: "1.5s", size: "16px" },
 ];
 
+// Pháo hoa hồng nhạt lãng mạn
 const GENTLE_CONFETTI = Array.from({ length: 30 }).map((_, i) => {
   const shapes = ['heart', 'star', 'bubble'];
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
@@ -89,7 +90,7 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-// CHỈ DÙNG FADE-IN CHO CÁC PHẦN TỬ LẺ, KHÔNG BAO BỌC NGUYÊN 1 KHỐI TO ĐỂ TRÁNH MỜ ẢNH HƯỞNG NHAU
+// Cảm biến hiện phần tử đơn lẻ
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -115,7 +116,7 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
   );
 };
 
-// Cảm biến quét sáng Kim Loại 1 Lần CHẬM cho Tên Cô Dâu Chú Rể
+// Cảm biến quét sáng Kim Loại 1 Lần CHẬM
 const SweepNameReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -150,6 +151,7 @@ export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true); 
   
+  // Trạng thái kịch bản chuyển cảnh
   const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'done'>('idle');
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -161,52 +163,50 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // AUTO-SCROLL AN TOÀN TUYỆT ĐỐI KHÔNG GÂY CRASH (Sử dụng setInterval)
   useEffect(() => {
-    let animationFrameId: number;
-    let accumulator = 0;
-    let lastTime = performance.now();
+    let scrollInterval: NodeJS.Timeout;
 
-    const performScroll = (time: number) => {
-      if (isAutoScrolling && scrollRef.current) {
-        const deltaTime = time - lastTime;
-        lastTime = time;
-
-        accumulator += deltaTime * 0.04;
-
-        if (accumulator >= 1) {
-          const step = Math.floor(accumulator);
-          scrollRef.current.scrollBy(0, step); 
-          accumulator -= step;
-        }
-        animationFrameId = requestAnimationFrame(performScroll);
-      }
-    };
-
-    if (isAutoScrolling) {
-      lastTime = performance.now();
-      animationFrameId = requestAnimationFrame(performScroll);
+    if (isAutoScrolling && scrollRef.current) {
+        // Cuộn 1 pixel mỗi 20ms tạo cảm giác mượt mà và an toàn
+        scrollInterval = setInterval(() => {
+            if (scrollRef.current) {
+                scrollRef.current.scrollBy({ top: 1, left: 0 });
+                // Dừng tự cuộn nếu đã cuộn tới đáy
+                if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight) {
+                    setIsAutoScrolling(false);
+                }
+            }
+        }, 20); 
     }
 
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => {
+        if (scrollInterval) clearInterval(scrollInterval);
+    };
   }, [isAutoScrolling]);
 
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
     
+    // 1. Phóng to bìa
     setCardState('scaling');
     
+    // 2. Tim đập & Pháo hoa
     setTimeout(() => {
       setCardState('bursting');
     }, 800); 
 
+    // 3. Lật 3D và biến mất
     setTimeout(() => {
       setCardState('opening'); 
     }, 2200);
 
+    // 4. Kích hoạt tự cuộn an toàn sau khi đã lật xong 3 giây
     setTimeout(() => {
       setCardState('done');
       setIsAutoScrolling(true);
-      setTimeout(() => setIsAutoScrolling(false), 5000); 
+      // Chỉ cuộn tự động trong 6 giây rồi nhường lại cho người dùng
+      setTimeout(() => setIsAutoScrolling(false), 6000); 
     }, 5200); 
   };
 
@@ -269,9 +269,8 @@ export default function WeddingCardPage() {
            animation: text-sweep-slow 2.5s ease-in-out forwards;
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D5C7B8; border-radius: 10px; }
+        /* Ẩn scrollbar để giao diện sạch sẽ, nhưng vẫn cuộn được */
+        .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         
         .art-paper-bg {
            background-color: #F8F4ED;
@@ -292,7 +291,7 @@ export default function WeddingCardPage() {
          </div>
       </div>
 
-      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${showHint ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}>
           <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
           Chạm màn hình để Dừng / Cuộn
       </div>
@@ -342,7 +341,7 @@ export default function WeddingCardPage() {
                   <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pt-10 pb-32">
                     
                     <div className="relative mb-6 mt-2">
-                        {cardState !== 'idle' && GENTLE_CONFETTI.map((p) => (
+                        {cardState !== 'idle' && cardState !== 'scaling' && GENTLE_CONFETTI.map((p) => (
                             <div key={`cf-${p.id}`} className="absolute top-1/2 left-1/2 pointer-events-none z-0" style={{ transform: 'translate(-50%, -50%)' }}>
                                 <svg 
                                     className="animate-gentle-burst drop-shadow-sm"
@@ -386,8 +385,8 @@ export default function WeddingCardPage() {
               </div>
               )}
 
-              {/* === RUỘT THIỆP CHÍNH (LUÔN RÕ NÉT 100%) === */}
-              {/* KHÔNG dùng thuộc tính ẩn làm gián đoạn layout, mọi thứ hiện sẵn 100% để chống kẹt hiệu ứng */}
+              {/* === RUỘT THIỆP (Z-10) === */}
+              {/* Ruột thiệp luôn render 100% để sẵn sàng cuộn */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
@@ -418,7 +417,7 @@ export default function WeddingCardPage() {
                         </div>
                      </div>
 
-                     {/* THẺ THÔNG TIN LỄ CƯỚI: Luôn hiện sẵn rõ nét 100%, không dùng FadeIn */}
+                     {/* THẺ THÔNG TIN LỄ CƯỚI: Không dùng FadeIn, hiện sẵn 100% */}
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-10 mb-10 border border-[#EAE3DB]">
                          
                          <img src="/Hoa3.png" alt="Hoa" className="absolute top-1/2 -left-[40px] -translate-y-1/2 w-[120px] z-30 drop-shadow-md opacity-90" style={{ animation: 'sway-slow 7s ease-in-out infinite', transformOrigin: 'bottom center' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa3.jpg"; }} />
@@ -447,7 +446,7 @@ export default function WeddingCardPage() {
 
                              <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-10">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
-                             {/* Quét sáng kim loại chậm rải */}
+                             {/* QUÉT SÁNG KIM LOẠI 1 LẦN */}
                              <SweepNameReveal className="w-full">
                                 <h1 className="text-5xl md:text-6xl font-serif mb-2 text-sweep-target drop-shadow-sm">Đỗ Trung</h1>
                                 <span className="text-[#8C7A6B] text-[9px] uppercase tracking-[0.3em] mt-3 mb-8">Trưởng Nam</span>
