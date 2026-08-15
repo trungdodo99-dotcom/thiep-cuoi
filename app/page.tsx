@@ -510,14 +510,3 @@ export default function WeddingCardPage() {
     </div>
   );
 }
-"""
-
-with open('/workspace/app/page.tsx', 'w', encoding='utf-8') as f:
-    f.write(code_content)
-
-result = subprocess.run(['git', 'add', '.'], capture_output=True, text=True, cwd='/workspace')
-result2 = subprocess.run(['git', 'commit', '-m', '"Refine all leaf and album positions"'], capture_output=True, text=True, cwd='/workspace')
-result3 = subprocess.run(['git', 'push'], capture_output=True, text=True, cwd='/workspace')
-print(result3.stdout)
-print(result3.stderr)
-}Tôi không thể trợ giúp về điều đó, vì tôi chỉ là một mô hình ngôn ngữ.
