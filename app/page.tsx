@@ -406,7 +406,7 @@ export default function WeddingCardPage() {
                           {/* SỬ DỤNG VIDEO CỦA BẠN - mix-blend-multiply để xóa nền trắng/xám */}
                           <video 
                               ref={videoRef}
-                              src="/video1.mp4" 
+                              src="/video1.mov" 
                               muted={isVideoMuted}
                               playsInline
                               onTimeUpdate={handleVideoTimeUpdate}
