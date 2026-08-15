@@ -16,6 +16,29 @@ const PARTICLES = [
   { id: 8, left: "15%", delay: "5s", duration: "21s", size: "11px", content: "✿" },
 ];
 
+const FOREST_FLOWERS = [
+  { id: 1, src: "/Hoa.png", left: "-15%", bottom: "-110px", width: "240px", rotate: "-20deg", duration: "5s", delay: "0s" },
+  { id: 2, src: "/Hoa.png", left: "-5%", bottom: "-130px", width: "200px", rotate: "-10deg", duration: "6.5s", delay: "1.2s" },
+  { id: 3, src: "/Hoa.png", left: "5%", bottom: "-100px", width: "260px", rotate: "-5deg", duration: "4.5s", delay: "0.5s" },
+  { id: 4, src: "/Hoa.png", left: "15%", bottom: "-120px", width: "220px", rotate: "2deg", duration: "7s", delay: "2.1s" },
+  { id: 5, src: "/Hoa.png", left: "25%", bottom: "-90px", width: "280px", rotate: "8deg", duration: "5.5s", delay: "1.5s" },
+  { id: 6, src: "/Hoa.png", left: "35%", bottom: "-115px", width: "210px", rotate: "-3deg", duration: "6s", delay: "0.8s" },
+  { id: 7, src: "/Hoa.png", left: "45%", bottom: "-135px", width: "190px", rotate: "5deg", duration: "4.8s", delay: "2.5s" },
+  { id: 8, src: "/Hoa.png", left: "55%", bottom: "-95px", width: "270px", rotate: "12deg", duration: "7.2s", delay: "0.3s" },
+  { id: 9, src: "/Hoa.png", left: "65%", bottom: "-125px", width: "230px", rotate: "18deg", duration: "5.2s", delay: "1.8s" },
+  { id: 10, src: "/Hoa.png", left: "75%", bottom: "-105px", width: "250px", rotate: "22deg", duration: "6.8s", delay: "0.9s" },
+  { id: 11, src: "/Hoa.png", left: "85%", bottom: "-140px", width: "180px", rotate: "25deg", duration: "4.5s", delay: "2.2s" },
+  { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s" },
+];
+
+const DRESS_SPARKLES = [
+  { id: 1, bottom: "10%", left: "30%", delay: "0s", size: "12px" },
+  { id: 2, bottom: "25%", left: "55%", delay: "0.5s", size: "8px" },
+  { id: 3, bottom: "15%", left: "70%", delay: "1.2s", size: "14px" },
+  { id: 4, bottom: "35%", left: "45%", delay: "0.8s", size: "10px" },
+  { id: 5, bottom: "5%", left: "50%", delay: "1.5s", size: "16px" },
+];
+
 const GENTLE_CONFETTI = Array.from({ length: 40 }).map((_, i) => {
   const shapes = ['heart', 'star', 'bubble'];
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
@@ -31,12 +54,13 @@ const GENTLE_CONFETTI = Array.from({ length: 40 }).map((_, i) => {
   };
 });
 
-// MẢNG CHỨA TÊN ẢNH ALBUM (Thay bằng ảnh thực tế của bạn)
+// MẢNG CHỨA TÊN ẢNH ALBUM
 const ALBUM_IMAGES = [
-  "/AnhT1.jpg", 
-  "/AnhT1.jpg", 
-  "/AnhT1.jpg", 
-  "/AnhT1.jpg", 
+  "/Ab1.jpg", 
+  "/Ab2.jpg", 
+  "/Ab3.jpg", 
+  "/Ab4.jpg", 
+  "/Ab5.jpg"
 ];
 
 const LuxuryCorner = ({ className }: { className?: string }) => (
@@ -52,7 +76,18 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const FadeIn = ({ children, delay = 0, duration = 1200, className = "" }: { children: React.ReactNode, delay?: number, duration?: number, className?: string }) => {
+const WatermarkPurpleFlowers = () => (
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.1]">
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[18%] -right-[5%] w-[150px] opacity-50 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[35%] -left-[10%] w-[180px] opacity-40 -rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[50%] -right-[8%] w-[140px] opacity-60 rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="" className="absolute top-[70%] -left-[5%] w-[160px] opacity-45 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="" className="absolute bottom-[5%] -right-[5%] w-[130px] opacity-55 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+  </div>
+);
+
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -71,33 +106,10 @@ const FadeIn = ({ children, delay = 0, duration = 1200, className = "" }: { chil
   }, []);
 
   return (
-    <div ref={ref} className={`transition-all ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms`, transitionDuration: `${duration}ms` }}>
+    <div ref={ref} className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
-};
-
-const TypingText = ({ text, delay = 100, onComplete }: { text: string, delay?: number, onComplete?: () => void }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-
-  useEffect(() => {
-    setDisplayedText("");
-    setIsTypingComplete(false);
-    let currentIdx = 0;
-    const intervalId = setInterval(() => {
-      setDisplayedText((prev) => prev + text[currentIdx]);
-      currentIdx++;
-      if (currentIdx === text.length) {
-        clearInterval(intervalId);
-        setIsTypingComplete(true);
-        if (onComplete) onComplete();
-      }
-    }, delay);
-    return () => clearInterval(intervalId);
-  }, [text, delay, onComplete]);
-
-  return <span className={isTypingComplete ? "" : "typing"}>{displayedText}</span>;
 };
 
 // ==========================================
@@ -107,64 +119,104 @@ export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true); 
   
-  // Trạng thái thiệp: idle -> scaling -> bursting -> gramophone -> done
-  const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'gramophone' | 'done'>('idle');
-  
-  // Trạng thái cục bộ cho Gramophone Scene: recordIn -> needleIn -> playing -> texts
-  const [gramophoneStage, setGramophoneStage] = useState<'entry' | 'recordIn' | 'needleIn' | 'playing' | 'text1' | 'text2' | 'text3' | 'end'>('entry');
-
+  const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'done'>('idle');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+  
+  // State cho Lightbox Album
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // === THÊM STATE & REF CHO NHẠC ===
   const audioRef = useRef<HTMLAudioElement>(null);
-  const gramophoneRef = useRef<HTMLDivElement>(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     const timer = setTimeout(() => setShowSplash(false), 2500);
+    
+    // Cấu hình audio element khi mounted
+    if (audioRef.current) {
+        audioRef.current.loop = true; // Phát lặp lại
+        audioRef.current.volume = 0.5; // Âm lượng 50%
+    }
+
     return () => clearTimeout(timer);
   }, []);
 
-  // Điều khiển trình tự thời gian cho Gramophone Scene
   useEffect(() => {
-    if (cardState === 'gramophone' && gramophoneStage === 'entry') {
-      // 1. recordIn (gạt đĩa than vào, 0.8s)
-      setTimeout(() => setGramophoneStage('recordIn'), 500);
-      
-      // 2. needleIn (gạt kim vào, 0.8s)
-      setTimeout(() => setGramophoneStage('needleIn'), 1300);
-      
-      // 3. Kim chạm đĩa -> Bắt đầu chơi (quay đĩa, phát nhạc)
-      setTimeout(() => {
-          setGramophoneStage('playing');
-          // audioRef.current?.play(); // PHÁT NHẠC Ở ĐÂY
-      }, 2100);
+    let rafId: number;
+    
+    const smoothScroll = () => {
+        if (isAutoScrolling && scrollRef.current && lightboxIndex === null) {
+            scrollRef.current.scrollTop += 1; 
+            
+            if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight - 2) {
+                setIsAutoScrolling(false);
+            } else {
+                rafId = requestAnimationFrame(smoothScroll);
+            }
+        }
+    };
 
-      // 4. Hiển thị văn bản (mượt mà, từng câu)
-      setTimeout(() => setGramophoneStage('text1'), 2100);
-      setTimeout(() => setGramophoneStage('text2'), 4100);
-      setTimeout(() => setGramophoneStage('text3'), 7100);
-      
-      // 5. Scene kết thúc
-      setTimeout(() => setGramophoneStage('end'), 8600);
+    if (isAutoScrolling && lightboxIndex === null) {
+        rafId = requestAnimationFrame(smoothScroll);
     }
-  }, [cardState, gramophoneStage]);
 
-  useEffect(() => {
-      if (gramophoneStage === 'end' && cardState === 'gramophone') {
-          setCardState('done');
-      }
-  }, [gramophoneStage, cardState]);
+    return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isAutoScrolling, lightboxIndex]);
 
+  // HÀM MỞ THIỆP & BẬT NHẠC
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
+    
     setCardState('scaling');
+    
     setTimeout(() => {
-      setCardState('bursting'); 
+      setCardState('bursting');
     }, 800); 
+
     setTimeout(() => {
-      // Chuyển card sang scene Gramophone
-      setCardState('gramophone'); 
-      setGramophoneStage('entry'); // Bắt đầu scene
-    }, 1500); // 1.5s scaling+bursting
+      setCardState('opening'); 
+    }, 2200);
+
+    setTimeout(() => {
+      setCardState('done');
+      setIsAutoScrolling(true);
+      
+      // === BẮT ĐẦU PHÁT NHẠC KHI THIỆP MỞ XONG ===
+      if (audioRef.current && !isMusicPlaying) {
+        audioRef.current.play().then(() => {
+            setIsMusicPlaying(true);
+        }).catch(error => {
+            console.error("Audio playback blocked by browser:", error);
+            // Trình duyệt có thể chặn tự phát nhạc nếu người dùng chưa tương tác.
+            // Trong trường hợp đó, isMusicPlaying vẫn là false, icon sẽ hiện trạng thái tắt.
+        });
+      }
+    }, 3800); 
+  };
+
+  const toggleAutoScroll = () => {
+    if (cardState === 'done') setIsAutoScrolling(prev => !prev);
+  };
+
+  // === HÀM TẮT/MỞ NHẠC ===
+  const toggleMusic = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Không làm dừng cuộn thiệp khi ấn nút nhạc
+    if (!audioRef.current) return;
+
+    if (isMusicPlaying) {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
+    } else {
+      audioRef.current.play().then(() => {
+          setIsMusicPlaying(true);
+      }).catch(error => {
+          console.error("Audio play failed:", error);
+      });
+    }
   };
 
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
@@ -172,8 +224,45 @@ export default function WeddingCardPage() {
   return (
     <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh]`}>
       
-      {/* HTML5 Audio cho nhạc nền (tên tệp Nhac.mp3) */}
-      {/* <audio ref={audioRef} src="/Nhac.mp3" preload="auto" loop /> */}
+      {/* === AUDIO ELEMENT === */}
+      <audio ref={audioRef} src="/Nhac.mp3" preload="auto" />
+
+      {/* KHU VỰC LIGHTBOX */}
+      {lightboxIndex !== null && (
+        <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-center touch-none" onClick={() => setLightboxIndex(null)}>
+            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4 z-50" onClick={() => setLightboxIndex(null)}>
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            
+            <div className="relative w-full h-full flex items-center justify-center px-2">
+                <img 
+                    src={ALBUM_IMAGES[lightboxIndex]} 
+                    alt="Zoom" 
+                    className="max-h-[85vh] max-w-full object-contain select-none shadow-2xl" 
+                    onClick={(e) => e.stopPropagation()} 
+                    onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = ALBUM_IMAGES[lightboxIndex].replace('.jpg', '.png'); }}
+                />
+                
+                <div 
+                    className="absolute inset-y-0 left-0 w-1/4 flex items-center justify-start p-2 cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => prev === 0 ? ALBUM_IMAGES.length - 1 : prev! - 1); }}
+                >
+                    <svg className="w-10 h-10 text-white drop-shadow-lg opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </div>
+                
+                <div 
+                    className="absolute inset-y-0 right-0 w-1/4 flex items-center justify-end p-2 cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => prev === ALBUM_IMAGES.length - 1 ? 0 : prev! + 1); }}
+                >
+                    <svg className="w-10 h-10 text-white drop-shadow-lg opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </div>
+            </div>
+            
+            <div className="absolute bottom-8 text-white/80 tracking-[0.2em] text-sm font-sans z-50">
+                {lightboxIndex + 1} / {ALBUM_IMAGES.length}
+            </div>
+        </div>
+      )}
 
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
@@ -184,75 +273,49 @@ export default function WeddingCardPage() {
         @keyframes heart-blink { 0%, 100% { stroke: transparent; stroke-width: 0px; transform: scale(1); opacity: 0.5; } 50% { stroke: #FF99C2; stroke-width: 1.5px; transform: scale(1.15); opacity: 0.85; } }
         .animate-heart { animation: heart-blink 2s ease-in-out infinite; }
 
-        @keyframes bursting-fade {
-            0% { transform: scale(1) translate(-50%, -50%); opacity: 1; }
-            100% { transform: scale(2.5) translate(-50%, -50%); opacity: 0; }
+        @keyframes fast-beat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.3); }
         }
-        .animate-bursting { animation: bursting-fade 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+        .animate-fast-beat { animation: fast-beat 1.5s ease-in-out forwards; }
 
-        @keyframes bursting-flower-fade {
-            0% { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+        @keyframes gentle-burst {
+           0% { opacity: 1; transform: translate(0, 0) scale(0) rotate(0deg); }
+           80% { opacity: 0.9; transform: translate(calc(var(--tx) * 0.8), calc(var(--ty) * 0.8)) scale(var(--s)) rotate(15deg); }
+           100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(calc(var(--s) * 1.1)) rotate(30deg); }
         }
-        .animate-bursting-flower { animation: bursting-flower-fade 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
-
-        @keyframes bubble-rise {
-            0% { transform: translateY(10px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-120px); opacity: 0; }
-        }
-        .animate-bubble { animation: bubble-rise 4s ease-out infinite; }
-
-        @keyframes sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+        .animate-gentle-burst { animation: gentle-burst 1.5s cubic-bezier(0.25, 1, 0.3, 1) forwards; }
         
-        @keyframes scale-up-invitation {
-          0% { transform: scale(0); opacity: 0; }
-          60% { transform: scale(1.05); opacity: 1; }
-          100% { transform: scale(1); opacity: 1; }
+        @keyframes sway-forest { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+        
+        @keyframes float-up-down { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-15px); } 
         }
-        .animate-invitation-scale { animation: scale-up-invitation 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
-        /* KEYFRAMES CHO CẢNH GRAMOPHONE */
-        @keyframes gramophone-fade-in {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        @keyframes float-up-down-small { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-6px); } 
         }
-        .animate-gramophone-entry { animation: gramophone-fade-in 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
-        @keyframes record-in {
-            0% { transform: translate(100%, 0) rotate(0deg); opacity: 0; }
-            100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+        @keyframes sparkle {
+           0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+           50% { opacity: 0.9; transform: scale(1) rotate(90deg); filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)); }
         }
-        .animate-record-in { animation: record-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
-        @keyframes needle-in {
-            0% { transform: rotate(-100deg); opacity: 0; }
-            100% { transform: rotate(-45deg); opacity: 1; } /* Vị trí kim trên đĩa */
-        }
-        .animate-needle-in { animation: needle-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-
-        @keyframes spin {
+        /* === KEYFRAMES CHO ICON NHẠC === */
+        @keyframes music-rotate {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .animate-spin-linear { animation: spin 4s linear infinite; }
-
-        @keyframes text-fade-in {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+        @keyframes music-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(140, 122, 107, 0.6); }
         }
-        .animate-text-fade-in { animation: text-fade-in 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #8C7A6B; } }
-        .typing {
-          overflow: hidden;
-          border-right: 2px solid #8C7A6B;
-          white-space: nowrap;
-          animation: typing 1s steps(20, end), blink-caret 0.75s step-end infinite;
-          display: inline-block;
-        }
+        .animate-music-on { animation: music-rotate 4s linear infinite, music-pulse 2s ease-in-out infinite; }
 
         .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         
@@ -260,22 +323,26 @@ export default function WeddingCardPage() {
            background-color: #F8F4ED;
            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
-        
-        .shadow-luxury-btn { box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
       `}} />
 
       {/* MÀN HÌNH CHÀO */}
       <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBF7] transition-all duration-1000 ease-in-out ${showSplash ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
          <div className="flex flex-col items-center justify-center text-center px-6">
             <span className="text-[#8C7A6B] text-4xl mb-4 animate-bounce">❦</span>
-            <TypingText text="Chào mừng bạn đến với" />
-            <TypingText text="Lễ Cưới của chúng tôi" delay={150} />
-            <div className="flex items-center gap-2 mt-4">
-                <div className="w-2 h-2 bg-[#8C7A6B] rounded-full animate-bubble"></div>
-                <div className="w-2 h-2 bg-[#8C7A6B] rounded-full animate-bubble delay-150"></div>
-                <div className="w-2 h-2 bg-[#8C7A6B] rounded-full animate-bubble delay-300"></div>
+            <h2 className="text-3xl md:text-4xl font-serif text-[#5C4F44] italic mb-6 leading-relaxed">Chào mừng bạn đến với<br/>Lễ Cưới của chúng tôi</h2>
+            <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping"></div>
+                <p className="text-[10px] md:text-xs text-[#8C7A6B] tracking-[0.3em] uppercase">Đang tải thiệp mời</p>
+                <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping delay-150"></div>
             </div>
          </div>
+      </div>
+
+      <div 
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}
+      >
+          <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+          Chạm vào thiệp để Dừng / Cuộn
       </div>
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[30]">
@@ -289,194 +356,227 @@ export default function WeddingCardPage() {
       {/* TỔ HỢP THIỆP CHÍNH */}
       <div className="w-full h-[100dvh] flex justify-center items-center p-0 md:p-6 relative">
           
-          {/* === Gramophone Classic Scene === */}
-          {cardState === 'gramophone' && (
-          <div 
-              ref={gramophoneRef}
-              className={`absolute top-1/2 left-1/2 inset-0 w-full h-full bg-[#FDFBF7] z-50 flex flex-col items-center justify-center text-center px-6 transition-all duration-500 ease-in-out shadow-luxury-btn border border-[#EAE3DB]
-                  ${gramophoneStage === 'end' ? 'opacity-0 scale-105 pointer-events-none transition-all duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
-                  animate-gramophone-entry
-              `}
-              style={{ transform: 'translate(-50%, -50%)', origin: 'center center' }}
-          >
-              <LuxuryCorner className="top-4 left-4" />
-              <LuxuryCorner className="top-4 right-4 rotate-90" />
-              <LuxuryCorner className="bottom-4 right-4 rotate-180" />
-              <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
-
-              {/* Gramophone Container */}
-              <div className="relative w-[80%] aspect-square flex items-center justify-center mb-12" style={{ perspective: '1000px' }}>
-                  
-                  {/* Vinyl Record */}
-                  <div className={`absolute w-[95%] aspect-square flex items-center justify-center bg-[#212121] rounded-full border-[6px] border-[#313131] shadow-[0_5px_15px_rgba(0,0,0,0.5)] transition-all duration-[800ms] ease-in-out
-                      ${(gramophoneStage === 'recordIn' || gramophoneStage === 'needleIn' || gramophoneStage === 'playing' || gramophoneStage.startsWith('text')) ? 'animate-record-in opacity-100 scale-100' : 'opacity-0 scale-95'}
-                      ${(gramophoneStage === 'playing' || gramophoneStage.startsWith('text')) ? 'animate-spin-linear' : ''}
-                  `} style={{ origin: 'center center' }}>
-                     {/* Label */}
-                     <div className="relative w-24 h-24 bg-[#B5A593] rounded-full flex flex-col items-center justify-center p-2 text-[#4A3C31] shadow-[inset_0_0_8px_rgba(0,0,0,0.3)]">
-                        <span className="text-[10px] font-medium uppercase tracking-widest mb-1">WEDDING</span>
-                        <span className="text-xl font-serif italic mb-1">Hải & Trung</span>
-                        <span className="text-[9px] tracking-[0.3em]">3.1.2027</span>
-                     </div>
-                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-black rounded-full shadow-inner"></div>
-                  </div>
-
-                  {/* Needle Arm */}
-                  <div className={`absolute top-[10%] right-[10%] w-[120px] aspect-[1/5] flex items-center justify-center transition-all duration-[800ms] ease-in-out origin-[top_center]
-                      ${(gramophoneStage === 'needleIn' || gramophoneStage === 'playing' || gramophoneStage.startsWith('text')) ? 'animate-needle-in opacity-100' : 'opacity-0'}
-                  `} style={{ transform: 'rotate(-45deg)' }}>
-                     <div className="w-2.5 h-[100%] bg-[#BDBDBD] rounded-full shadow-sm"></div>
-                     <div className="absolute bottom-[2%] left-1/2 -translate-x-1/2 w-8 h-10 bg-[#757575] rounded-t-sm shadow-md flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-[#424242] rounded-full"></div>
-                     </div>
-                  </div>
-
-                  <div className="absolute -bottom-6 w-full h-[25%] bg-[#FDFBF7] p-2 flex items-center justify-center">
-                      <div className="absolute -bottom-2 w-[70%] h-3 bg-[#EAE3DB] rounded-b-md shadow-sm"></div>
-                  </div>
-
-              </div>
-
-              {/* Văn bản seq */}
-              <div className="flex flex-col items-center justify-center w-full px-2 text-[#5C4F44] space-y-4">
-                {gramophoneStage.startsWith('text') && <p className="animate-text-fade-in text-lg font-serif italic mb-2">❦ Xin chào bạn,...❦</p>}
-                {(gramophoneStage === 'text2' || gramophoneStage === 'text3') && <p className="animate-text-fade-in text-sm font-sans tracking-wide leading-relaxed delay-1000">Cảm ơn bạn đã đến với đám cưới của chúng tôi!</p>}
-                {gramophoneStage === 'text3' && <p className="animate-text-fade-in text-sm font-sans tracking-wide leading-relaxed delay-2000">Xin cảm ơn!</p>}
-              </div>
-          </div>
+          {/* === ICON NHẠC TẠI RUỘT THIỆP (Z-70, nằm trên cùng) === */}
+          {cardState === 'done' && (
+            <button 
+                onClick={toggleMusic}
+                className={`fixed top-6 right-6 z-[70] w-12 h-12 rounded-full backdrop-blur-sm border transition-all duration-300 flex items-center justify-center shadow-lg group
+                    ${isMusicPlaying 
+                        ? 'bg-[#8C7A6B]/80 border-[#A09386] animate-music-on' 
+                        : 'bg-white/40 border-white/60 hover:bg-white/60'
+                    }
+                `}
+            >
+                {isMusicPlaying ? (
+                  // Icon đang bật nhạc (Music Note)
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
+                ) : (
+                  // Icon đang tắt nhạc (Speaker X)
+                  <svg className="w-6 h-6 text-[#8C7A6B] group-hover:text-[#5C4F44]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                )}
+            </button>
           )}
 
-          {/* === BÌA THIỆP === */}
-          {cardState !== 'done' && cardState !== 'gramophone' && (
-          <div 
-              className={`absolute inset-0 w-full h-full bg-[#FDFBF7] overflow-hidden flex flex-col items-center justify-center text-center px-4 md:px-6 
-                  ${cardState !== 'idle' ? 'z-50' : 'z-50'}
-                  ${cardState === 'opening' ? 'rotate-y-[-110deg] transition-all duration-[1500ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
-                  animate-invitation-scale
-              `}
-              style={{ transformOrigin: 'left center', transitionDelay: '0.1s' }}
-          >
-              <LuxuryCorner className="top-4 left-4" />
-              <LuxuryCorner className="top-4 right-4 rotate-90" />
-              <LuxuryCorner className="bottom-4 right-4 rotate-180" />
-              <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
+          <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl md:rounded-lg border-x border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
-                 <div className="absolute flex items-center justify-center">
-                    <div className="absolute w-[220px] h-[220px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
-                    <div className="absolute w-[220px] h-[220px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
-                 </div>
-                 <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
-              </div>
+              {/* === BÌA THIỆP (Z-50) === */}
+              {cardState !== 'done' && (
+              <div 
+                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col
+                      ${cardState === 'opening' ? 'rotate-y-[-110deg] opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
+                  `}
+                  style={{ transformOrigin: 'left center' }}
+              >
+                  <LuxuryCorner className="top-4 left-4" />
+                  <LuxuryCorner className="top-4 right-4 rotate-90" />
+                  <LuxuryCorner className="bottom-4 right-4 rotate-180" />
+                  <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
 
-              {/* Hiệu ứng Bursting (0.7s) */}
-              {(cardState === 'bursting' || cardState === 'opening' || cardState === 'gramophone') && (
-                  <div className="absolute top-1/2 left-1/2 pointer-events-none transform -translate-x-1/2 -translate-y-1/2 animate-bursting origin-center z-40 w-[200px] aspect-square flex items-center justify-center">
-                      <img src="/Hoadau1.png" alt="" className="w-full h-auto object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                      {GENTLE_CONFETTI.map((p) => (
-                          <div key={p.id} className="absolute animate-bursting-flower opacity-0" style={{'--tx': `${p.tx}px`, '--ty': `${p.ty}px`, left: '50%', top: '50%', width: p.shape === 'heart' ? '18px' : '12px', aspectSquare: '1', color: p.color } as React.CSSProperties}>
-                              {p.shape === 'heart' && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>}
-                              {p.shape === 'star' && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>}
-                              {p.shape === 'bubble' && <div className="w-2 h-2 bg-currentColor rounded-full opacity-60"></div>}
-                          </div>
-                      ))}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
+                     <div className="absolute flex items-center justify-center">
+                        <div className="absolute w-[220px] h-[220px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
+                        <div className="absolute w-[220px] h-[220px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
+                     </div>
+                     <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
-              )}
-
-              <div className={`absolute top-[-30px] -left-[20px] pointer-events-none z-30 transition-opacity duration-300 ${(cardState === 'bursting' || cardState === 'opening' || cardState === 'gramophone') ? 'opacity-0' : 'opacity-100'}`} style={{ animation: 'sway 6s ease-in-out infinite' }}>
-                  <img src="/Hoadau1.png" alt="" className="w-[140px] h-auto opacity-95" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-              </div>
-
-              <div className={`relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full transition-opacity duration-300 ${(cardState === 'bursting' || cardState === 'opening' || cardState === 'gramophone') ? 'opacity-0' : 'opacity-100'}`}>
-                
-                <div className="relative mb-6">
-                  <div className="relative z-10 bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-luxury-btn group">
-                    <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  
+                  <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[15]">
+                     {FOREST_FLOWERS.map((flower) => (
+                        <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, transform: `rotate(${flower.rotate})`, animation: `sway-forest ${flower.duration} ease-in-out infinite`, animationDelay: flower.delay }}>
+                            <img src={flower.src} alt="Flower" className="w-full h-auto origin-bottom opacity-90" />
+                        </div>
+                     ))}
                   </div>
-                </div>
 
-                <h1 className="text-5xl md:text-6xl font-serif text-[#5C4F44] font-light mb-2">Đỗ Trung</h1>
-                <span className="text-2xl font-serif text-[#8C7A6B] italic my-2">&</span>
-                <h1 className="text-5xl md:text-6xl font-serif text-[#5C4F44] font-light mt-2">Đặng Hải</h1>
-
-                <div className="flex items-center gap-2 my-6 text-[#A09386]">
-                  <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
-                  <span className="text-xl font-serif">❦</span>
-                  <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
-                </div>
-
-                <p className="text-[#8C7A6B] text-lg md:text-xl font-serif tracking-wide mb-12">3 tháng 1, 2027</p>
-
-                <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className={`px-10 md:px-12 py-3.5 md:py-4 bg-[#8C7A6B] text-white text-[13px] md:text-[14px] uppercase tracking-widest rounded-full shadow-luxury-btn hover:bg-[#7A6A5E] transition-all duration-300 relative z-50 ${cardState !== 'idle' ? 'opacity-0 scale-75 pointer-events-none' : 'opacity-100'}`}>
-                    Mở thiệp
-                </button>
-              </div>
-          </div>
-          )}
-
-          {/* === RUỘT THIỆP (Z-10 khi idle, Z-50 khi cardState === done) === */}
-          <div 
-              ref={scrollRef}
-              className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative custom-scrollbar
-                  ${cardState === 'done' ? 'z-50 overflow-y-auto pb-24' : 'z-10 overflow-hidden'}
-              `}
-          >
-             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.1]">
-                 <img src="/Hoadau1.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                 <img src="/Hoadau1.png" alt="" className="absolute top-[18%] -right-[5%] w-[150px] opacity-50 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                 <img src="/Hoadau1.png" alt="" className="absolute top-[35%] -left-[10%] w-[180px] opacity-40 -rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                 <img src="/Hoadau1.png" alt="" className="absolute top-[50%] -right-[8%] w-[140px] opacity-60 rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                 <img src="/Hoadau1.png" alt="" className="absolute top-[70%] -left-[5%] w-[160px] opacity-45 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                 <img src="/Hoadau1.png" alt="" className="absolute bottom-[5%] -right-[5%] w-[130px] opacity-55 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-             </div>
-
-             <div className="relative w-full flex flex-col items-center pt-24 z-20">
-                 <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-2">The Wedding Of</p>
-                 <h2 className="text-3xl md:text-4xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
-                 
-                 <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-16">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
-                    <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden">
-                        <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/Hoadau1.png"; }} />
-                    </div>
-                    <img src="/Hoadau1.png" alt="Dummy Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                 </div>
-
-                 {/* THẺ THÔNG TIN LỄ CƯỚI */}
-                 <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
-                     
-                     <div className="absolute top-[-30px] -right-[15px] z-30 pointer-events-none origin-bottom" style={{ animation: 'sway 7s ease-in-out infinite' }}>
-                         <img src="/Hoadau1.png" alt="" className="w-[120px] h-auto opacity-90" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                     </div>
-
-                     {/* THAY ĐỔI: Thêm HoaDưới (dummy) vào góc dưới */}
-                     <div className="absolute -bottom-[60px] -left-[20px] z-30 pointer-events-none origin-top" style={{ animation: 'sway 8s ease-in-out infinite' }}>
-                         <img src="/Hoadau1.png" alt="" className="w-[140px] h-auto opacity-95" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoadau1.jpg"; }} />
-                     </div>
-
-                     <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
-                         <div className="text-3xl font-serif text-[#5C4F44] mb-3">2027</div>
-                         <div className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.25em] leading-loose">(TỨC NGÀY 26 THÁNG 11 NĂM BÍNH NGỌ)</div>
-                     </div>
-                 </div>
-
-                 {/* KHU VỰC ALBUM ẢNH LƯỚI */}
-                 {/* THAY ĐỔI: Xóa cụm lá treo ở góc trên bên trái của 'ALBUM ẢNH' */}
-                 <FadeIn delay={100} className="relative w-full flex flex-col items-center mt-12 mb-16">
-                     <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-10 text-center drop-shadow-sm">Album Ảnh</h3>
-                     
-                     <div className="grid grid-cols-2 gap-4 w-[90%] max-w-[400px]">
-                        {ALBUM_IMAGES.map((src, idx) => (
-                            <div key={idx} className="relative aspect-[3/4] overflow-hidden rounded-md shadow-sm border-2 border-[#EAE3DB] group">
-                                <img src={src} alt={`Album ${idx + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/Hoadau1.png"; }} />
-                                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative z-40 flex flex-col items-center justify-center text-center px-4 md:px-6 w-full h-full pt-10 pb-32">
+                    
+                    <div className="relative mb-6 mt-2">
+                        {cardState !== 'idle' && cardState !== 'scaling' && GENTLE_CONFETTI.map((p) => (
+                            <div key={`cf-${p.id}`} className="absolute top-1/2 left-1/2 pointer-events-none z-0" style={{ transform: 'translate(-50%, -50%)' }}>
+                                <svg 
+                                    className="animate-gentle-burst drop-shadow-sm"
+                                    viewBox="0 0 24 24" 
+                                    fill={p.color}
+                                    style={{ 
+                                        width: '24px', height: '24px',
+                                        '--tx': `${p.tx}px`, '--ty': `${p.ty}px`, '--s': p.scale
+                                    } as React.CSSProperties}
+                                >
+                                    {p.shape === 'heart' && <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>}
+                                    {p.shape === 'star' && <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>}
+                                    {p.shape === 'bubble' && <circle cx="12" cy="12" r="8" opacity="0.8"/>}
+                                </svg>
                             </div>
                         ))}
-                     </div>
-                 </FadeIn>
-             </div>
-          </div>
 
+                        <div className="relative z-10 bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.15)] shrink-0">
+                          <svg className={`w-5 h-5 md:w-6 md:h-6 text-white ${cardState === 'bursting' ? 'animate-fast-beat text-[#FF99C2]' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </div>
+                    </div>
+
+                    <h1 className="text-5xl md:text-6xl font-serif text-[#5C4F44] font-light mb-2">Đỗ Trung</h1>
+                    <span className="text-2xl font-serif text-[#8C7A6B] italic my-2">&</span>
+                    <h1 className="text-5xl md:text-6xl font-serif text-[#5C4F44] font-light mt-2">Đặng Hải</h1>
+
+                    <div className="flex items-center gap-2 my-6 text-[#A09386] pointer-events-none">
+                      <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
+                      <span className="text-xl font-serif">❦</span>
+                      <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
+                    </div>
+
+                    <p className="text-[#8C7A6B] text-lg md:text-xl font-serif tracking-wide mb-2">3 tháng 1, 2027</p>
+                    <p className="text-[#8C7A6B] text-[13px] md:text-[14px] mt-2 mb-12 uppercase tracking-[0.2em] font-medium">Thân Mời</p>
+
+                    <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className={`px-10 md:px-12 py-3.5 md:py-4 bg-[#8C7A6B] text-white text-[13px] md:text-[14px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] transition-all duration-300 relative z-50 ${cardState !== 'idle' ? 'opacity-0 scale-75 pointer-events-none' : 'opacity-100'}`}>
+                        Mở thiệp
+                    </button>
+                  </div>
+              </div>
+              )}
+
+              {/* === RUỘT THIỆP (Z-10) === */}
+              <div 
+                  ref={scrollRef}
+                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
+                  `}
+                  onClick={toggleAutoScroll}
+              >
+                 <WatermarkPurpleFlowers />
+
+                 <div className="relative w-full flex flex-col items-center pt-24 z-20">
+                     <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
+                     <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
+                     
+                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-16 mt-4">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
+                        <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
+                            <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
+                            <div className="absolute inset-0 pointer-events-none z-10">
+                                {DRESS_SPARKLES.map((sparkle) => (
+                                    <svg key={`sp-${sparkle.id}`} className="absolute text-white animate-sparkle drop-shadow-md" style={{ bottom: sparkle.bottom, left: sparkle.left, width: sparkle.size, height: sparkle.size, animationDelay: sparkle.delay }} viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                                    </svg>
+                                ))}
+                            </div>
+                        </div>
+                        <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
+                        
+                        <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        </div>
+                     </div>
+
+                     <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
+                         
+                         <div className="absolute top-[-50px] -right-[25px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         </div>
+                         
+                         <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
+                             <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
+
+                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-8 relative px-2">
+                                 <div className="w-[45%] flex flex-col items-center">
+                                     <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
+                                     <span className="font-bold mb-1">Võ Nhật Minh</span>
+                                     <span className="font-bold mb-2">Trần Thu Thảo</span>
+                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90">Quận 1, TP. HCM</span>
+                                 </div>
+                                 <div className="w-[45%] flex flex-col items-center">
+                                     <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
+                                     <span className="font-bold mb-1">Lê Văn Thành</span>
+                                     <span className="font-bold mb-2">Phạm Thị Lan</span>
+                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90">Quận 3, TP. HCM</span>
+                                 </div>
+                             </div>
+
+                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+
+                             <div className="w-full flex flex-col items-center">
+                                <h1 className="text-4xl md:text-5xl font-serif mb-1 text-[#5C4F44]">Đỗ Trung</h1>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-4">Trưởng Nam</span>
+                                <span className="text-2xl font-serif text-[#C3B09B] italic my-1">❦</span>
+                                <h1 className="text-4xl md:text-5xl font-serif mt-3 mb-1 text-[#5C4F44]">Đặng Hải</h1>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-8">Út Nữ</span>
+                             </div>
+
+                             <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
+                             <div className="text-3xl font-serif text-[#5C4F44] mb-6">09:00</div>
+
+                             <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
+                                 <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Chủ Nhật</span>
+                                 <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
+                                 <span className="text-4xl font-serif">03</span>
+                                 <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
+                                 <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Tháng 01</span>
+                             </div>
+                             <span className="text-lg font-serif text-[#5C4F44] mb-2">2027</span>
+                             <span className="text-[#8C7A6B] text-[10px] uppercase tracking-[0.1em] opacity-90">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
+                         </div>
+                     </div>
+
+                     {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 */}
+                     <FadeIn delay={100} className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-16 border border-[#EAE3DB] z-20">
+                         
+                         <div className="absolute top-[-30px] -left-[20px] z-30 pointer-events-none origin-bottom-left rotate-[10deg]" style={{ animation: 'float-up-down-small 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[110px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         </div>
+
+                         <div className="px-5 md:px-6 pt-10 pb-12 flex flex-col items-center w-full">
+                             <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 text-center">Album Ảnh</h3>
+                             
+                             <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+                                {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200 rounded-sm"
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            setLightboxIndex(idx); 
+                                        }}
+                                    >
+                                        <img 
+                                            src={src} 
+                                            alt={`Album ${idx + 1}`} 
+                                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+                                            onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
+                                        />
+                                        
+                                        {/* Lớp phủ đen và chữ +2 ở bức ảnh thứ 4 */}
+                                        {idx === 3 && ALBUM_IMAGES.length > 4 && (
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
+                                                <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 3}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                             </div>
+                         </div>
+                     </FadeIn>
+                 </div>
+              </div>
+
+          </div>
       </div>
     </div>
   );
