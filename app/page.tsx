@@ -190,22 +190,15 @@ export default function WeddingCardPage() {
     if (time >= 2 && stageProgress < 1) setStageProgress(1); // Xin chào
     if (time >= 3.5 && stageProgress < 2) setStageProgress(2); // Cảm ơn...
     
-    // ĐÚNG GIÂY THỨ 4: Lặp lại 4s tiếng xào xạc (từ 4s đến 8s) rồi tự ngắt, đồng thời phát nhạc bài hát
+    // ĐÚNG GIÂY THỨ 4: Tua lại và phát tiếp tiếng xào xạc từ đầu, đồng thời phát nhạc bài hát nhỏ rồi to lên
     if (time >= 4 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
         
-        // Tua lại và phát tiếp tiếng xào xạc thêm 4 giây
+        // Tua lại tiếng xào xạc chạy thêm 1 lần nữa song song với nhạc bài hát
         if (scratchAudioRef.current) {
             scratchAudioRef.current.currentTime = 0;
             scratchAudioRef.current.play().catch(e => console.log(e));
-            
-            // Tự động dừng tiếng xào xạc sau đúng 4 giây (tại giây thứ 8)
-            setTimeout(() => {
-                if (scratchAudioRef.current) {
-                    scratchAudioRef.current.pause();
-                }
-            }, 4000);
         }
         
         // Kích hoạt nhạc bài hát fade-in
@@ -441,7 +434,7 @@ export default function WeddingCardPage() {
                       )}
 
                       <div className="relative w-full flex items-center justify-center z-10">
-                          {/* Video mute tuyệt đối, âm thanh xào xạc được điều khiển riêng bởi scratchAudioRef */}
+                          {/* Video mute để không bị lẫn tiếng, ta dùng scratchAudioRef phát âm thanh xào xạc riêng */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
