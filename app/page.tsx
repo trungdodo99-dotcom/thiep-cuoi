@@ -122,7 +122,7 @@ export default function WeddingCardPage() {
   const [showSplash, setShowSplash] = useState(true); 
   const [loadingPercentage, setLoadingPercentage] = useState(0); 
 
-  const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'gramophone' | 'done'>('idle');
+  const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'gramophone' | 'done'>('idle');
   
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [showMusicTitle, setShowMusicTitle] = useState(false);
@@ -134,6 +134,7 @@ export default function WeddingCardPage() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const musicTriggeredRef = useRef(false);
   
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
@@ -169,7 +170,7 @@ export default function WeddingCardPage() {
           setIsMusicPlaying(true);
           let vol = 0;
           const fadeInterval = setInterval(() => {
-              vol += 0.05; // Tăng dần 0.05 mỗi 200ms
+              vol += 0.05;
               if (vol >= 0.6) {
                   clearInterval(fadeInterval);
                   if(audioRef.current) audioRef.current.volume = 0.6;
@@ -190,19 +191,19 @@ export default function WeddingCardPage() {
     if (time >= 3.5 && stageProgress < 2) setStageProgress(2); // Cảm ơn...
     
     // ĐÚNG GIÂY THỨ 5: Slide in Title, Tắt âm Video, Fade in MP3
-    if (time >= 5 && !showMusicTitle) {
+    if (time >= 5 && !musicTriggeredRef.current) {
+        musicTriggeredRef.current = true;
         setShowMusicTitle(true);
-        if (!isVideoMuted) {
-            setIsVideoMuted(true);
-            fadeAudioIn();
-        }
+        setIsVideoMuted(true);
+        videoRef.current.muted = true; // Ép tắt âm video ngay lập tức
+        fadeAudioIn();
     }
 
     if (time >= 7 && stageProgress < 3) setStageProgress(3); // Xin cảm ơn
 
-    // Tách đôi vào thiệp chính sau khi video chạy đến gần cuối (tầm 10s)
+    // Tách đôi vào thiệp chính sau khi video chạy đến gần cuối
     if (time >= 10 && stageProgress < 4) {
-        setStageProgress(4); // Trigger CSS split
+        setStageProgress(4);
         setTimeout(() => {
              setCardState('done');
              setTimeout(() => setIsAutoScrolling(true), 3000); // 3s chờ cuộn
@@ -212,32 +213,31 @@ export default function WeddingCardPage() {
 
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
+
+    // Kích hoạt ngầm media ngay tại thời điểm Click để trình duyệt không chặn phát tự động
+    if (videoRef.current) {
+        videoRef.current.muted = false; // Video được quyền phát tiếng từ giây 0 -> 5
+        const p1 = videoRef.current.play();
+        if (p1 !== undefined) p1.then(() => videoRef.current?.pause()).catch(e => console.log(e));
+    }
+    if (audioRef.current) {
+        audioRef.current.volume = 0;
+        const p2 = audioRef.current.play();
+        if (p2 !== undefined) p2.then(() => audioRef.current?.pause()).catch(e => console.log(e));
+    }
+
     setCardState('scaling');
-    setTimeout(() => setCardState('bursting'), 800); 
+    setTimeout(() => setCardState('bursting'), 600); 
+    setTimeout(() => setCardState('opening'), 1500); // Bắt đầu hiệu ứng lật trang 
+    
     setTimeout(() => {
       setCardState('gramophone'); 
-      if (videoRef.current) videoRef.current.play().catch(e => console.log(e));
-    }, 1800); 
+      if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().catch(e => console.log(e));
+      }
+    }, 2000); // Video bắt đầu phát khi trang vừa lật được một nửa
   };
-
-  // Cuộn mượt
-  useEffect(() => {
-    let rafId: number;
-    const smoothScroll = () => {
-        if (isAutoScrolling && scrollRef.current && lightboxIndex === null) {
-            scrollRef.current.scrollTop += 1; 
-            if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight - 2) {
-                setIsAutoScrolling(false);
-            } else {
-                rafId = requestAnimationFrame(smoothScroll);
-            }
-        }
-    };
-    if (isAutoScrolling && lightboxIndex === null) {
-        rafId = requestAnimationFrame(smoothScroll);
-    }
-    return () => { if (rafId) cancelAnimationFrame(rafId); };
-  }, [isAutoScrolling, lightboxIndex]);
 
   const toggleAutoScroll = () => {
     if (cardState === 'done') setIsAutoScrolling(prev => !prev);
@@ -391,23 +391,17 @@ export default function WeddingCardPage() {
           <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl md:rounded-lg border-x border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
               {/* =========================================================
-                  CẢNH GRAMOPHONE (BẰNG VIDEO CÓ KHUNG VÀNG TÂN CỔ ĐIỂN)
+                  CẢNH GRAMOPHONE (Luôn nằm chìm ở dưới, Z-40, Nền trắng tinh)
                  ========================================================= */}
-              {(cardState === 'gramophone' || stageProgress === 4) && (
-              <div className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-[60] flex flex-col items-center justify-center 
+              <div className={`absolute inset-0 w-full h-full bg-white flex flex-col items-center justify-center transition-all duration-1000
+                  ${(cardState === 'idle' || cardState === 'scaling' || cardState === 'bursting') ? 'opacity-0 z-0' : 'opacity-100 z-[40]'}
                   ${cardState === 'done' ? 'hidden' : ''}`}
               >
-                  <LuxuryCorner className="top-4 left-4" />
-                  <LuxuryCorner className="top-4 right-4 rotate-90" />
-                  <LuxuryCorner className="bottom-4 right-4 rotate-180" />
-                  <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
-
-                  {/* Phần trên - KHUNG VIDEO TRANG TRÍ VÀNG KIM */}
+                  {/* BẢNG TÊN BÀI HÁT TỪ PHẢI TRƯỢT RA TẠI GIÂY THỨ 5 */}
                   <div className={`relative w-[90%] max-w-[340px] mx-auto mt-4 flex flex-col items-center justify-center
                       ${stageProgress === 4 ? 'animate-split-up' : ''}
                   `}>
                       
-                      {/* BẢNG TÊN BÀI HÁT TỪ PHẢI TRƯỢT RA TẠI GIÂY THỨ 5 */}
                       {showMusicTitle && (
                           <div className="absolute top-4 right-[-10px] bg-gradient-to-r from-black/80 to-[#1a1a1a]/90 border border-[#D4AF37] rounded-l-full pr-1 pl-4 py-1.5 flex items-center gap-2 animate-slide-in-right shadow-[0_0_15px_rgba(212,175,55,0.4)] z-50">
                               <div className="overflow-hidden w-[140px] relative">
@@ -424,32 +418,27 @@ export default function WeddingCardPage() {
                           </div>
                       )}
 
-                      {/* KHUNG VIDEO VÀNG KIM CHI TIẾT */}
-                      <div className="relative w-full p-2 bg-gradient-to-br from-[#E2BE6C] via-[#FCF6BA] to-[#A67B27] rounded-md shadow-[0_15px_30px_rgba(0,0,0,0.3)] z-10">
-                          {/* Viền đôi bên trong */}
-                          <div className="absolute inset-1.5 border border-[#8B6508] pointer-events-none z-20 mix-blend-overlay"></div>
+                      {/* KHUNG VIDEO KHÔNG VIỀN NỀN TRẮNG */}
+                      <div className="relative w-full flex items-center justify-center z-10">
+                          {/* SỬ DỤNG VIDEO CỦA BẠN - mix-blend-multiply để xóa nền tuyệt đối nếu còn dư */}
+                          <video 
+                              ref={videoRef}
+                              src="/video1.mov" 
+                              muted={isVideoMuted}
+                              playsInline
+                              onTimeUpdate={handleVideoTimeUpdate}
+                              className="w-full h-auto object-cover scale-[1.02] z-10"
+                              style={{ mixBlendMode: 'multiply' }}
+                          />
                           
-                          <div className="relative overflow-hidden rounded-sm bg-[#FDFBF7]">
-                              {/* SỬ DỤNG VIDEO CỦA BẠN - mix-blend-multiply để xóa nền */}
-                              <video 
-                                  ref={videoRef}
-                                  src="/video1.mov" 
-                                  muted={isVideoMuted}
-                                  playsInline
-                                  onTimeUpdate={handleVideoTimeUpdate}
-                                  className="w-full h-auto object-cover scale-[1.02] z-10"
-                                  style={{ mixBlendMode: 'multiply' }}
-                              />
-                              
-                              {/* Nốt nhạc bay ra từ trung tâm dĩa (chỉ hiển thị khi đang phát) */}
-                              {stageProgress >= 1 && (
-                                  <div className="absolute inset-0 pointer-events-none z-40">
-                                      <div className="absolute top-[25%] left-[55%] text-[#d4af37] text-2xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '0s' }}>♪</div>
-                                      <div className="absolute top-[30%] left-[60%] text-[#d4af37] text-xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '1.2s' }}>♫</div>
-                                      <div className="absolute top-[15%] left-[50%] text-[#d4af37] text-3xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '2.5s' }}>♬</div>
-                                  </div>
-                              )}
-                          </div>
+                          {/* Nốt nhạc bay ra từ trung tâm dĩa */}
+                          {stageProgress >= 1 && (
+                              <div className="absolute inset-0 pointer-events-none z-40">
+                                  <div className="absolute top-[25%] left-[55%] text-[#d4af37] text-2xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '0s' }}>♪</div>
+                                  <div className="absolute top-[30%] left-[60%] text-[#d4af37] text-xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '1.2s' }}>♫</div>
+                                  <div className="absolute top-[15%] left-[50%] text-[#d4af37] text-3xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '2.5s' }}>♬</div>
+                              </div>
+                          )}
                       </div>
                   </div>
 
@@ -476,15 +465,18 @@ export default function WeddingCardPage() {
                     </p>
                   </div>
               </div>
-              )}
 
-              {/* === BÌA THIỆP === */}
-              {cardState !== 'done' && cardState !== 'gramophone' && (
+              {/* === BÌA THIỆP (Z-50, Lật sang trái khi mở) === */}
               <div 
-                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col items-center justify-center text-center px-4 md:px-6 
-                      ${cardState === 'opening' ? 'opacity-0 scale-110 transition-all duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]' : ''}
+                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col items-center justify-center text-center px-4 md:px-6 transition-all duration-[1500ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]
+                      ${cardState === 'done' ? 'hidden' : ''}
                   `}
-                  style={{ transformOrigin: 'center center' }}
+                  style={{ 
+                      transformOrigin: 'left center', 
+                      transform: (cardState === 'opening' || cardState === 'gramophone') ? 'perspective(2000px) rotateY(-120deg)' : 'perspective(2000px) rotateY(0deg)',
+                      opacity: (cardState === 'opening' || cardState === 'gramophone') ? 0 : 1,
+                      pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
+                  }}
               >
                   <LuxuryCorner className="top-4 left-4" />
                   <LuxuryCorner className="top-4 right-4 rotate-90" />
@@ -499,7 +491,7 @@ export default function WeddingCardPage() {
                      <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
                   
-                  {/* BÌA THIỆP - THAY HOA BẰNG HỌA TIẾT VÀNG KIM CỐ ĐỊNH CHI TIẾT */}
+                  {/* BÌA THIỆP - HOẠ TIẾT VÀNG KIM CỐ ĐỊNH CHI TIẾT */}
                   <GoldenVintageOrnaments />
 
                   <div className={`relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full transition-opacity duration-300 ${cardState === 'bursting' ? 'opacity-0' : 'opacity-100'}`}>
@@ -539,7 +531,6 @@ export default function WeddingCardPage() {
                     </button>
                   </div>
               </div>
-              )}
 
               {/* === RUỘT THIỆP CHÍNH === */}
               <div 
