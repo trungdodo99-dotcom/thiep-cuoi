@@ -357,7 +357,10 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* ĐÃ XÓA ẢNH HOA T1 TẠI ĐÂY */}
+                        {/* THAY ĐỔI: TRẢ LẠI ẢNH LÁ VÀO GÓC TRÁI DƯỚI BỨC ẢNH ĐẦU */}
+                        <div className="absolute -bottom-10 -left-12 w-40 z-20 pointer-events-none drop-shadow-lg" style={{ animation: 'float-up-down 5s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto origin-bottom-left" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        </div>
                      </div>
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
@@ -366,11 +369,7 @@ export default function WeddingCardPage() {
                              <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
 
-                         <div className="absolute top-[40%] -left-[50px] -translate-y-1/2 z-30 pointer-events-none origin-bottom-left rotate-[20deg]" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                             <img src="/hoa3.png" alt="Hoa" className="w-[200px] h-auto opacity-95" style={{ filter: 'drop-shadow(6px 15px 12px rgba(0,0,0,0.35))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
-                         </div>
-                         
-                         {/* THAY ĐỔI: Chuyển chiếc lá (HoaT1) sang BÊN TRÁI, bóng đổ (shadow) cũng đã được lật ngược cho chân thật */}
+                         {/* THAY ĐỔI: Chuyển chiếc lá (HoaT1) sang BÊN TRÁI thẻ thông tin */}
                          <div className="absolute -bottom-[70px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
