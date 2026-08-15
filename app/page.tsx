@@ -124,7 +124,6 @@ export default function WeddingCardPage() {
 
   const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'gramophone' | 'done'>('idle');
   
-  const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
 
@@ -134,6 +133,7 @@ export default function WeddingCardPage() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const scratchAudioRef = useRef<HTMLAudioElement>(null);
   const musicTriggeredRef = useRef(false);
   
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -190,12 +190,18 @@ export default function WeddingCardPage() {
     if (time >= 2 && stageProgress < 1) setStageProgress(1); // Xin chào
     if (time >= 3.5 && stageProgress < 2) setStageProgress(2); // Cảm ơn...
     
-    // ĐÚNG GIÂY THỨ 5: Slide in Title, Tắt âm Video, Fade in MP3
-    if (time >= 5 && !musicTriggeredRef.current) {
+    // ĐÚNG GIÂY THỨ 4: Tua lại và phát tiếp tiếng xào xạc từ đầu, đồng thời phát nhạc bài hát nhỏ rồi to lên
+    if (time >= 4 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
-        setIsVideoMuted(true);
-        videoRef.current.muted = true; // Ép tắt âm video ngay lập tức
+        
+        // Tua lại tiếng xào xạc chạy thêm 1 lần nữa song song với nhạc bài hát
+        if (scratchAudioRef.current) {
+            scratchAudioRef.current.currentTime = 0;
+            scratchAudioRef.current.play().catch(e => console.log(e));
+        }
+        
+        // Kích hoạt nhạc bài hát fade-in
         fadeAudioIn();
     }
 
@@ -216,27 +222,37 @@ export default function WeddingCardPage() {
 
     // Kích hoạt ngầm media ngay tại thời điểm Click để trình duyệt không chặn phát tự động
     if (videoRef.current) {
-        videoRef.current.muted = false; // Video được quyền phát tiếng từ giây 0 -> 5
+        videoRef.current.muted = false;
         const p1 = videoRef.current.play();
         if (p1 !== undefined) p1.then(() => videoRef.current?.pause()).catch(e => console.log(e));
     }
+    if (scratchAudioRef.current) {
+        scratchAudioRef.current.muted = false;
+        const p2 = scratchAudioRef.current.play();
+        if (p2 !== undefined) p2.then(() => scratchAudioRef.current?.pause()).catch(e => console.log(e));
+    }
     if (audioRef.current) {
         audioRef.current.volume = 0;
-        const p2 = audioRef.current.play();
-        if (p2 !== undefined) p2.then(() => audioRef.current?.pause()).catch(e => console.log(e));
+        const p3 = audioRef.current.play();
+        if (p3 !== undefined) p3.then(() => audioRef.current?.pause()).catch(e => console.log(e));
     }
 
     setCardState('scaling');
     setTimeout(() => setCardState('bursting'), 600); 
-    setTimeout(() => setCardState('opening'), 1500); // Bắt đầu hiệu ứng lật trang 
+    setTimeout(() => setCardState('opening'), 1500); 
     
     setTimeout(() => {
       setCardState('gramophone'); 
+      musicTriggeredRef.current = false;
       if (videoRef.current) {
           videoRef.current.currentTime = 0;
           videoRef.current.play().catch(e => console.log(e));
       }
-    }, 2000); // Video bắt đầu phát khi trang vừa lật được một nửa
+      if (scratchAudioRef.current) {
+          scratchAudioRef.current.currentTime = 0;
+          scratchAudioRef.current.play().catch(e => console.log(e));
+      }
+    }, 2000); 
   };
 
   const toggleAutoScroll = () => {
@@ -259,7 +275,11 @@ export default function WeddingCardPage() {
   return (
     <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh]`}>
       
+      {/* Âm thanh bài hát nền */}
       <audio ref={audioRef} src="/Nhac.mp3" preload="auto" />
+      
+      {/* Âm thanh xào xạc độc lập từ video1.mov */}
+      <audio ref={scratchAudioRef} src="/video1.mov" preload="auto" />
 
       {/* LIGHTBOX ALBUM */}
       {lightboxIndex !== null && (
@@ -283,7 +303,6 @@ export default function WeddingCardPage() {
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
         
-        /* Bắt buộc áp dụng Font Serif cổ điển cho phần Typography quan trọng */
         .force-serif { font-family: 'Cormorant Garamond', serif !important; }
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Montserrat', sans-serif; }
@@ -313,7 +332,6 @@ export default function WeddingCardPage() {
         @keyframes music-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(140, 122, 107, 0.6); } }
         .animate-music-on { animation: music-rotate 4s linear infinite, music-pulse 2s ease-in-out infinite; }
 
-        /* Slide In cho thanh bài hát */
         @keyframes slide-in-right {
             0% { transform: translateX(120%); opacity: 0; }
             100% { transform: translateX(0); opacity: 1; }
@@ -391,17 +409,15 @@ export default function WeddingCardPage() {
           <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl md:rounded-lg border-x border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
               {/* =========================================================
-                  CẢNH GRAMOPHONE (Luôn nằm chìm ở dưới, Z-40, Nền trắng tinh)
+                  CẢNH GRAMOPHONE (Nền trắng tinh, không viền)
                  ========================================================= */}
               <div className={`absolute inset-0 w-full h-full bg-white flex flex-col items-center justify-center transition-all duration-1000
                   ${(cardState === 'idle' || cardState === 'scaling' || cardState === 'bursting') ? 'opacity-0 z-0' : 'opacity-100 z-[40]'}
                   ${cardState === 'done' ? 'hidden' : ''}`}
               >
-                  {/* BẢNG TÊN BÀI HÁT TỪ PHẢI TRƯỢT RA TẠI GIÂY THỨ 5 */}
                   <div className={`relative w-[90%] max-w-[340px] mx-auto mt-4 flex flex-col items-center justify-center
                       ${stageProgress === 4 ? 'animate-split-up' : ''}
                   `}>
-                      
                       {showMusicTitle && (
                           <div className="absolute top-4 right-[-10px] bg-gradient-to-r from-black/80 to-[#1a1a1a]/90 border border-[#D4AF37] rounded-l-full pr-1 pl-4 py-1.5 flex items-center gap-2 animate-slide-in-right shadow-[0_0_15px_rgba(212,175,55,0.4)] z-50">
                               <div className="overflow-hidden w-[140px] relative">
@@ -411,27 +427,24 @@ export default function WeddingCardPage() {
                                       Beautiful In White - Westlife
                                   </div>
                               </div>
-                              {/* Biểu tượng nốt nhạc khoanh tròn */}
                               <div className="w-7 h-7 rounded-full border border-[#D4AF37] bg-black/40 flex items-center justify-center shrink-0 shadow-inner">
                                   <span className="text-[#D4AF37] text-xs pb-0.5">♫</span>
                               </div>
                           </div>
                       )}
 
-                      {/* KHUNG VIDEO KHÔNG VIỀN NỀN TRẮNG */}
                       <div className="relative w-full flex items-center justify-center z-10">
-                          {/* SỬ DỤNG VIDEO CỦA BẠN - mix-blend-multiply để xóa nền tuyệt đối nếu còn dư */}
+                          {/* Video mute để không bị lẫn tiếng, ta dùng scratchAudioRef phát âm thanh xào xạc riêng */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
-                              muted={isVideoMuted}
+                              muted={true}
                               playsInline
                               onTimeUpdate={handleVideoTimeUpdate}
                               className="w-full h-auto object-cover scale-[1.02] z-10"
                               style={{ mixBlendMode: 'multiply' }}
                           />
                           
-                          {/* Nốt nhạc bay ra từ trung tâm dĩa */}
                           {stageProgress >= 1 && (
                               <div className="absolute inset-0 pointer-events-none z-40">
                                   <div className="absolute top-[25%] left-[55%] text-[#d4af37] text-2xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '0s' }}>♪</div>
@@ -442,7 +455,7 @@ export default function WeddingCardPage() {
                       </div>
                   </div>
 
-                  {/* KHỐI VĂN BẢN (Sửa font-serif tuyệt đối, ngăn rớt dòng) */}
+                  {/* KHỐI VĂN BẢN */}
                   <div className={`relative mt-6 h-36 flex flex-col items-center justify-center w-full px-4 text-center
                       ${stageProgress === 4 ? 'animate-split-down' : ''}
                   `}>
@@ -451,7 +464,6 @@ export default function WeddingCardPage() {
                       Xin chào bạn...
                     </p>
                     
-                    {/* Bắt buộc 1 dòng bằng whitespace-nowrap và clamp tự scale font size */}
                     <div className={`absolute top-10 w-full transition-all duration-1000 ease-out px-2
                         ${stageProgress >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                         <p className="force-serif text-[clamp(14px,4.5vw,20px)] text-[#5C4F44] italic tracking-wide whitespace-nowrap overflow-visible">
@@ -466,7 +478,7 @@ export default function WeddingCardPage() {
                   </div>
               </div>
 
-              {/* === BÌA THIỆP (Z-50, Lật sang trái khi mở) === */}
+              {/* === BÌA THIỆP (Lật sang trái khi mở) === */}
               <div 
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col items-center justify-center text-center px-4 md:px-6 transition-all duration-[1500ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]
                       ${cardState === 'done' ? 'hidden' : ''}
@@ -491,12 +503,10 @@ export default function WeddingCardPage() {
                      <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
                   
-                  {/* BÌA THIỆP - HOẠ TIẾT VÀNG KIM CỐ ĐỊNH CHI TIẾT */}
                   <GoldenVintageOrnaments />
 
                   <div className={`relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full transition-opacity duration-300 ${cardState === 'bursting' ? 'opacity-0' : 'opacity-100'}`}>
                     
-                    {/* KHU VỰC NÚT TRÁI TIM & HIỆU ỨNG TIM BUNG TẠI ĐÂY */}
                     <div className="relative mb-6 mt-2">
                         {cardState === 'bursting' && (
                             <div className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-40 overflow-visible">
@@ -561,7 +571,6 @@ export default function WeddingCardPage() {
                              <img src="/goc1.png" alt="Hoa goc" className="w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
 
-                         {/* Chiếc lá cố định đứng im */}
                          <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none">
                              <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
