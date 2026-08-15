@@ -126,9 +126,20 @@ export default function WeddingCardPage() {
   // State cho Lightbox Album
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  // === THÊM STATE & REF CHO NHẠC ===
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
     const timer = setTimeout(() => setShowSplash(false), 2500);
+    
+    // Cấu hình audio element khi mounted
+    if (audioRef.current) {
+        audioRef.current.loop = true; // Phát lặp lại
+        audioRef.current.volume = 0.5; // Âm lượng 50%
+    }
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -156,6 +167,7 @@ export default function WeddingCardPage() {
     };
   }, [isAutoScrolling, lightboxIndex]);
 
+  // HÀM MỞ THIỆP & BẬT NHẠC
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
     
@@ -172,6 +184,17 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('done');
       setIsAutoScrolling(true);
+      
+      // === BẮT ĐẦU PHÁT NHẠC KHI THIỆP MỞ XONG ===
+      if (audioRef.current && !isMusicPlaying) {
+        audioRef.current.play().then(() => {
+            setIsMusicPlaying(true);
+        }).catch(error => {
+            console.error("Audio playback blocked by browser:", error);
+            // Trình duyệt có thể chặn tự phát nhạc nếu người dùng chưa tương tác.
+            // Trong trường hợp đó, isMusicPlaying vẫn là false, icon sẽ hiện trạng thái tắt.
+        });
+      }
     }, 3800); 
   };
 
@@ -179,12 +202,32 @@ export default function WeddingCardPage() {
     if (cardState === 'done') setIsAutoScrolling(prev => !prev);
   };
 
+  // === HÀM TẮT/MỞ NHẠC ===
+  const toggleMusic = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Không làm dừng cuộn thiệp khi ấn nút nhạc
+    if (!audioRef.current) return;
+
+    if (isMusicPlaying) {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
+    } else {
+      audioRef.current.play().then(() => {
+          setIsMusicPlaying(true);
+      }).catch(error => {
+          console.error("Audio play failed:", error);
+      });
+    }
+  };
+
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
     <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh]`}>
       
-      {/* KHU VỰC LIGHTBOX (Hiển thị khi bấm vào ảnh) */}
+      {/* === AUDIO ELEMENT === */}
+      <audio ref={audioRef} src="/Nhac.mp3" preload="auto" />
+
+      {/* KHU VỰC LIGHTBOX */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-center touch-none" onClick={() => setLightboxIndex(null)}>
             <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4 z-50" onClick={() => setLightboxIndex(null)}>
@@ -263,6 +306,17 @@ export default function WeddingCardPage() {
         }
         .animate-sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
+        /* === KEYFRAMES CHO ICON NHẠC === */
+        @keyframes music-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes music-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(140, 122, 107, 0.6); }
+        }
+        .animate-music-on { animation: music-rotate 4s linear infinite, music-pulse 2s ease-in-out infinite; }
+
         .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         
         .art-paper-bg {
@@ -302,6 +356,27 @@ export default function WeddingCardPage() {
       {/* TỔ HỢP THIỆP CHÍNH */}
       <div className="w-full h-[100dvh] flex justify-center items-center p-0 md:p-6 relative">
           
+          {/* === ICON NHẠC TẠI RUỘT THIỆP (Z-70, nằm trên cùng) === */}
+          {cardState === 'done' && (
+            <button 
+                onClick={toggleMusic}
+                className={`fixed top-6 right-6 z-[70] w-12 h-12 rounded-full backdrop-blur-sm border transition-all duration-300 flex items-center justify-center shadow-lg group
+                    ${isMusicPlaying 
+                        ? 'bg-[#8C7A6B]/80 border-[#A09386] animate-music-on' 
+                        : 'bg-white/40 border-white/60 hover:bg-white/60'
+                    }
+                `}
+            >
+                {isMusicPlaying ? (
+                  // Icon đang bật nhạc (Music Note)
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
+                ) : (
+                  // Icon đang tắt nhạc (Speaker X)
+                  <svg className="w-6 h-6 text-[#8C7A6B] group-hover:text-[#5C4F44]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                )}
+            </button>
+          )}
+
           <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl md:rounded-lg border-x border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
               {/* === BÌA THIỆP (Z-50) === */}
@@ -392,9 +467,7 @@ export default function WeddingCardPage() {
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
                      <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
                      
-                     {/* BỨC ẢNH ĐẦU TIÊN */}
-                     {/* THAY ĐỔI: Tăng mb-16 lên mb-24 để cách xa thẻ thông tin lễ cưới ra một tí */}
-                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-24 mt-4">
+                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-16 mt-4">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
                             <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
@@ -408,21 +481,15 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        <div className="absolute -bottom-[50px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
+                        <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
 
-                     {/* THẺ THÔNG TIN LỄ CƯỚI */}
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
                          
                          <div className="absolute top-[-50px] -right-[25px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
                              <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
-                         </div>
-
-                         {/* THAY ĐỔI: Thêm lá (HoaT1) vào góc dưới bên trái của thẻ thông tin lễ cưới */}
-                         <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 6s ease-in-out infinite reverse' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
                          
                          <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
@@ -468,8 +535,12 @@ export default function WeddingCardPage() {
                          </div>
                      </div>
 
-                     {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 - Đã thu nhỏ và lồng vào nền Art Paper */}
+                     {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 */}
                      <FadeIn delay={100} className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-16 border border-[#EAE3DB] z-20">
+                         
+                         <div className="absolute top-[-30px] -left-[20px] z-30 pointer-events-none origin-bottom-left rotate-[10deg]" style={{ animation: 'float-up-down-small 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[110px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         </div>
 
                          <div className="px-5 md:px-6 pt-10 pb-12 flex flex-col items-center w-full">
                              <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 text-center">Album Ảnh</h3>
