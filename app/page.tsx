@@ -393,7 +393,8 @@ export default function WeddingCardPage() {
                      <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
                      
                      {/* BỨC ẢNH ĐẦU TIÊN */}
-                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-16 mt-4">
+                     {/* THAY ĐỔI: Tăng mb-16 lên mb-24 để cách xa thẻ thông tin lễ cưới ra một tí */}
+                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-24 mt-4">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
                             <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
@@ -407,7 +408,6 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* THAY ĐỔI: TRẢ LẠI ẢNH CHIẾC LÁ (HOAT1) VÀO GÓC TRÁI DƯỚI CỦA BỨC ẢNH ĐẦU TIÊN */}
                         <div className="absolute -bottom-[50px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
@@ -420,6 +420,11 @@ export default function WeddingCardPage() {
                              <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
 
+                         {/* THAY ĐỔI: Thêm lá (HoaT1) vào góc dưới bên trái của thẻ thông tin lễ cưới */}
+                         <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 6s ease-in-out infinite reverse' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                         </div>
+                         
                          <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
@@ -463,12 +468,8 @@ export default function WeddingCardPage() {
                          </div>
                      </div>
 
-                     {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 */}
+                     {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 - Đã thu nhỏ và lồng vào nền Art Paper */}
                      <FadeIn delay={100} className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-16 border border-[#EAE3DB] z-20">
-                         
-                         <div className="absolute top-[-30px] -left-[20px] z-30 pointer-events-none origin-bottom-left rotate-[10deg]" style={{ animation: 'float-up-down-small 6s ease-in-out infinite' }}>
-                             <img src="/goc1.png" alt="Hoa goc" className="w-[110px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
-                         </div>
 
                          <div className="px-5 md:px-6 pt-10 pb-12 flex flex-col items-center w-full">
                              <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 text-center">Album Ảnh</h3>
@@ -509,3 +510,14 @@ export default function WeddingCardPage() {
     </div>
   );
 }
+"""
+
+with open('/workspace/app/page.tsx', 'w', encoding='utf-8') as f:
+    f.write(code_content)
+
+result = subprocess.run(['git', 'add', '.'], capture_output=True, text=True, cwd='/workspace')
+result2 = subprocess.run(['git', 'commit', '-m', '"Refine all leaf and album positions"'], capture_output=True, text=True, cwd='/workspace')
+result3 = subprocess.run(['git', 'push'], capture_output=True, text=True, cwd='/workspace')
+print(result3.stdout)
+print(result3.stderr)
+}Tôi không thể trợ giúp về điều đó, vì tôi chỉ là một mô hình ngôn ngữ.
