@@ -190,29 +190,38 @@ export default function WeddingCardPage() {
     if (time >= 2 && stageProgress < 1) setStageProgress(1); // Xin chào
     if (time >= 3.5 && stageProgress < 2) setStageProgress(2); // Cảm ơn...
     
-    // ĐÚNG GIÂY THỨ 4: Tua lại và phát tiếp tiếng xào xạc từ đầu, đồng thời phát nhạc bài hát nhỏ rồi to lên
+    // ĐÚNG GIÂY THỨ 4: Lặp lại 4s tiếng xào xạc và phát nhạc nền
     if (time >= 4 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
         
-        // Tua lại tiếng xào xạc chạy thêm 1 lần nữa song song với nhạc bài hát
         if (scratchAudioRef.current) {
             scratchAudioRef.current.currentTime = 0;
             scratchAudioRef.current.play().catch(e => console.log(e));
+            
+            setTimeout(() => {
+                if (scratchAudioRef.current) {
+                    scratchAudioRef.current.pause();
+                }
+            }, 4000);
         }
         
-        // Kích hoạt nhạc bài hát fade-in
         fadeAudioIn();
     }
 
     if (time >= 7 && stageProgress < 3) setStageProgress(3); // Xin cảm ơn
 
-    // Tách đôi vào thiệp chính sau khi video chạy đến gần cuối
-    if (time >= 10 && stageProgress < 4) {
+    // CẮT BỎ 1 GIÂY ĐEN CUỐI: Dừng video sớm khi chạy đến giây thứ 9
+    if (time >= 9 && !videoRef.current.paused) {
+        videoRef.current.pause();
+    }
+
+    // Tách đôi vào thiệp chính 
+    if (time >= 9 && stageProgress < 4) {
         setStageProgress(4);
         setTimeout(() => {
              setCardState('done');
-             setTimeout(() => setIsAutoScrolling(true), 3000); // 3s chờ cuộn
+             setTimeout(() => setIsAutoScrolling(true), 3000); 
         }, 1200);
     }
   };
