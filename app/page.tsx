@@ -392,6 +392,7 @@ export default function WeddingCardPage() {
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
                      <h2 className="text-4xl md:text-5xl font-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="font-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
                      
+                     {/* BỨC ẢNH ĐẦU TIÊN */}
                      <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-16 mt-4">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
@@ -405,16 +406,18 @@ export default function WeddingCardPage() {
                             </div>
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
+                        
+                        {/* THAY ĐỔI: TRẢ LẠI ẢNH CHIẾC LÁ (HOAT1) VÀO GÓC TRÁI DƯỚI CỦA BỨC ẢNH ĐẦU TIÊN */}
+                        <div className="absolute -bottom-[50px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        </div>
                      </div>
 
+                     {/* THẺ THÔNG TIN LỄ CƯỚI */}
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
                          
                          <div className="absolute top-[-50px] -right-[25px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
                              <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
-                         </div>
-                         
-                         <div className="absolute -bottom-[70px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
                          <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
@@ -461,34 +464,41 @@ export default function WeddingCardPage() {
                      </div>
 
                      {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 */}
-                     <FadeIn delay={100} className="relative w-[90%] max-w-[400px] mt-6 mb-16 z-20">
-                         <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-6 text-center drop-shadow-sm">Album Ảnh</h3>
+                     <FadeIn delay={100} className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-16 border border-[#EAE3DB] z-20">
                          
-                         <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
-                            {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200"
-                                    onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        setLightboxIndex(idx); 
-                                    }}
-                                >
-                                    <img 
-                                        src={src} 
-                                        alt={`Album ${idx + 1}`} 
-                                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
-                                        onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
-                                    />
-                                    
-                                    {/* Lớp phủ đen và chữ +2 ở bức ảnh thứ 4 */}
-                                    {idx === 3 && ALBUM_IMAGES.length > 4 && (
-                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
-                                            <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 3}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
+                         <div className="absolute top-[-30px] -left-[20px] z-30 pointer-events-none origin-bottom-left rotate-[10deg]" style={{ animation: 'float-up-down-small 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[110px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         </div>
+
+                         <div className="px-5 md:px-6 pt-10 pb-12 flex flex-col items-center w-full">
+                             <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 text-center">Album Ảnh</h3>
+                             
+                             <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+                                {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200 rounded-sm"
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            setLightboxIndex(idx); 
+                                        }}
+                                    >
+                                        <img 
+                                            src={src} 
+                                            alt={`Album ${idx + 1}`} 
+                                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+                                            onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
+                                        />
+                                        
+                                        {/* Lớp phủ đen và chữ +2 ở bức ảnh thứ 4 */}
+                                        {idx === 3 && ALBUM_IMAGES.length > 4 && (
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
+                                                <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 3}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                             </div>
                          </div>
                      </FadeIn>
                  </div>
