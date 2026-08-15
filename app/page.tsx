@@ -39,7 +39,6 @@ const DRESS_SPARKLES = [
   { id: 5, bottom: "5%", left: "50%", delay: "1.5s", size: "16px" },
 ];
 
-// Pháo hoa bung đều theo hình tròn (bắn ra 1 lần duy nhất cực mượt)
 const GENTLE_CONFETTI = Array.from({ length: 40 }).map((_, i) => {
   const shapes = ['heart', 'star', 'bubble'];
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
@@ -121,15 +120,13 @@ export default function WeddingCardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // THUẬT TOÁN TỰ CUỘN KHÔNG GIẬT TRÊN MOBILE (1 Pixel / Frame)
   useEffect(() => {
     let rafId: number;
     
     const smoothScroll = () => {
         if (isAutoScrolling && scrollRef.current) {
-            scrollRef.current.scrollTop += 1; // Tăng chuẩn 1px mỗi khung hình, loại bỏ giật lag
+            scrollRef.current.scrollTop += 1; 
             
-            // Tự dừng khi tới đáy
             if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight - 2) {
                 setIsAutoScrolling(false);
             } else {
@@ -160,7 +157,6 @@ export default function WeddingCardPage() {
       setCardState('opening'); 
     }, 2200);
 
-    // Mở ra phát chạy luôn cho nhanh
     setTimeout(() => {
       setCardState('done');
       setIsAutoScrolling(true);
@@ -193,7 +189,6 @@ export default function WeddingCardPage() {
         }
         .animate-fast-beat { animation: fast-beat 1.5s ease-in-out forwards; }
 
-        /* BONG BÓNG MƯỢT: Bay nổ ra và giữ nguyên kích thước, chỉ tan biến Opacity */
         @keyframes gentle-burst {
            0% { opacity: 1; transform: translate(0, 0) scale(0) rotate(0deg); }
            80% { opacity: 0.9; transform: translate(calc(var(--tx) * 0.8), calc(var(--ty) * 0.8)) scale(var(--s)) rotate(15deg); }
@@ -240,7 +235,6 @@ export default function WeddingCardPage() {
          </div>
       </div>
 
-      {/* CHẠM ĐỂ DỪNG/CUỘN THÔNG BÁO */}
       <div 
         className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}
       >
@@ -337,7 +331,6 @@ export default function WeddingCardPage() {
               )}
 
               {/* === RUỘT THIỆP (Z-10) === */}
-              {/* Thêm onClick vào đây để người dùng chạm vào thiệp là cuộn/dừng */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative z-10 overflow-y-auto overflow-x-hidden custom-scrollbar pb-32
@@ -364,27 +357,22 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* HOA ĐẦU TIÊN: Sửa thành float-up-down thay vì lắc qua lắc lại */}
-                        <div className="absolute -bottom-10 -left-12 w-40 z-20 pointer-events-none drop-shadow-lg" style={{ animation: 'float-up-down 5s ease-in-out infinite' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto origin-bottom-left" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
-                        </div>
+                        {/* ĐÃ XÓA ẢNH HOA T1 TẠI ĐÂY */}
                      </div>
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
                          
-                         {/* THAY ĐỔI: Goc1 (Góc trên phải) Tràn lề trên và né mép phải ra */}
                          <div className="absolute top-[-50px] -right-[25px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
                              <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
 
-                         {/* THAY ĐỔI: Hoa3 (Giữa trái) Nghiêng cụp vào trong (rotate), nhưng thân rễ vẫn ngoài lề */}
                          <div className="absolute top-[40%] -left-[50px] -translate-y-1/2 z-30 pointer-events-none origin-bottom-left rotate-[20deg]" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                              <img src="/hoa3.png" alt="Hoa" className="w-[200px] h-auto opacity-95" style={{ filter: 'drop-shadow(6px 15px 12px rgba(0,0,0,0.35))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/hoa3.jpg"; }} />
                          </div>
                          
-                         {/* THAY ĐỔI: HoaT1 (Góc dưới phải) Đẩy lùi lên trên một chút để không tuột đáy */}
-                         <div className="absolute -bottom-[70px] -right-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite reverse' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ transform: 'scaleX(-1) rotate(15deg)', filter: 'drop-shadow(-4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                         {/* THAY ĐỔI: Chuyển chiếc lá (HoaT1) sang BÊN TRÁI, bóng đổ (shadow) cũng đã được lật ngược cho chân thật */}
+                         <div className="absolute -bottom-[70px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
                          <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
