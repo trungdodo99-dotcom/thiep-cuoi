@@ -54,6 +54,15 @@ const GENTLE_CONFETTI = Array.from({ length: 40 }).map((_, i) => {
   };
 });
 
+// MẢNG CHỨA TÊN ẢNH ALBUM
+const ALBUM_IMAGES = [
+  "/Ab1.jpg", 
+  "/Ab2.jpg", 
+  "/Ab3.jpg", 
+  "/Ab4.jpg", 
+  "/Ab5.jpg"
+];
+
 const LuxuryCorner = ({ className }: { className?: string }) => (
   <svg className={`absolute w-12 h-12 md:w-16 md:h-16 pointer-events-none opacity-90 z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 98 V2 H98" stroke="#C3B09B" strokeWidth="2"/>
@@ -113,6 +122,9 @@ export default function WeddingCardPage() {
   const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'opening' | 'done'>('idle');
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+  
+  // State cho Lightbox Album
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -124,7 +136,7 @@ export default function WeddingCardPage() {
     let rafId: number;
     
     const smoothScroll = () => {
-        if (isAutoScrolling && scrollRef.current) {
+        if (isAutoScrolling && scrollRef.current && lightboxIndex === null) {
             scrollRef.current.scrollTop += 1; 
             
             if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight - 2) {
@@ -135,14 +147,14 @@ export default function WeddingCardPage() {
         }
     };
 
-    if (isAutoScrolling) {
+    if (isAutoScrolling && lightboxIndex === null) {
         rafId = requestAnimationFrame(smoothScroll);
     }
 
     return () => {
         if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [isAutoScrolling]);
+  }, [isAutoScrolling, lightboxIndex]);
 
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
@@ -172,6 +184,43 @@ export default function WeddingCardPage() {
   return (
     <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh]`}>
       
+      {/* KHU VỰC LIGHTBOX (Hiển thị khi bấm vào ảnh) */}
+      {lightboxIndex !== null && (
+        <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-center touch-none" onClick={() => setLightboxIndex(null)}>
+            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4 z-50" onClick={() => setLightboxIndex(null)}>
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            
+            <div className="relative w-full h-full flex items-center justify-center px-2">
+                <img 
+                    src={ALBUM_IMAGES[lightboxIndex]} 
+                    alt="Zoom" 
+                    className="max-h-[85vh] max-w-full object-contain select-none shadow-2xl" 
+                    onClick={(e) => e.stopPropagation()} 
+                    onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = ALBUM_IMAGES[lightboxIndex].replace('.jpg', '.png'); }}
+                />
+                
+                <div 
+                    className="absolute inset-y-0 left-0 w-1/4 flex items-center justify-start p-2 cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => prev === 0 ? ALBUM_IMAGES.length - 1 : prev! - 1); }}
+                >
+                    <svg className="w-10 h-10 text-white drop-shadow-lg opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </div>
+                
+                <div 
+                    className="absolute inset-y-0 right-0 w-1/4 flex items-center justify-end p-2 cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => prev === ALBUM_IMAGES.length - 1 ? 0 : prev! + 1); }}
+                >
+                    <svg className="w-10 h-10 text-white drop-shadow-lg opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </div>
+            </div>
+            
+            <div className="absolute bottom-8 text-white/80 tracking-[0.2em] text-sm font-sans z-50">
+                {lightboxIndex + 1} / {ALBUM_IMAGES.length}
+            </div>
+        </div>
+      )}
+
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap');
         .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -356,11 +405,6 @@ export default function WeddingCardPage() {
                             </div>
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
-                        
-                        {/* THAY ĐỔI: TRẢ LẠI ẢNH LÁ VÀO GÓC TRÁI DƯỚI BỨC ẢNH ĐẦU */}
-                        <div className="absolute -bottom-10 -left-12 w-40 z-20 pointer-events-none drop-shadow-lg" style={{ animation: 'float-up-down 5s ease-in-out infinite' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-full h-auto origin-bottom-left" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
-                        </div>
                      </div>
 
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-6 mb-8 border border-[#EAE3DB]">
@@ -368,8 +412,7 @@ export default function WeddingCardPage() {
                          <div className="absolute top-[-50px] -right-[25px] z-30 pointer-events-none origin-top-right" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
                              <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
-
-                         {/* THAY ĐỔI: Chuyển chiếc lá (HoaT1) sang BÊN TRÁI thẻ thông tin */}
+                         
                          <div className="absolute -bottom-[70px] -left-[40px] z-30 pointer-events-none" style={{ animation: 'float-up-down-small 7s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
@@ -417,8 +460,36 @@ export default function WeddingCardPage() {
                          </div>
                      </div>
 
-                     <FadeIn delay={100}>
-                        <p className="mt-6 text-[#5C4F44] font-serif text-sm tracking-[0.3em] uppercase opacity-80">Album Ảnh</p>
+                     {/* KHU VỰC ALBUM ẢNH LƯỚI 2x2 */}
+                     <FadeIn delay={100} className="relative w-[90%] max-w-[400px] mt-6 mb-16 z-20">
+                         <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-6 text-center drop-shadow-sm">Album Ảnh</h3>
+                         
+                         <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+                            {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200"
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        setLightboxIndex(idx); 
+                                    }}
+                                >
+                                    <img 
+                                        src={src} 
+                                        alt={`Album ${idx + 1}`} 
+                                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+                                        onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
+                                    />
+                                    
+                                    {/* Lớp phủ đen và chữ +2 ở bức ảnh thứ 4 */}
+                                    {idx === 3 && ALBUM_IMAGES.length > 4 && (
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
+                                            <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 3}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                         </div>
                      </FadeIn>
                  </div>
               </div>
