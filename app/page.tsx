@@ -16,6 +16,21 @@ const PARTICLES = [
   { id: 8, left: "15%", delay: "5s", duration: "21s", size: "11px", content: "✿" },
 ];
 
+const FOREST_FLOWERS = [
+  { id: 1, src: "/Hoa.png", left: "-15%", bottom: "-110px", width: "240px", rotate: "-20deg", duration: "5s", delay: "0s" },
+  { id: 2, src: "/Hoa.png", left: "-5%", bottom: "-130px", width: "200px", rotate: "-10deg", duration: "6.5s", delay: "1.2s" },
+  { id: 3, src: "/Hoa.png", left: "5%", bottom: "-100px", width: "260px", rotate: "-5deg", duration: "4.5s", delay: "0.5s" },
+  { id: 4, src: "/Hoa.png", left: "15%", bottom: "-120px", width: "220px", rotate: "2deg", duration: "7s", delay: "2.1s" },
+  { id: 5, src: "/Hoa.png", left: "25%", bottom: "-90px", width: "280px", rotate: "8deg", duration: "5.5s", delay: "1.5s" },
+  { id: 6, src: "/Hoa.png", left: "35%", bottom: "-115px", width: "210px", rotate: "-3deg", duration: "6s", delay: "0.8s" },
+  { id: 7, src: "/Hoa.png", left: "45%", bottom: "-135px", width: "190px", rotate: "5deg", duration: "4.8s", delay: "2.5s" },
+  { id: 8, src: "/Hoa.png", left: "55%", bottom: "-95px", width: "270px", rotate: "12deg", duration: "7.2s", delay: "0.3s" },
+  { id: 9, src: "/Hoa.png", left: "65%", bottom: "-125px", width: "230px", rotate: "18deg", duration: "5.2s", delay: "1.8s" },
+  { id: 10, src: "/Hoa.png", left: "75%", bottom: "-105px", width: "250px", rotate: "22deg", duration: "6.8s", delay: "0.9s" },
+  { id: 11, src: "/Hoa.png", left: "85%", bottom: "-140px", width: "180px", rotate: "25deg", duration: "4.5s", delay: "2.2s" },
+  { id: 12, src: "/Hoa.png", left: "95%", bottom: "-110px", width: "240px", rotate: "30deg", duration: "5.8s", delay: "1.1s" },
+];
+
 const GENTLE_CONFETTI = Array.from({ length: 40 }).map((_, i) => {
   const shapes = ['heart', 'star', 'bubble'];
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#FFF0F5', '#FFFFFF'];
@@ -95,8 +110,8 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true); 
-  
-  // Trạng thái thiệp: idle -> scaling -> bursting -> gramophone -> done
+  const [loadingPercentage, setLoadingPercentage] = useState(0); // Bộ đếm loading
+
   const [cardState, setCardState] = useState<'idle' | 'scaling' | 'bursting' | 'gramophone' | 'done'>('idle');
   
   // Trạng thái Gramophone: entry -> needleIn -> playing -> text1 -> text2 -> text3 -> end
@@ -113,20 +128,31 @@ export default function WeddingCardPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const timer = setTimeout(() => setShowSplash(false), 2500);
     
+    // ĐIỀU KHIỂN BỘ ĐẾM LOADING (không đều)
+    let currentPercentage = 0;
+    const intervalId = setInterval(() => {
+        currentPercentage += Math.floor(Math.random() * 5) + 1; // Tăng ngẫu nhiên từ 1 đến 5%
+        if (currentPercentage >= 100) {
+            currentPercentage = 100;
+            clearInterval(intervalId);
+            setTimeout(() => setShowSplash(false), 500); // Ẩn splash sau khi đạt 100%
+        }
+        setLoadingPercentage(currentPercentage);
+    }, Math.floor(Math.random() * 100) + 50); // Khoảng thời gian ngẫu nhiên từ 50 đến 150ms
+
     if (audioRef.current) {
         audioRef.current.loop = true; 
-        audioRef.current.volume = 0.6; 
+        audioRef.current.volume = 0.5; 
     }
-    return () => clearTimeout(timer);
+    return () => clearInterval(intervalId);
   }, []);
 
   // ĐIỀU KHIỂN LOGIC CHUYỂN CẢNH GRAMOPHONE 
   useEffect(() => {
     if (cardState === 'gramophone' && gramophoneStage === 'entry') {
       
-      // 1. Sau 1 giây, kim hát bắt đầu gạt vào mượt mà
+      // 1. Sau 1 giây, kim hát bắt đầu gạt vào
       setTimeout(() => setGramophoneStage('needleIn'), 1000);
       
       // 2. Kim chạm đĩa -> Bắt đầu quay đĩa và phát nhạc
@@ -155,7 +181,7 @@ export default function WeddingCardPage() {
       }
   }, [gramophoneStage, cardState]);
 
-  // Cuộn mượt (1 pixel / frame)
+  // Cuộn mượt
   useEffect(() => {
     let rafId: number;
     const smoothScroll = () => {
@@ -253,6 +279,9 @@ export default function WeddingCardPage() {
         .animate-gentle-burst { animation: gentle-burst 1.5s cubic-bezier(0.25, 1, 0.3, 1) forwards; }
         
         @keyframes sway-slow { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+        
+        /* THAY ĐỔI: Chuyển hoa từ lắc qua lắc lại sang chuyển động lên xuống */
+        @keyframes float-vertical { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes float-up-down { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         @keyframes float-up-down-small { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
@@ -266,7 +295,7 @@ export default function WeddingCardPage() {
         @keyframes music-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(140, 122, 107, 0.6); } }
         .animate-music-on { animation: music-rotate 4s linear infinite, music-pulse 2s ease-in-out infinite; }
 
-        @keyframes spin-record { 0% { transform: translateX(-50%) rotate(0deg); } 100% { transform: translateX(-50%) rotate(360deg); } }
+        @keyframes spin-record { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-spin-record { animation: spin-record 3s linear infinite; }
 
         @keyframes float-note {
@@ -276,6 +305,18 @@ export default function WeddingCardPage() {
         }
         .animate-float-note { animation: float-note 4s ease-out infinite; }
 
+        /* KEYFRAMES CHO CHUYỂN CẢNH MỞ ĐÔI (Split Transition) */
+        @keyframes split-up { 
+            0% { transform: translateY(0); opacity: 1; } 
+            100% { transform: translateY(-100%); opacity: 0; } 
+        }
+        @keyframes split-down { 
+            0% { transform: translateY(0); opacity: 1; } 
+            100% { transform: translateY(100%); opacity: 0; } 
+        }
+        .animate-split-up { animation: split-up 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .animate-split-down { animation: split-down 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
         .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
         .art-paper-bg {
            background-color: #F8F4ED;
@@ -283,16 +324,17 @@ export default function WeddingCardPage() {
         }
       `}} />
 
-      {/* MÀN HÌNH CHÀO BẮT ĐẦU */}
+      {/* THAY ĐỔI: Chỉnh sửa màn hình chào với bộ đếm phần trăm */}
       <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBF7] transition-all duration-1000 ease-in-out ${showSplash ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
          <div className="flex flex-col items-center justify-center text-center px-6">
             <span className="text-[#8C7A6B] text-4xl mb-4 animate-bounce">❦</span>
-            <h2 className="text-3xl md:text-4xl font-serif text-[#5C4F44] italic mb-6 leading-relaxed">Chào mừng bạn đến với<br/>Lễ Cưới của chúng tôi</h2>
-            <div className="flex items-center gap-2">
+            <h2 className="text-3xl md:text-4xl font-serif text-[#5C4F44] italic mb-6 leading-relaxed">Kết nối trái tim Loading...</h2>
+            <div className="relative flex items-center justify-center">
                 <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping"></div>
-                <p className="text-[10px] md:text-xs text-[#8C7A6B] tracking-[0.3em] uppercase">Đang tải thiệp mời</p>
-                <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping delay-150"></div>
+                <div className="w-1.5 h-1.5 bg-[#8C7A6B] rounded-full animate-ping delay-150 ml-1.5"></div>
             </div>
+            {/* Bộ đếm phần trăm */}
+            <div className="mt-8 text-xl font-sans font-bold text-[#8C7A6B] tracking-widest">{loadingPercentage}%</div>
          </div>
       </div>
 
@@ -331,36 +373,30 @@ export default function WeddingCardPage() {
           <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl md:rounded-lg border-x border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
               {/* =========================================================
-                  CẢNH GRAMOPHONE (MÁY PHÁT NHẠC CỔ ĐIỂN SIÊU CHI TIẾT)
+                  CẢNH GRAMOPHONE (BIRD'S-EYE VIEW - CHI TIẾT SIÊU MƯỢT)
                  ========================================================= */}
               {cardState === 'gramophone' && (
-              <div 
-                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-[60] flex flex-col items-center justify-center transition-all duration-[1200ms] ease-in-out
-                      ${gramophoneStage === 'end' ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100'}
-                  `}
-              >
+              <div className="absolute inset-0 w-full h-full bg-[#FDFBF7] z-[60] flex flex-col items-center justify-center">
                   <LuxuryCorner className="top-4 left-4" />
                   <LuxuryCorner className="top-4 right-4 rotate-90" />
                   <LuxuryCorner className="bottom-4 right-4 rotate-180" />
                   <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
 
-                  {/* KHỐI MÁY PHÁT NHẠC */}
-                  <div className="relative w-72 h-80 mx-auto mt-12 mb-4 drop-shadow-2xl">
+                  {/* KHỐI MÁY PHÁT NHẠC (Phần trên - split up) */}
+                  <div className={`relative w-72 h-80 mx-auto mt-12 mb-4 drop-shadow-2xl flex items-center justify-center transition-transform duration-[1200ms] ease-in-out origin-center
+                      ${gramophoneStage === 'end' ? 'animate-split-up' : ''}
+                  `}>
                       
-                      {/* 1. Hộp gỗ */}
+                      {/* 1. Hộp gỗ (Đế) */}
                       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-64 h-24 bg-gradient-to-b from-[#8b5a2b] to-[#4a2e1b] rounded-b-xl shadow-[0_15px_30px_rgba(0,0,0,0.5)] border-t-[8px] border-[#a06b3a] z-10 flex justify-center">
                           <div className="absolute -bottom-2 left-6 w-5 h-4 bg-gradient-to-b from-[#3a2210] to-[#1a0f05] rounded-b-lg shadow-md"></div>
                           <div className="absolute -bottom-2 right-6 w-5 h-4 bg-gradient-to-b from-[#3a2210] to-[#1a0f05] rounded-b-lg shadow-md"></div>
-                          
-                          {/* Nhãn hiệu đồng */}
                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-8 bg-gradient-to-r from-[#d4af37] via-[#fff8dc] to-[#aa801e] rounded-sm shadow-md border border-[#8b6508] flex items-center justify-center">
                               <div className="w-16 h-5 border border-[#8b6508]/40 flex items-center justify-center gap-3">
                                   <div className="w-1.5 h-1.5 bg-[#8b6508] rounded-full shadow-inner"></div>
                                   <div className="w-1.5 h-1.5 bg-[#8b6508] rounded-full shadow-inner"></div>
                               </div>
                           </div>
-                          
-                          <div className="absolute top-2 left-2 right-2 bottom-2 border border-black/15 rounded-b-lg pointer-events-none"></div>
                       </div>
 
                       {/* 2. Đĩa than */}
@@ -368,13 +404,10 @@ export default function WeddingCardPage() {
                            ${gramophoneStage >= 'playing' ? 'animate-spin-record' : ''}`}
                            style={{ backgroundImage: 'repeating-radial-gradient(circle, #111 0, #111 3px, #2a2a2a 4px, #111 5px)' }}>
                           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/0 via-white/10 to-white/0 transform rotate-45 pointer-events-none"></div>
-                          <div className="absolute inset-0 rounded-full bg-gradient-to-bl from-white/0 via-white/5 to-white/0 transform -rotate-45 pointer-events-none"></div>
-                          
                           <div className="w-16 h-16 bg-gradient-to-br from-[#c4a682] to-[#8C7A6B] rounded-full flex flex-col items-center justify-center border-2 border-[#5C4F44] shadow-inner relative">
                               <span className="text-[6px] uppercase tracking-widest text-[#4A3C31] font-bold mt-1">Wedding</span>
                               <span className="text-[10px] font-serif text-[#4A3C31] italic">Hải & Trung</span>
                               <div className="w-3 h-3 bg-[#000] rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-sm border border-gray-700"></div>
-                              <div className="w-1.5 h-1.5 bg-gradient-to-br from-gray-200 to-gray-500 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 shadow-[0_0_3px_rgba(0,0,0,0.8)]"></div>
                           </div>
                       </div>
 
@@ -391,7 +424,7 @@ export default function WeddingCardPage() {
                           </div>
                       </div>
 
-                      {/* 4. Loa kèn vàng (Brass Horn) - Xoay nhẹ sang trái cho đúng phối cảnh */}
+                      {/* 4. Loa kèn vàng (Brass Horn) - Bird's-eye view scale nhẹ cho đúng phối cảnh */}
                       <div className="absolute -top-6 -right-16 w-64 h-64 z-0 pointer-events-none drop-shadow-[0_20px_30px_rgba(0,0,0,0.3)] transform -rotate-[15deg] scale-x-[-1]">
                           <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
                               <defs>
@@ -410,8 +443,6 @@ export default function WeddingCardPage() {
                               </defs>
                               <path d="M40,180 Q20,130 50,90 C80,50 120,20 180,10 C160,50 140,80 110,120 C80,160 60,170 40,180 Z" fill="url(#brass-grad)"/>
                               <ellipse cx="150" cy="40" rx="38" ry="75" transform="rotate(50 150 40)" fill="url(#horn-depth)" stroke="url(#brass-grad)" strokeWidth="6"/>
-                              <path d="M120,10 Q150,0 178,20" stroke="#fff8dc" strokeWidth="1.5" fill="none" opacity="0.6" transform="rotate(50 150 40)"/>
-                              <path d="M110,35 Q140,20 185,50" stroke="#fff8dc" strokeWidth="1.5" fill="none" opacity="0.4" transform="rotate(50 150 40)"/>
                           </svg>
                       </div>
                       
@@ -425,11 +456,14 @@ export default function WeddingCardPage() {
                       )}
                   </div>
 
-                  {/* VĂN BẢN CHÀO MỪNG */}
-                  <div className="relative mt-2 h-32 flex flex-col items-center w-full px-6 text-[#5C4F44]">
-                    <p className={`absolute top-0 transition-all duration-1000 ease-out text-2xl font-serif italic text-[#8C7A6B] 
+                  {/* KHỐI VĂN BẢN Seq (Phần dưới - split down) */}
+                  <div className={`relative mt-2 h-32 flex flex-col items-center w-full px-6 transition-transform duration-[1200ms] ease-in-out
+                      ${gramophoneStage === 'end' ? 'animate-split-down' : ''}
+                  `}>
+                    {/* THAY ĐỔI: Sử dụng Sans font cho cả 3 câu văn bản chào mừng */}
+                    <p className={`absolute top-0 transition-all duration-1000 ease-out text-lg font-sans italic text-[#8C7A6B] font-bold 
                         ${gramophoneStage >= 'text1' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                      ❦ Xin chào bạn... ❦
+                      ❦ Xin chào bạn,... ❦
                     </p>
                     <p className={`absolute top-12 transition-all duration-1000 ease-out text-[15px] font-sans tracking-wide leading-relaxed text-center font-medium
                         ${gramophoneStage >= 'text2' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
@@ -443,7 +477,7 @@ export default function WeddingCardPage() {
               </div>
               )}
 
-              {/* === BÌA THIỆP (Z-50 khi chưa mở) === */}
+              {/* === BÌA THIỆP === */}
               {cardState !== 'done' && cardState !== 'gramophone' && (
               <div 
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col items-center justify-center text-center px-4 md:px-6 
@@ -464,6 +498,16 @@ export default function WeddingCardPage() {
                      <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
                   
+                  {/* THAY ĐỔI: Các hoa lắc qua lắc lại -> chuyển động lên xuống */}
+                  <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[15]">
+                     {FOREST_FLOWERS.map((flower) => (
+                        <div key={flower.id} className="absolute" style={{ left: flower.left, bottom: flower.bottom, width: flower.width, transform: `rotate(${flower.rotate})`, animation: `float-vertical ${flower.duration} ease-in-out infinite`, animationDelay: flower.delay }}>
+                            <img src={flower.src} alt="Flower" className="w-full h-auto origin-bottom opacity-90" />
+                        </div>
+                     ))}
+                  </div>
+
+                  {/* THAY ĐỔI: Hiệu ứng mở thiệp, trái tim bung ra được cho xuất hiện lại */}
                   {cardState === 'bursting' && (
                       <div className="absolute top-1/2 left-1/2 pointer-events-none transform -translate-x-1/2 -translate-y-1/2 z-40 w-full h-full">
                           {GENTLE_CONFETTI.map((p) => (
@@ -478,10 +522,10 @@ export default function WeddingCardPage() {
 
                   <div className={`relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full transition-opacity duration-300 ${cardState === 'bursting' ? 'opacity-0' : 'opacity-100'}`}>
                     
-                    <div className="relative mb-6">
-                      <div className="relative z-10 bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-luxury-btn">
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                      </div>
+                    <div className="relative mb-6 mt-2">
+                        <div className="relative z-10 bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-luxury-btn group">
+                          <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </div>
                     </div>
 
                     <h1 className="text-5xl md:text-6xl font-serif text-[#5C4F44] font-light mb-2">Đỗ Trung</h1>
@@ -496,7 +540,7 @@ export default function WeddingCardPage() {
 
                     <p className="text-[#8C7A6B] text-lg md:text-xl font-serif tracking-wide mb-12">3 tháng 1, 2027</p>
 
-                    <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-10 md:px-12 py-3.5 md:py-4 bg-[#8C7A6B] text-white text-[13px] md:text-[14px] uppercase tracking-widest rounded-full shadow-luxury-btn hover:bg-[#7A6A5E] transition-all duration-300">
+                    <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-10 md:px-12 py-3.5 md:py-4 bg-[#8C7A6B] text-white text-[13px] md:text-[14px] uppercase tracking-widest rounded-full shadow-luxury-btn hover:bg-[#7A6A5E] transition-all duration-300 relative z-50">
                         Mở thiệp
                     </button>
                   </div>
@@ -522,18 +566,30 @@ export default function WeddingCardPage() {
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
                             <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
+                            <div className="absolute inset-0 pointer-events-none z-10">
+                                {DRESS_SPARKLES.map((sparkle) => (
+                                    <svg key={`sp-${sparkle.id}`} className="absolute text-white animate-sparkle drop-shadow-md" style={{ bottom: sparkle.bottom, left: sparkle.left, width: sparkle.size, height: sparkle.size, animationDelay: sparkle.delay }} viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                                    </svg>
+                                ))}
+                            </div>
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
+                        
+                        {/* THAY ĐỔI: Ảnh đầu thêm lại phần hoa dưới góc trái, lắc -> lên xuống */}
+                        <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto" style={{ filter: 'drop-shadow(4px 10px 8px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        </div>
                      </div>
 
                      {/* THẺ THÔNG TIN LỄ CƯỚI */}
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] mt-12 mb-8 border border-[#EAE3DB]">
                          
-                         {/* THAY ĐỔI: Thêm Lá vào góc dưới bên trái của thẻ thông tin lễ cưới */}
-                         <div className="absolute -bottom-[50px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'sway-slow 6s ease-in-out infinite' }}>
-                             <img src="/HoaT1.png" alt="Hoa" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                         {/* THAY ĐỔI: Thông tin lễ cưới cho lại phần hoa bên trên góc phải, lắc -> lên xuống */}
+                         <div className="absolute top-[-50px] -right-[25px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                             <img src="/goc1.png" alt="Hoa goc" className="w-[140px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
-
+                         
                          <div className="px-6 pt-12 pb-16 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
@@ -577,9 +633,9 @@ export default function WeddingCardPage() {
                          </div>
                      </div>
 
-                     {/* KHU VỰC ALBUM ẢNH */}
+                     {/* KHU VỰC ALBUM ẢNH (2x2 grid như cũ) */}
+                     {/* THAY ĐỔI: Phục hồi phần album cho phần hiển thị nhiều ảnh như cũ (lưới 2x2) */}
                      <FadeIn delay={100} className="relative w-full flex flex-col items-center mt-12 mb-16 z-20">
-                         {/* THAY ĐỔI: Đã xóa lá ở Album ảnh */}
                          
                          <h3 className="text-[#5C4F44] font-serif text-xl tracking-[0.25em] uppercase font-bold mb-10 text-center drop-shadow-sm">Album Ảnh</h3>
                          
@@ -599,6 +655,13 @@ export default function WeddingCardPage() {
                                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
                                         onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
                                     />
+                                    
+                                    {/* Lớp phủ đen và chữ +1 ở bức ảnh thứ 4 */}
+                                    {idx === 3 && ALBUM_IMAGES.length > 4 && (
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
+                                            <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 4 + 1}</span>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                          </div>
