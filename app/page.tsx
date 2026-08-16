@@ -464,7 +464,7 @@ export default function WeddingCardPage() {
 
                     <p className={`absolute top-24 transition-all duration-1000 ease-out text-[13px] md:text-[15px] force-serif font-bold tracking-[0.25em] text-[#8C7A6B] uppercase
                         ${stageProgress >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                      Xin Cảm Ơn
+                      Xin Cảm Ơn!
                     </p>
                   </div>
               </div>
