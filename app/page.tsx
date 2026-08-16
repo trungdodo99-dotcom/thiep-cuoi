@@ -78,7 +78,6 @@ const GoldenVintageOrnaments = ({ className = "" }: { className?: string }) => (
   </div>
 );
 
-// Họa tiết dải ngang hoàng gia cổ điển
 const VintageDivider = () => (
   <div className="flex items-center justify-center w-full my-3 opacity-70">
      <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-[#C3B09B]"></div>
@@ -186,7 +185,6 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
-    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
@@ -217,7 +215,6 @@ export default function WeddingCardPage() {
 
     if (time >= 7.5 && stageProgress < 3) setStageProgress(3);
 
-    // Dừng video máy hát ở giây 9.5
     if (time >= 9.5 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -570,16 +567,17 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        {/* Hoa góc dưới bên trái Ảnh 1 (Tăng nhẹ kích thước) */}
+                        <div className="absolute -bottom-[40px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[160px] md:w-[200px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
                  </div>
 
-                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI (Đã thu gọn khoảng cách) */}
+                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
-                     <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
-                         <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                     <div className="absolute top-[-40px] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right">
+                         <img src="/goc1.png" alt="Hoa goc" className="w-[180px] md:w-[220px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
@@ -589,11 +587,10 @@ export default function WeddingCardPage() {
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
 
-                         <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
-                             <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                         <div className="absolute -bottom-[80px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                             <img src="/HoaT1.png" alt="Hoa" className="w-[200px] md:w-[250px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         {/* Khoảng cách Padding được thu nhỏ lại (pt-16 pb-16 thay vì pt-20 pb-24) */}
                          <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-5">Thông Tin Lễ Cưới</h3>
 
@@ -614,7 +611,6 @@ export default function WeddingCardPage() {
 
                              <VintageDivider />
 
-                             {/* Rút ngắn margin */}
                              <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-relaxed mb-4 mt-3">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
                              <div className="w-full flex flex-col items-center">
@@ -627,7 +623,6 @@ export default function WeddingCardPage() {
 
                              <VintageDivider />
 
-                             {/* Rút ngắn margin */}
                              <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-relaxed mb-3 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
                              <div className="text-3xl force-serif text-[#5C4F44] mb-4">09:00</div>
 
@@ -644,7 +639,7 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* THẺ 2: ALBUM ẢNH (Đảo vị trí lên trước Tiệc Cưới) */}
+                 {/* THẺ 2: ALBUM ẢNH */}
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-12 z-20 px-2">
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                          
@@ -683,16 +678,16 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
+                 {/* THẺ 3: THÔNG TIN TIỆC CƯỚI (PHÓNG TO LÁ GẤP 2.5 LẦN) */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
-                     {/* Lá bên phải */}
-                     <div className="absolute top-[10%] right-[-25px] md:right-[-35px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
-                         <img src="/La_phai.png" alt="Lá" className="w-[100px] md:w-[170px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                     {/* Lá bên phải (To gấp 2.5 lần và lùi biên) */}
+                     <div className="absolute top-[5%] right-[-70px] md:right-[-90px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                         <img src="/La_phai.png" alt="Lá" className="w-[250px] md:w-[325px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                      </div>
 
-                     {/* Hoa khô bên trái */}
-                     <div className="absolute bottom-[5%] left-[-30px] md:left-[-40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[120px] md:w-[150px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                     {/* Hoa khô bên trái (To gấp 2.5 lần và lùi biên) */}
+                     <div className="absolute bottom-[5%] left-[-80px] md:left-[-100px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[300px] md:w-[375px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
