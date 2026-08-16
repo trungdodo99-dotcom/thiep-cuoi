@@ -89,7 +89,8 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-const FadeIn = ({ children, delay = 0, threshold = 0.15, className = "" }: { children: React.ReactNode, delay?: number, threshold?: number, className?: string }) => {
+// Nâng cấp FadeIn: Tăng tốc độ xuất hiện (duration 700ms, translate-y-6) để nhanh nhẹn hơn nhưng vẫn mượt
+const FadeIn = ({ children, delay = 0, threshold = 0.05, className = "" }: { children: React.ReactNode, delay?: number, threshold?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -108,7 +109,7 @@ const FadeIn = ({ children, delay = 0, threshold = 0.15, className = "" }: { chi
   }, [threshold]);
 
   return (
-    <div ref={ref} className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div ref={ref} className={`transition-all duration-[700ms] ease-out w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
@@ -150,36 +151,22 @@ export default function WeddingCardPage() {
     }
   }, []);
 
-  // Xử lý Auto-Scroll siêu mượt với gia tốc trên Mobile
+  // Xử lý Auto-Scroll chống rung giật cực êm bằng setInterval
   useEffect(() => {
-    let animationFrameId: number;
-    let lastTime = performance.now();
-    let scrollAccumulator = 0;
+    let scrollInterval: NodeJS.Timeout;
     
-    const smoothScroll = (currentTime: number) => {
-      if (isAutoScrolling && scrollRef.current) {
-        const deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-        
-        scrollAccumulator += deltaTime * 0.04; 
-        
-        if (scrollAccumulator >= 1) {
-            const pixelsToScroll = Math.floor(scrollAccumulator);
-            scrollRef.current.scrollTop += pixelsToScroll;
-            scrollAccumulator -= pixelsToScroll;
-        }
-        
-        animationFrameId = requestAnimationFrame(smoothScroll);
-      }
-    };
-
-    if (isAutoScrolling) {
-      lastTime = performance.now();
-      scrollAccumulator = 0;
-      animationFrameId = requestAnimationFrame(smoothScroll);
+    if (isAutoScrolling && scrollRef.current) {
+        // Tốc độ: 1 pixel mỗi 25ms (~ 40px mỗi giây). Cách này trượt cực kỳ đều đặn và êm trên Mobile.
+        scrollInterval = setInterval(() => {
+            if (scrollRef.current) {
+                scrollRef.current.scrollTop += 1;
+            }
+        }, 25);
     }
 
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => {
+        if (scrollInterval) clearInterval(scrollInterval);
+    };
   }, [isAutoScrolling]);
 
   // Đồng bộ thời gian Video & Kích hoạt Audio
@@ -190,18 +177,19 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
-    // Đúng giây thứ 4.5, kích hoạt bài hát (Hòa cùng tiếng rột roạt của đĩa than)
+    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát (Bật tiếng MP3 hòa cùng hộp nhạc)
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
         
         if (audioRef.current) {
-            audioRef.current.currentTime = 0; // Bắt đầu lại từ đầu bài hát
+            audioRef.current.currentTime = 0; // Bắt đầu lại bài hát từ giây 0
+            audioRef.current.muted = false;   // Bật lại tiếng (Rất quan trọng cho Mobile)
+            
+            // Fade-in volume mượt mà trên PC (iOS sẽ lấy âm lượng thật của máy)
+            audioRef.current.volume = 0;
             audioRef.current.play().then(() => {
-                setIsMusicPlaying(true); // Cập nhật đúng trạng thái nút
-                
-                // Hiệu ứng Fade-in âm lượng cho mượt (Hoạt động tốt trên PC, iOS sẽ tự động phát mức âm thiết bị)
-                audioRef.current!.volume = 0;
+                setIsMusicPlaying(true);
                 let vol = 0;
                 const fadeInterval = setInterval(() => {
                     vol += 0.05;
@@ -221,7 +209,7 @@ export default function WeddingCardPage() {
 
     if (time >= 7.5 && stageProgress < 3) setStageProgress(3);
 
-    // Dừng máy hát ở giây 9.5
+    // Dừng video máy hát ở giây 9.5
     if (time >= 9.5 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -238,17 +226,15 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
-    // Bật tiếng Video đĩa than
+    // 1. Gỡ muted cho Video đĩa than để CÓ TIẾNG RỘT ROẠT
     setIsVideoMuted(false);
 
-    // MỞ KHÓA AUDIO CHO MOBILE: Phát một mili-giây rồi Dừng ngay lập tức
-    // Cách này giúp Audio được cấp quyền mà không phát tiếng lộn xộn ở màn hình ngoài
+    // 2. MỞ KHÓA AUDIO CHO MOBILE (Kích hoạt chạy ngầm TẮT TIẾNG)
     if (audioRef.current) {
+        audioRef.current.muted = true; // Chặn tiếng hoàn toàn ở màn hình bìa
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
-            playPromise.then(() => {
-                audioRef.current?.pause();
-            }).catch(e => console.log("Audio unlock failed", e));
+            playPromise.catch(e => console.log("Audio unlock failed", e));
         }
     }
 
@@ -258,7 +244,7 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
-      // Phát Video chính thức có hình có tiếng
+      // Phát Video đĩa than chính thức (Có âm thanh rột roạt)
       if (videoRef.current) {
           videoRef.current.currentTime = 0;
           videoRef.current.play().catch(e => console.log(e));
@@ -416,7 +402,7 @@ export default function WeddingCardPage() {
                       ${stageProgress === 4 ? 'animate-split-up' : ''}
                   `}>
                       {showMusicTitle && (
-                          /* THIẾT KẾ MỚI CHO TAG BÀI HÁT: Sang trọng, kính mờ (Glassmorphism), phong cách Châu Âu */
+                          /* THIẾT KẾ TAG BÀI HÁT: Tinh tế, kính mờ (Glassmorphism), chuẩn Châu Âu */
                           <div className="absolute top-4 right-[-10px] bg-white/85 backdrop-blur-md border border-[#EAE3DB] rounded-l-full pr-1 pl-4 py-1.5 flex items-center gap-2 animate-slide-in-right shadow-[0_4px_15px_rgba(0,0,0,0.06)] z-50">
                               <div className="overflow-hidden w-[140px] relative">
                                   <div className="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-white/90 to-transparent z-10 pointer-events-none"></div>
@@ -432,7 +418,7 @@ export default function WeddingCardPage() {
                       )}
 
                       <div className="relative w-full flex items-center justify-center z-10">
-                          {/* Sửa Video: Đặt muted theo state (Khóa ban đầu, mở bằng click) */}
+                          {/* Đã thêm muted liên kết State để quản lý linh hoạt */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
@@ -550,7 +536,7 @@ export default function WeddingCardPage() {
                       ${cardState === 'done' ? 'z-50 overflow-y-auto overflow-x-hidden pb-24' : 'z-10 overflow-hidden'}
                   `}
                   style={{ WebkitOverflowScrolling: 'touch', transform: 'translateZ(0)' }}
-                  /* Hủy auto-scroll khi người dùng tự thao tác */
+                  /* Hủy auto-scroll khi người dùng tự thao tác (Bao gồm cả touchMove) */
                   onTouchStart={() => setIsAutoScrolling(false)}
                   onTouchMove={() => setIsAutoScrolling(false)}
                   onWheel={() => setIsAutoScrolling(false)}
@@ -574,7 +560,7 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - Tăng threshold lên 0.05 để hiện ra CỰC NHANH khi cuộn */}
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - Tăng độ nhạy hiện ra (ngắn & nhanh hơn) */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-8 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
@@ -629,7 +615,7 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* ALBUM ẢNH - Đặt lại Threshold 0.05 để hiện ra sớm ngang với thẻ trên */}
+                 {/* ALBUM ẢNH - Bật nhanh */}
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-12 mb-16 z-20">
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center">
                          <h3 className="text-[#5C4F44] force-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
