@@ -16,7 +16,6 @@ const PARTICLES = [
   { id: 8, left: "15%", delay: "5s", duration: "21s", size: "11px", content: "✿" },
 ];
 
-// Tạo hiệu ứng trái tim nhỏ tỏa ra khi ấn nút
 const GENTLE_CONFETTI = Array.from({ length: 60 }).map((_, i) => {
   const shapes = ['heart', 'heart', 'heart', 'bubble', 'bubble']; 
   const colors = ['#FFC0CB', '#FF99C2', '#FFD1DC', '#FFE4E1', '#8C7A6B', '#FFFFFF'];
@@ -90,7 +89,6 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-// Nâng cấp FadeIn: Có thêm thuộc tính threshold để chỉnh độ nhạy hiện ra
 const FadeIn = ({ children, delay = 0, threshold = 0.15, className = "" }: { children: React.ReactNode, delay?: number, threshold?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -129,6 +127,9 @@ export default function WeddingCardPage() {
   // Trạng thái hiện chữ và máy hát
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
+  
+  // Quản lý tắt tiếng của Video (Bắt buộc true lúc đầu để vượt rào Mobile)
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
@@ -149,7 +150,7 @@ export default function WeddingCardPage() {
     }
   }, []);
 
-  // KHẮC PHỤC LỖI TRƯỢT RUNG RUNG TRÊN MOBILE (Time-based scroll)
+  // Xử lý Auto-Scroll chống rung (Time-based scroll)
   useEffect(() => {
     let animationFrameId: number;
     let lastTime = performance.now();
@@ -160,10 +161,8 @@ export default function WeddingCardPage() {
         const deltaTime = currentTime - lastTime;
         lastTime = currentTime;
         
-        // Tốc độ: 0.04 pixel mỗi mili-giây (~ 2.4px / frame 60fps)
         scrollAccumulator += deltaTime * 0.04; 
         
-        // Chỉ trượt khi tích lũy đủ 1 pixel tròn để tránh màn hình Mobile bị giật (Jitter)
         if (scrollAccumulator >= 1) {
             const pixelsToScroll = Math.floor(scrollAccumulator);
             scrollRef.current.scrollTop += pixelsToScroll;
@@ -192,13 +191,13 @@ export default function WeddingCardPage() {
           let vol = 0;
           const fadeInterval = setInterval(() => {
               vol += 0.05;
-              if (vol >= 0.6) {
+              if (vol >= 0.7) { 
                   clearInterval(fadeInterval);
-                  if(audioRef.current) audioRef.current.volume = 0.6;
+                  if(audioRef.current) audioRef.current.volume = 0.7;
               } else {
                   if(audioRef.current) audioRef.current.volume = vol;
               }
-          }, 200);
+          }, 150);
       }).catch(e => console.error("Audio block:", e));
   };
 
@@ -209,6 +208,7 @@ export default function WeddingCardPage() {
     if (time >= 2 && stageProgress < 1) setStageProgress(1);
     if (time >= 3.5 && stageProgress < 2) setStageProgress(2);
     
+    // Đúng giây thứ 4 phát MP3, cả 2 sẽ hòa âm vào nhau
     if (time >= 4 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
@@ -217,7 +217,7 @@ export default function WeddingCardPage() {
 
     if (time >= 7 && stageProgress < 3) setStageProgress(3);
 
-    // Dừng Video dứt điểm
+    // Giây 9 thì cắt bỏ tiếng và hình video máy hát
     if (time >= 9 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -234,11 +234,17 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
-    // CHỈ "mở khóa" Audio tại đây. GỠ BỎ mẹo chạy/dừng Video để Mobile không bị lỗi play 2 lần.
+    // 1. Gỡ muted cho video để khi chạy sẽ CÓ TIẾNG
+    setIsVideoMuted(false);
+
+    // 2. Mở khóa Audio & Video trên Mobile (Ngay trong Click event để không bị chặn)
     if (audioRef.current) {
-        audioRef.current.volume = 0;
-        const p2 = audioRef.current.play();
-        if (p2 !== undefined) p2.then(() => audioRef.current?.pause()).catch(e => console.log(e));
+        const p1 = audioRef.current.play();
+        if (p1 !== undefined) p1.then(() => audioRef.current?.pause()).catch(e => console.log(e));
+    }
+    if (videoRef.current) {
+        const p2 = videoRef.current.play();
+        if (p2 !== undefined) p2.then(() => videoRef.current?.pause()).catch(e => console.log(e));
     }
 
     setCardState('bursting');
@@ -248,7 +254,7 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
-      // KHI NÀY CHUYỂN SANG CẢNH HỘP NHẠC THÌ MỚI PLAY VIDEO CHÍNH THỨC
+      // Phát video chính thức với tiếng 
       if (videoRef.current) {
           videoRef.current.currentTime = 0;
           videoRef.current.play().catch(e => console.log(e));
@@ -424,7 +430,7 @@ export default function WeddingCardPage() {
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
-                              muted 
+                              muted={isVideoMuted}
                               playsInline
                               onTimeUpdate={handleVideoTimeUpdate}
                               className="w-full h-auto object-cover scale-[1.02] z-10"
@@ -560,7 +566,7 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - Nâng cấp FadeIn xuất hiện siêu nhanh (Chỉ 5% viền hiện lên là Fade) */}
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - Tăng threshold lên 0.05 để hiện ra CỰC NHANH khi cuộn */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-8 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
