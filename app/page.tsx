@@ -234,13 +234,24 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
+    // 1. Gỡ tắt tiếng cho Video
     setIsVideoMuted(false);
 
+    // 2. Kích hoạt Audio nền chạy nháp (Tắt tiếng) để vượt rào Safari
     if (audioRef.current) {
         audioRef.current.muted = true; 
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
             playPromise.catch(e => console.log("Audio unlock failed", e));
+        }
+    }
+
+    // 3. CHẠY VIDEO NGAY LẬP TỨC ĐỂ KHÔNG BỊ LOAD TRỄ TRÊN MOBILE
+    if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(e => console.log("Video unlock failed", e));
         }
     }
 
@@ -250,10 +261,7 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
-      if (videoRef.current) {
-          videoRef.current.currentTime = 0;
-          videoRef.current.play().catch(e => console.log(e));
-      }
+      // Không cần phải bắt Video chạy lại ở đây nữa vì nó đang chạy sẵn rất mượt rồi
     }, 2500); 
   };
 
@@ -422,11 +430,13 @@ export default function WeddingCardPage() {
                       )}
 
                       <div className="relative w-full flex items-center justify-center z-10">
+                          {/* Đã thêm preload="auto" để tải sẵn video trên Mobile */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
                               muted={isVideoMuted} 
                               playsInline
+                              preload="auto"
                               onTimeUpdate={handleVideoTimeUpdate}
                               className="w-full h-auto object-cover scale-[1.02] z-10"
                               style={{ mixBlendMode: 'multiply' }}
@@ -570,16 +580,14 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - XÓA BỎ overflow-hidden ĐỂ LÁ TRÀN RA NGOÀI ĐƯỢC */}
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - TRÀN LÁ MƯỢT MÀ */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
-                     {/* Khối này ĐÃ XÓA overflow-hidden */}
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
                          
-                         {/* THÊM 4 GÓC HOÀNG GIA CHO THẺ THÔNG TIN */}
                          <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
@@ -637,11 +645,10 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* ALBUM ẢNH - Khối này ĐÃ XÓA overflow-hidden */}
+                 {/* ALBUM ẢNH */}
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-12 mb-20 z-20 px-2">
-                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center">
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                          
-                         {/* THÊM 4 GÓC HOÀNG GIA CHO THẺ ALBUM */}
                          <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
