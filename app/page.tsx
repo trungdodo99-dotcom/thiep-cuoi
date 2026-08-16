@@ -148,14 +148,13 @@ export default function WeddingCardPage() {
     }
   }, []);
 
-  // Xử lý Auto-Scroll MƯỢT NHƯ NHUNG trên Mobile
+  // Xử lý Auto-Scroll
   useEffect(() => {
     let animationFrameId: number;
     let currentScrollY = scrollRef.current?.scrollTop || 0;
     
     const smoothScroll = () => {
       if (isAutoScrolling && scrollRef.current) {
-        // Cộng dồn bằng số thập phân độc lập với DOM (Fix rung giật)
         currentScrollY += 0.4; 
         scrollRef.current.scrollTop = currentScrollY;
         animationFrameId = requestAnimationFrame(smoothScroll);
@@ -163,7 +162,6 @@ export default function WeddingCardPage() {
     };
 
     if (isAutoScrolling) {
-      // Bắt đầu cuộn: Đồng bộ vị trí thực tế hiện tại vào biến ảo
       currentScrollY = scrollRef.current?.scrollTop || 0; 
       animationFrameId = requestAnimationFrame(smoothScroll);
     }
@@ -521,12 +519,12 @@ export default function WeddingCardPage() {
               </div>
 
               {/* === RUỘT THIỆP CHÍNH === */}
+              {/* Thêm overflow-x-hidden vào wrapper tổng để chống thanh cuộn ngang khi hoa tràn ra, đồng thời bỏ overflow-hidden ở các thẻ con */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative custom-scrollbar
-                      ${cardState === 'done' ? 'z-50 overflow-y-auto pb-24' : 'z-10 overflow-hidden'}
+                      ${cardState === 'done' ? 'z-50 overflow-y-auto overflow-x-hidden pb-24' : 'z-10 overflow-hidden'}
                   `}
-                  /* Hủy auto-scroll khi người dùng tự thao tác */
                   onTouchStart={() => setIsAutoScrolling(false)}
                   onWheel={() => setIsAutoScrolling(false)}
               >
@@ -551,8 +549,8 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - ĐÃ FIX LỖI ĐÈ CHỮ */}
-                 <div className="relative w-full flex justify-center mt-6 mb-8 overflow-hidden md:overflow-visible px-2">
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - Đã bỏ overflow-hidden ở div này */}
+                 <div className="relative w-full flex justify-center mt-8 mb-12 px-2">
                      {/* Hoa goc1 - Ghim sát mếp phải, dạt ra ngoài */}
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
@@ -566,7 +564,6 @@ export default function WeddingCardPage() {
                              <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         {/* Tăng padding top và bottom để chữ nằm thỏm vào giữa, xa lá */}
                          <div className="px-5 md:px-6 pt-20 pb-24 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
