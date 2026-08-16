@@ -575,7 +575,7 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI - SỬA LẠI THÀNH HoaT2 */}
+                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
@@ -588,9 +588,9 @@ export default function WeddingCardPage() {
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
 
-                         {/* THAY ĐỔI THEO YÊU CẦU: DÙNG HoaT2 Ở GÓC DƯỚI THÔNG TIN LỄ CƯỚI */}
-                         <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
-                             <img src="/HoaT2.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT2.jpg"; }} />
+                         {/* THAY ĐỔI THEO YÊU CẦU: Phóng to HoaT2 gấp ~2.5 lần và căn lại góc */}
+                         <div className="absolute -bottom-[90px] -left-[80px] md:-bottom-[110px] md:-left-[100px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                             <img src="/HoaT2.png" alt="Hoa" className="w-[280px] md:w-[320px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT2.jpg"; }} />
                          </div>
 
                          <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
