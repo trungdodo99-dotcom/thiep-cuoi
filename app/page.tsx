@@ -133,12 +133,8 @@ export default function WeddingCardPage() {
 
   // Trạng thái Bìa
   const [cardState, setCardState] = useState<'idle' | 'bursting' | 'opening' | 'gramophone' | 'done'>('idle');
-  
-  // Trạng thái hiện chữ và máy hát
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
-  
-  // Trạng thái tắt tiếng Video
   const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -154,16 +150,12 @@ export default function WeddingCardPage() {
   useEffect(() => {
     setIsMounted(true);
     setTimeout(() => setIsPageLoaded(true), 150);
-
-    if (audioRef.current) {
-        audioRef.current.loop = true; 
-    }
+    if (audioRef.current) { audioRef.current.loop = true; }
   }, []);
 
-  // Xử lý Auto-Scroll chống rung giật cực êm bằng setInterval
+  // Xử lý Auto-Scroll chống rung
   useEffect(() => {
     let scrollInterval: NodeJS.Timeout;
-    
     if (isAutoScrolling && scrollRef.current) {
         scrollInterval = setInterval(() => {
             if (scrollRef.current) {
@@ -171,13 +163,9 @@ export default function WeddingCardPage() {
             }
         }, 25);
     }
-
-    return () => {
-        if (scrollInterval) clearInterval(scrollInterval);
-    };
+    return () => { if (scrollInterval) clearInterval(scrollInterval); };
   }, [isAutoScrolling]);
 
-  // Đồng bộ thời gian Video & Kích hoạt Audio
   const handleVideoTimeUpdate = () => {
     if (!videoRef.current) return;
     const time = videoRef.current.currentTime;
@@ -185,15 +173,12 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
-    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
-        
         if (audioRef.current) {
             audioRef.current.currentTime = 0; 
             audioRef.current.muted = false;   
-            
             audioRef.current.volume = 0;
             audioRef.current.play().then(() => {
                 setIsMusicPlaying(true);
@@ -216,7 +201,6 @@ export default function WeddingCardPage() {
 
     if (time >= 7.5 && stageProgress < 3) setStageProgress(3);
 
-    // Dừng video máy hát ở giây 9.5
     if (time >= 9.5 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -234,7 +218,6 @@ export default function WeddingCardPage() {
     if (cardState !== 'idle') return;
 
     setIsVideoMuted(false);
-
     if (audioRef.current) {
         audioRef.current.muted = true; 
         const playPromise = audioRef.current.play();
@@ -242,7 +225,6 @@ export default function WeddingCardPage() {
             playPromise.catch(e => console.log("Audio unlock failed", e));
         }
     }
-
     if (videoRef.current) {
         videoRef.current.currentTime = 0;
         const playPromise = videoRef.current.play();
@@ -253,7 +235,6 @@ export default function WeddingCardPage() {
 
     setCardState('bursting');
     setTimeout(() => setCardState('opening'), 1300); 
-    
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
@@ -576,9 +557,9 @@ export default function WeddingCardPage() {
                  </div>
 
                  {/* THẺ THÔNG TIN LỄ CƯỚI */}
-                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-8 px-2">
+                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
-                         <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                         <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
@@ -640,16 +621,16 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* THẺ THÔNG TIN TIỆC CƯỚI (MỚI THÊM) */}
+                 {/* THẺ THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      {/* Lá bên phải */}
                      <div className="absolute top-[10%] right-[-25px] md:right-[-35px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
-                         <img src="/La_phai.png" alt="Lá" className="w-[100px] md:w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
+                         <img src="/La_phai.png" alt="Lá" className="w-[100px] md:w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                      </div>
 
                      {/* Hoa khô bên trái */}
                      <div className="absolute bottom-[5%] left-[-30px] md:left-[-40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[120px] md:w-[150px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
+                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[120px] md:w-[150px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
@@ -722,7 +703,6 @@ export default function WeddingCardPage() {
 
                  {/* ALBUM ẢNH */}
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-20 z-20 px-2">
-                     {/* Vì đã bỏ overflow-hidden ở thẻ cha, ta khôi phục lại overflow-hidden cho RIÊNG thẻ con Album để nó giấu ảnh tràn đi */}
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                          
                          <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
