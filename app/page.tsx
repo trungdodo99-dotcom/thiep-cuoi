@@ -21,16 +21,15 @@ const GENTLE_CONFETTI = Array.from({ length: 45 }).map((_, i) => {
   const shapes = ['heart', 'heart', 'bubble']; 
   const colors = ['#FFC0CB', '#FFB6C1', '#FFD1DC', '#FFE4E1', '#8C7A6B', '#FFFFFF'];
   const angle = Math.random() * Math.PI * 2;
-  // Tỏa xa hơn và phân bổ đều hơn
-  const distance = 60 + Math.random() * 120; 
+  const distance = 70 + Math.random() * 130; // Tỏa xa
   return {
     id: i,
     shape: shapes[Math.floor(Math.random() * shapes.length)],
     color: colors[Math.floor(Math.random() * colors.length)],
     tx: Math.cos(angle) * distance, 
     ty: Math.sin(angle) * distance, 
-    scale: 0.5 + Math.random() * 1,
-    delay: Math.random() * 0.15 // Delay ngắn để tỏa mượt
+    scale: 0.5 + Math.random() * 1.2,
+    delay: Math.random() * 0.15 
   };
 });
 
@@ -121,8 +120,7 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 // ==========================================
 export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
-  const [showSplash, setShowSplash] = useState(true); 
-  const [loadingPercentage, setLoadingPercentage] = useState(0); 
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   // Trạng thái Bìa: idle -> bursting (ấn nút tỏa tim) -> opening (lật trang) -> gramophone -> done (vào ruột)
   const [cardState, setCardState] = useState<'idle' | 'bursting' | 'opening' | 'gramophone' | 'done'>('idle');
@@ -144,25 +142,12 @@ export default function WeddingCardPage() {
   useEffect(() => {
     setIsMounted(true);
     
-    // BỘ ĐẾM LOADING
-    let currentPercentage = 0;
-    const intervalId = setInterval(() => {
-        const step = Math.floor(Math.random() * 16) - 4; 
-        currentPercentage += step;
-        if (currentPercentage < 0) currentPercentage = 0;
-
-        if (currentPercentage >= 100) {
-            currentPercentage = 100;
-            clearInterval(intervalId);
-            setTimeout(() => setShowSplash(false), 500); 
-        }
-        setLoadingPercentage(currentPercentage);
-    }, 120); 
+    // Hiệu ứng mờ dần vào khi trang load xong
+    setTimeout(() => setIsPageLoaded(true), 150);
 
     if (audioRef.current) {
         audioRef.current.loop = true; 
     }
-    return () => clearInterval(intervalId);
   }, []);
 
   // Xử lý logic Auto-Scroll mượt mà
@@ -183,7 +168,6 @@ export default function WeddingCardPage() {
 
     return () => cancelAnimationFrame(animationFrameId);
   }, [isAutoScrolling]);
-
 
   // Hàm Fade-in mượt mà cho MP3
   const fadeAudioIn = () => {
@@ -222,7 +206,7 @@ export default function WeddingCardPage() {
 
     if (time >= 7 && stageProgress < 3) setStageProgress(3); // Xin cảm ơn
 
-    // CẮT BỎ 1 GIÂY ĐEN CUỐI: Dừng video sớm khi chạy đến giây thứ 9
+    // Dừng video sớm khi chạy đến giây thứ 9
     if (time >= 9 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -254,11 +238,11 @@ export default function WeddingCardPage() {
         if (p2 !== undefined) p2.then(() => audioRef.current?.pause()).catch(e => console.log(e));
     }
 
-    // 1. Ấn nút -> Toả trái tim (Chữ vẫn giữ nguyên không biến mất)
+    // 1. Ấn nút -> Toả trái tim mượt mà
     setCardState('bursting');
     
     // 2. Mờ toàn bộ bìa và lật trang sau khi tim bung xong
-    setTimeout(() => setCardState('opening'), 1200); 
+    setTimeout(() => setCardState('opening'), 1300); 
     
     // 3. Vào cảnh Gramophone
     setTimeout(() => {
@@ -268,7 +252,7 @@ export default function WeddingCardPage() {
           videoRef.current.currentTime = 0;
           videoRef.current.play().catch(e => console.log(e));
       }
-    }, 2400); 
+    }, 2500); 
   };
 
   const toggleAutoScroll = () => {
@@ -289,7 +273,7 @@ export default function WeddingCardPage() {
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
-    <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh]`}>
+    <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh] transition-opacity duration-[1200ms] ease-in-out ${isPageLoaded ? 'opacity-100' : 'opacity-0'}`}>
       
       {/* ÂM THANH */}
       <audio ref={audioRef} src="/Nhac.mp3" preload="auto" />
@@ -332,14 +316,14 @@ export default function WeddingCardPage() {
         }
         .animate-fast-beat { animation: fast-beat 1.5s ease-in-out forwards; }
 
-        /* Animation tim bung ra mượt mà hơn */
+        /* Animation tim bung ra CỰC KỲ MƯỢT MÀ */
         @keyframes gentle-burst {
            0% { opacity: 0; transform: translate(0, 0) scale(0) rotate(0deg); }
-           10% { opacity: 1; transform: translate(calc(var(--tx) * 0.15), calc(var(--ty) * 0.15)) scale(0.6) rotate(10deg); }
-           60% { opacity: 0.9; transform: translate(calc(var(--tx) * 0.8), calc(var(--ty) * 0.8)) scale(var(--s)) rotate(25deg); }
-           100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(calc(var(--s) * 0.9)) rotate(45deg); }
+           15% { opacity: 1; transform: translate(calc(var(--tx) * 0.6), calc(var(--ty) * 0.6)) scale(var(--s)) rotate(15deg); }
+           70% { opacity: 0.8; transform: translate(calc(var(--tx) * 0.9), calc(var(--ty) * 0.9)) scale(var(--s)) rotate(30deg); }
+           100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(calc(var(--s) * 0.8)) rotate(45deg); }
         }
-        .animate-gentle-burst { animation: gentle-burst 2.2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+        .animate-gentle-burst { animation: gentle-burst 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         
         /* Hiệu ứng lơ lửng dọc */
         @keyframes float-up-down { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
@@ -364,7 +348,7 @@ export default function WeddingCardPage() {
         }
         .animate-float-note { animation: float-note 3s ease-out infinite; }
 
-        /* HIỆU ỨNG CHUYỂN CẢNH MỞ ĐÔI (Split Screen Transition) */
+        /* HIỆU ỨNG CHUYỂN CẢNH MỞ ĐÔI */
         @keyframes split-up { 
             0% { transform: translateY(0); opacity: 1; } 
             100% { transform: translateY(-120%); opacity: 0; } 
@@ -382,18 +366,6 @@ export default function WeddingCardPage() {
            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
       `}} />
-
-      {/* MÀN HÌNH CHÀO BẮT ĐẦU */}
-      <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBF7] transition-all duration-1000 ease-in-out ${showSplash ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-         <div className="flex flex-col items-center justify-center text-center px-6">
-            <span className="text-[#8C7A6B] text-4xl mb-4 animate-bounce">❦</span>
-            <h2 className="text-2xl md:text-3xl font-serif text-[#5C4F44] italic mb-6 leading-relaxed uppercase tracking-widest">Kết nối trái tim<br/>Vui lòng chờ...</h2>
-            
-            <div className="w-32 h-1 bg-[#EAE3DB] rounded-full mt-2 overflow-hidden">
-                <div className="h-full bg-[#8C7A6B] transition-all duration-300" style={{ width: `${loadingPercentage}%` }}></div>
-            </div>
-         </div>
-      </div>
 
       {/* Thông báo Auto Scroll */}
       <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}>
@@ -509,9 +481,7 @@ export default function WeddingCardPage() {
                   `}
                   style={{ 
                       transformOrigin: 'left center', 
-                      // Mở cửa chuyển cảnh khi state là opening hoặc gramophone
                       transform: (cardState === 'opening' || cardState === 'gramophone') ? 'perspective(2000px) rotateY(-120deg)' : 'perspective(2000px) rotateY(0deg)',
-                      // Chỉ mờ dần BÌA THIỆP khi lật (Không mờ khi đang bung tim)
                       opacity: (cardState === 'opening' || cardState === 'gramophone') ? 0 : 1,
                       pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
                   }}
@@ -531,7 +501,6 @@ export default function WeddingCardPage() {
                   
                   <GoldenVintageOrnaments />
 
-                  {/* Wrapper bọc nội dung bìa giữ nguyên Opacity lúc bung tim để không bị nháy chữ */}
                   <div className="relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full">
                     
                     <div className="relative mb-6 mt-2">
@@ -573,7 +542,7 @@ export default function WeddingCardPage() {
                   </div>
               </div>
 
-              {/* === RUỘT THIỆP CHÍNH (Z-10, rendered sẵn bên dưới Gramophone) === */}
+              {/* === RUỘT THIỆP CHÍNH (Đã đẩy lên trên để không cắt hình) === */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative custom-scrollbar
@@ -583,35 +552,34 @@ export default function WeddingCardPage() {
               >
                  <WatermarkPurpleFlowers />
 
-                 <div className="relative w-full flex flex-col items-center pt-24 z-20">
-                     <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p>
-                     <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-12">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2>
+                 <div className="relative w-full flex flex-col items-center pt-8 md:pt-12 z-20"> {/* Đẩy toàn bộ khối này lên */}
+                     <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-2">The Wedding Of</p> {/* Giảm margin */}
+                     <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-6">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2> {/* Giảm margin */}
                      
-                     {/* BỨC ẢNH ĐẦU TIÊN */}
-                     <div className="relative w-[88%] max-w-[340px] bg-white p-3 md:p-4 pb-16 shadow-xl rotate-[2deg] mx-auto mb-20 mt-4">
+                     {/* BỨC ẢNH ĐẦU TIÊN (Đã điều chỉnh chiều cao và margin để vừa khít màn hình) */}
+                     <div className="relative w-[85%] max-w-[320px] bg-white p-3 pb-12 shadow-xl rotate-[2deg] mx-auto mb-16 mt-2">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
                             <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
                         </div>
-                        <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-8 -right-6 w-20 h-20 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
+                        <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
                         {/* Hoa góc dưới bên trái Ảnh 1 (Float nhẹ) */}
-                        <div className="absolute -bottom-[45px] -left-[35px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[140px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
 
-                     {/* THẺ THÔNG TIN LỄ CƯỚI - Bao bọc bởi Wrapper để thả Hoa goc1 mép phải */}
-                     <div className="relative w-full flex justify-center mt-12 mb-8">
-                         
-                         {/* Hoa goc1 - Đưa ra khỏi thiệp nhỏ, ghim sát mếp phải màn hình/thiệp chính */}
+                     {/* THẺ THÔNG TIN LỄ CƯỚI */}
+                     <div className="relative w-full flex justify-center mt-6 mb-8">
+                         {/* Hoa goc1 - Ghim sát mếp phải */}
                          <div className="absolute top-[-30px] right-0 z-30 pointer-events-none origin-top-right">
                              <img src="/goc1.png" alt="Hoa goc" className="w-[130px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                          </div>
 
                          {/* Thiệp nhỏ bên trong */}
                          <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
-                             {/* HoaT1 góc dưới trái (Float nhẹ) */}
+                             {/* HoaT1 góc dưới trái */}
                              <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
                                  <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                              </div>
@@ -660,7 +628,7 @@ export default function WeddingCardPage() {
                          </div>
                      </div>
 
-                     {/* ALBUM NẰM TRONG KHUNG GIẤY TƯƠNG TỰ THÔNG TIN */}
+                     {/* ALBUM ẢNH */}
                      <FadeIn delay={100} className="relative w-full flex flex-col items-center mt-12 mb-16 z-20">
                          <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center">
                              <h3 className="text-[#5C4F44] force-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
