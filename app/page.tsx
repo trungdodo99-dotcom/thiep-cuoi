@@ -569,7 +569,7 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* Hoa góc dưới bên trái Ảnh 1 (Kích thước gốc) */}
+                        {/* Hoa góc dưới bên trái Ảnh 1 (Trả về kích thước gốc 120px) */}
                         <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
@@ -682,14 +682,14 @@ export default function WeddingCardPage() {
 
                  {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
-                     {/* Lá bên phải: Đặt kích thước 240px */}
-                     <div className="absolute top-[5%] right-[-50px] md:right-[-70px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
-                         <img src="/La_phai.png" alt="Lá" className="w-[240px] md:w-[260px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
+                     {/* Lá bên phải: Đặt kích thước 150px */}
+                     <div className="absolute top-[5%] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                         <img src="/La_phai.png" alt="Lá" className="w-[150px] md:w-[170px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                      </div>
 
-                     {/* Hoa khô bên trái: Đặt kích thước 250px */}
-                     <div className="absolute bottom-[5%] left-[-60px] md:left-[-80px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[250px] md:w-[270px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
+                     {/* Hoa khô bên trái: Đặt kích thước 220px */}
+                     <div className="absolute bottom-[5%] left-[-50px] md:left-[-70px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[220px] md:w-[240px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
