@@ -16,12 +16,11 @@ const PARTICLES = [
   { id: 8, left: "15%", delay: "5s", duration: "21s", size: "11px", content: "✿" },
 ];
 
-// Tạo hiệu ứng trái tim nhỏ tỏa ra khi ấn nút - Tinh chỉnh mượt mà & vật lý hơn
+// Tạo hiệu ứng trái tim nhỏ tỏa ra khi ấn nút
 const GENTLE_CONFETTI = Array.from({ length: 60 }).map((_, i) => {
   const shapes = ['heart', 'heart', 'heart', 'bubble', 'bubble']; 
   const colors = ['#FFC0CB', '#FF99C2', '#FFD1DC', '#FFE4E1', '#8C7A6B', '#FFFFFF'];
   const angle = Math.random() * Math.PI * 2;
-  // Bán kính tỏa ra ngẫu nhiên từ 50px đến 150px
   const distance = 50 + Math.random() * 100; 
   return {
     id: i,
@@ -30,7 +29,7 @@ const GENTLE_CONFETTI = Array.from({ length: 60 }).map((_, i) => {
     tx: Math.cos(angle) * distance, 
     ty: Math.sin(angle) * distance, 
     scale: 0.4 + Math.random() * 1.2,
-    delay: Math.random() * 0.1 // Rút ngắn delay để nổ đồng đều hơn
+    delay: Math.random() * 0.1 
   };
 });
 
@@ -123,10 +122,10 @@ export default function WeddingCardPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
 
-  // Trạng thái Bìa: idle -> bursting (ấn nút tỏa tim) -> opening (lật trang) -> gramophone -> done (vào ruột)
+  // Trạng thái Bìa
   const [cardState, setCardState] = useState<'idle' | 'bursting' | 'opening' | 'gramophone' | 'done'>('idle');
   
-  // Trạng thái hiện chữ và hiệu ứng máy hát
+  // Trạng thái hiện chữ và máy hát
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
 
@@ -142,7 +141,6 @@ export default function WeddingCardPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Hiệu ứng mờ dần vào khi trang load xong
     setTimeout(() => setIsPageLoaded(true), 150);
 
     if (audioRef.current) {
@@ -150,35 +148,30 @@ export default function WeddingCardPage() {
     }
   }, []);
 
-  // Xử lý logic Auto-Scroll mượt mà TRÊN CẢ MOBILE & PC
+  // Xử lý Auto-Scroll MƯỢT NHƯ NHUNG trên Mobile
   useEffect(() => {
     let animationFrameId: number;
-    let scrollAccumulator = 0; // Biến tích lũy để fix lỗi số thập phân trên Mobile Safari
+    let currentScrollY = scrollRef.current?.scrollTop || 0;
     
     const smoothScroll = () => {
       if (isAutoScrolling && scrollRef.current) {
-        // Tốc độ cuộn
-        scrollAccumulator += 0.8; 
-        
-        // Khi tích lũy >= 1px thì mới thực hiện cuộn (Giúp Mobile không bị kẹt)
-        if (scrollAccumulator >= 1) {
-            const pixelsToScroll = Math.floor(scrollAccumulator);
-            scrollRef.current.scrollTop += pixelsToScroll;
-            scrollAccumulator -= pixelsToScroll;
-        }
-        
+        // Cộng dồn bằng số thập phân độc lập với DOM (Fix rung giật)
+        currentScrollY += 0.4; 
+        scrollRef.current.scrollTop = currentScrollY;
         animationFrameId = requestAnimationFrame(smoothScroll);
       }
     };
 
     if (isAutoScrolling) {
+      // Bắt đầu cuộn: Đồng bộ vị trí thực tế hiện tại vào biến ảo
+      currentScrollY = scrollRef.current?.scrollTop || 0; 
       animationFrameId = requestAnimationFrame(smoothScroll);
     }
 
     return () => cancelAnimationFrame(animationFrameId);
   }, [isAutoScrolling]);
 
-  // Hàm Fade-in mượt mà cho MP3
+  // Hàm Fade-in mượt cho MP3
   const fadeAudioIn = () => {
       if (!audioRef.current) return;
       audioRef.current.volume = 0;
@@ -197,7 +190,6 @@ export default function WeddingCardPage() {
       }).catch(e => console.error("Audio block:", e));
   };
 
-  // Đồng bộ thời gian thực từ video
   const handleVideoTimeUpdate = () => {
     if (!videoRef.current) return;
     const time = videoRef.current.currentTime;
@@ -205,7 +197,6 @@ export default function WeddingCardPage() {
     if (time >= 2 && stageProgress < 1) setStageProgress(1);
     if (time >= 3.5 && stageProgress < 2) setStageProgress(2);
     
-    // ĐÚNG GIÂY THỨ 4: Hiện mác nhạc và phát nhạc nền
     if (time >= 4 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
@@ -214,12 +205,10 @@ export default function WeddingCardPage() {
 
     if (time >= 7 && stageProgress < 3) setStageProgress(3);
 
-    // Dừng video sớm
     if (time >= 9 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
 
-    // Tách đôi để lộ ruột thiệp
     if (time >= 9 && stageProgress < 4) {
         setStageProgress(4); 
         setTimeout(() => {
@@ -243,13 +232,10 @@ export default function WeddingCardPage() {
         if (p2 !== undefined) p2.then(() => audioRef.current?.pause()).catch(e => console.log(e));
     }
 
-    // 1. Ấn nút -> Toả trái tim
     setCardState('bursting');
     
-    // 2. Chuyển cảnh lật trang
     setTimeout(() => setCardState('opening'), 1300); 
     
-    // 3. Vào cảnh Gramophone
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
@@ -276,10 +262,8 @@ export default function WeddingCardPage() {
   return (
     <div className={`relative selection:bg-[#E5D9CC] selection:text-[#4A3C31] font-sans text-[#5C4F44] bg-[#8C8076] w-full flex flex-col items-center mx-auto overflow-hidden h-[100dvh] transition-opacity duration-[1200ms] ease-in-out ${isPageLoaded ? 'opacity-100' : 'opacity-0'}`}>
       
-      {/* ÂM THANH */}
       <audio ref={audioRef} src="/Nhac.mp3" preload="auto" />
 
-      {/* LIGHTBOX ALBUM */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col items-center justify-center touch-none" onClick={() => setLightboxIndex(null)}>
             <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4 z-50" onClick={() => setLightboxIndex(null)}>
@@ -317,7 +301,6 @@ export default function WeddingCardPage() {
         }
         .animate-fast-beat { animation: fast-beat 1.5s ease-in-out forwards; }
 
-        /* Animation tim bung ra CỰC KỲ MƯỢT MÀ VÀ VẬT LÝ HƠN */
         @keyframes gentle-burst {
            0% { opacity: 0; transform: translate(0, 0) scale(0) rotate(0deg); }
            5% { opacity: 1; transform: translate(0, 0) scale(0) rotate(0deg); }
@@ -325,7 +308,6 @@ export default function WeddingCardPage() {
            100% { opacity: 0; transform: translate(var(--tx), calc(var(--ty) - 50px)) scale(calc(var(--s) * 0.7)) rotate(45deg); }
         }
         .animate-gentle-burst { 
-            /* Dùng cubic-bezier nảy để tạo cảm giác bùng nổ rồi trôi lơ lửng */
             animation: gentle-burst 2.2s cubic-bezier(0.15, 1.15, 0.6, 1) forwards; 
         }
         
@@ -386,7 +368,6 @@ export default function WeddingCardPage() {
       {/* TỔ HỢP THIỆP CHÍNH */}
       <div className="w-full h-[100dvh] flex justify-center items-center p-0 md:p-6 relative">
           
-          {/* === ICON NHẠC KHI ĐÃ VÀO THIỆP === */}
           {cardState === 'done' && (
             <button 
                 onClick={toggleMusic}
@@ -405,13 +386,12 @@ export default function WeddingCardPage() {
           <div className="relative w-full max-w-[460px] h-full max-h-[850px] shadow-2xl md:rounded-lg border-x border-[#EAE3DB] overflow-hidden bg-[#FDFBF7]" style={{ perspective: '2000px' }}>
               
               {/* =========================================================
-                  CẢNH GRAMOPHONE (Nền trắng tinh, không viền)
+                  CẢNH GRAMOPHONE
                  ========================================================= */}
               <div className={`absolute inset-0 w-full h-full bg-white flex flex-col items-center justify-center transition-all duration-1000
                   ${(cardState === 'idle' || cardState === 'bursting') ? 'opacity-0 z-0' : 'opacity-100 z-[40]'}
                   ${cardState === 'done' ? 'hidden' : ''}`}
               >
-                  {/* Container video */}
                   <div className={`relative w-[90%] max-w-[340px] mx-auto mt-4 flex flex-col items-center justify-center
                       ${stageProgress === 4 ? 'animate-split-up' : ''}
                   `}>
@@ -430,7 +410,6 @@ export default function WeddingCardPage() {
                           </div>
                       )}
 
-                      {/* Video Máy hát nền */}
                       <div className="relative w-full flex items-center justify-center z-10">
                           <video 
                               ref={videoRef}
@@ -442,7 +421,6 @@ export default function WeddingCardPage() {
                               style={{ mixBlendMode: 'multiply' }}
                           />
                           
-                          {/* Nốt nhạc bay */}
                           {stageProgress >= 1 && (
                               <div className="absolute inset-0 pointer-events-none z-40">
                                   <div className="absolute top-[25%] left-[55%] text-[#d4af37] text-2xl animate-float-note opacity-0 drop-shadow-md" style={{ animationDelay: '0s' }}>♪</div>
@@ -453,7 +431,6 @@ export default function WeddingCardPage() {
                       </div>
                   </div>
 
-                  {/* KHỐI VĂN BẢN SEQ */}
                   <div className={`relative mt-6 h-36 flex flex-col items-center justify-center w-full px-4 text-center
                       ${stageProgress === 4 ? 'animate-split-down' : ''}
                   `}>
@@ -555,7 +532,6 @@ export default function WeddingCardPage() {
               >
                  <WatermarkPurpleFlowers />
 
-                 {/* KHỐI 1: Bọc Tiêu đề và Ảnh 1 vào 1 Group có min-height để giấu thẻ bên dưới */}
                  <div className="relative w-full min-h-[95vh] flex flex-col items-center justify-center pt-8 pb-16 z-20"> 
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p> 
                      <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-8">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2> 
@@ -568,42 +544,44 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* Hoa góc dưới bên trái Ảnh 1 (Float nhẹ) */}
+                        {/* Hoa góc dưới bên trái Ảnh 1 */}
                         <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - Nằm gọn gàng bên dưới, không bị lồi lá lên trên */}
-                 <div className="relative w-full flex justify-center mt-6 mb-8">
-                     {/* Hoa goc1 - Ghim sát mếp phải */}
-                     <div className="absolute top-[-30px] right-0 z-30 pointer-events-none origin-top-right">
-                         <img src="/goc1.png" alt="Hoa goc" className="w-[130px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - ĐÃ FIX LỖI ĐÈ CHỮ */}
+                 <div className="relative w-full flex justify-center mt-6 mb-8 overflow-hidden md:overflow-visible px-2">
+                     {/* Hoa goc1 - Ghim sát mếp phải, dạt ra ngoài */}
+                     <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
+                         <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
                      {/* Thiệp nhỏ bên trong */}
-                     <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
-                         {/* HoaT1 góc dưới trái */}
-                         <div className="absolute -bottom-[60px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
-                             <img src="/HoaT1.png" alt="Hoa" className="w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
+                         
+                         {/* HoaT1 góc dưới trái - Kéo dạt xuống dưới và sang trái */}
+                         <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                             <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         <div className="px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
-                             <h3 className="text-[#5C4F44] force-serif text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
+                         {/* Tăng padding top và bottom để chữ nằm thỏm vào giữa, xa lá */}
+                         <div className="px-5 md:px-6 pt-20 pb-24 flex flex-col items-center text-center relative z-20 w-full">
+                             <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
-                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-8 relative px-2">
-                                 <div className="w-[45%] flex flex-col items-center">
+                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-10 relative px-1">
+                                 <div className="w-[48%] flex flex-col items-center">
                                      <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
                                      <span className="font-bold mb-1">Võ Nhật Minh</span>
                                      <span className="font-bold mb-2">Trần Thu Thảo</span>
-                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90">Quận 1, TP. HCM</span>
+                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90 text-[10px] md:text-[11px]">Quận 1, TP. HCM</span>
                                  </div>
-                                 <div className="w-[45%] flex flex-col items-center">
+                                 <div className="w-[48%] flex flex-col items-center">
                                      <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
                                      <span className="font-bold mb-1">Lê Văn Thành</span>
                                      <span className="font-bold mb-2">Phạm Thị Lan</span>
-                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90">Quận 3, TP. HCM</span>
+                                     <span className="text-[#8C7A6B] leading-relaxed opacity-90 text-[10px] md:text-[11px]">Quận 3, TP. HCM</span>
                                  </div>
                              </div>
 
@@ -614,13 +592,13 @@ export default function WeddingCardPage() {
                                 <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-4">Trưởng Nam</span>
                                 <span className="text-2xl force-serif text-[#C3B09B] italic my-1">❦</span>
                                 <h1 className="text-4xl md:text-5xl force-serif mt-3 mb-1 text-[#5C4F44]">Đặng Hải</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-8">Út Nữ</span>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-10">Út Nữ</span>
                              </div>
 
                              <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
                              <div className="text-3xl force-serif text-[#5C4F44] mb-6">09:00</div>
 
-                             <div className="flex items-center justify-center gap-4 text-[#5C4F44] mb-4">
+                             <div className="flex items-center justify-center gap-3 md:gap-4 text-[#5C4F44] mb-5">
                                  <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Chủ Nhật</span>
                                  <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
                                  <span className="text-4xl font-serif">03</span>
@@ -628,7 +606,7 @@ export default function WeddingCardPage() {
                                  <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Tháng 01</span>
                              </div>
                              <span className="text-lg force-serif text-[#5C4F44] mb-2">2027</span>
-                             <span className="text-[#8C7A6B] text-[10px] uppercase tracking-[0.1em] opacity-90">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
+                             <span className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.1em] opacity-90">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
                          </div>
                      </div>
                  </div>
