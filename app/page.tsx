@@ -684,9 +684,9 @@ export default function WeddingCardPage() {
                  {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
                      
-                     {/* HOA GÓC 3 MỚI THÊM: Nằm khít góc trên phải, đảm bảo không che chữ */}
-                     <div className="absolute top-[-50px] right-[-40px] md:top-[-60px] md:right-[-50px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                         <img src="/goc3.png" alt="Hoa goc 3" className="w-[170px] md:w-[190px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc3.jpg"; }} />
+                     {/* CẬP NHẬT: Hoa goc3.png lùi sâu ra ngoài mép góc trên phải, không đè chữ */}
+                     <div className="absolute top-[-50px] right-[-45px] md:top-[-60px] md:right-[-55px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                         <img src="/goc3.png" alt="Hoa goc 3" className="w-[160px] md:w-[180px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc3.jpg"; }} />
                      </div>
 
                      <div className="absolute bottom-[5%] left-[-50px] md:left-[-70px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
@@ -729,9 +729,9 @@ export default function WeddingCardPage() {
 
                              <div className="w-[95%] md:w-[90%] bg-[#77665B] rounded-lg p-5 text-[#F2EBE1] shadow-inner mb-8 border border-[#8C7A6B] relative z-40">
                                 
-                                {/* NHÁNH LÁ PHẢI: Đã thu nhỏ 70% và ghim xuống ngang đúng góc cuốn lịch */}
-                                <div className="absolute bottom-[10%] -right-[30px] md:-right-[35px] z-50 pointer-events-none origin-bottom-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
-                                    <img src="/La_phai.png" alt="Lá" className="w-[90px] md:w-[100px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
+                                {/* CẬP NHẬT: Nhánh lá phải thu nhỏ 70%, ghim sát vào mép phải của cuốn lịch */}
+                                <div className="absolute top-[-15px] -right-[25px] md:top-[-20px] md:-right-[30px] z-50 pointer-events-none origin-bottom-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                                    <img src="/La_phai.png" alt="Lá" className="w-[85px] md:w-[95px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                                 </div>
 
                                 <div className="text-center font-script text-3xl md:text-4xl mb-4 tracking-wider">Tháng 1 / 2027</div>
