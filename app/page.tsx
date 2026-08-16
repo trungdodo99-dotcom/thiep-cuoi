@@ -569,7 +569,6 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* Hoa góc dưới bên trái Ảnh 1 (Trả về kích thước gốc 120px) */}
                         <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
@@ -683,7 +682,7 @@ export default function WeddingCardPage() {
                  {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
                      {/* Lá bên phải: Đặt kích thước 150px */}
-                     <div className="absolute top-[5%] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                     <div className="absolute top-[35%] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
                          <img src="/La_phai.png" alt="Lá" className="w-[150px] md:w-[170px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                      </div>
 
