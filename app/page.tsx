@@ -78,7 +78,6 @@ const GoldenVintageOrnaments = ({ className = "" }: { className?: string }) => (
   </div>
 );
 
-// Họa tiết dải ngang hoàng gia cổ điển
 const VintageDivider = () => (
   <div className="flex items-center justify-center w-full my-4 opacity-70">
      <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-[#C3B09B]"></div>
@@ -234,10 +233,8 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
-    // 1. Gỡ tắt tiếng cho Video
     setIsVideoMuted(false);
 
-    // 2. Kích hoạt Audio nền chạy nháp (Tắt tiếng) để vượt rào Safari
     if (audioRef.current) {
         audioRef.current.muted = true; 
         const playPromise = audioRef.current.play();
@@ -246,7 +243,6 @@ export default function WeddingCardPage() {
         }
     }
 
-    // 3. CHẠY VIDEO NGAY LẬP TỨC ĐỂ KHÔNG BỊ LOAD TRỄ TRÊN MOBILE
     if (videoRef.current) {
         videoRef.current.currentTime = 0;
         const playPromise = videoRef.current.play();
@@ -261,7 +257,6 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
-      // Không cần phải bắt Video chạy lại ở đây nữa vì nó đang chạy sẵn rất mượt rồi
     }, 2500); 
   };
 
@@ -302,11 +297,12 @@ export default function WeddingCardPage() {
       )}
 
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap');
         
         .force-serif { font-family: 'Cormorant Garamond', serif !important; }
         .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Montserrat', sans-serif; }
+        .font-script { font-family: 'Great Vibes', cursive; }
         
         @keyframes fall { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(110vh) translateX(-20px) rotate(360deg); opacity: 0; } }
         @keyframes heart-blink { 0%, 100% { stroke: transparent; stroke-width: 0px; transform: scale(1); opacity: 0.5; } 50% { stroke: #FF99C2; stroke-width: 1.5px; transform: scale(1.15); opacity: 0.85; } }
@@ -430,7 +426,6 @@ export default function WeddingCardPage() {
                       )}
 
                       <div className="relative w-full flex items-center justify-center z-10">
-                          {/* Đã thêm preload="auto" để tải sẵn video trên Mobile */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
@@ -580,8 +575,8 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - TRÀN LÁ MƯỢT MÀ */}
-                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
+                 {/* THẺ THÔNG TIN LỄ CƯỚI */}
+                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-8 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
@@ -645,8 +640,89 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
+                 {/* THẺ THÔNG TIN TIỆC CƯỚI (MỚI THÊM) */}
+                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
+                     {/* Lá bên phải */}
+                     <div className="absolute top-[10%] right-[-25px] md:right-[-35px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                         <img src="/La_phai.png" alt="Lá" className="w-[100px] md:w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
+                     </div>
+
+                     {/* Hoa khô bên trái */}
+                     <div className="absolute bottom-[5%] left-[-30px] md:left-[-40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[120px] md:w-[150px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
+                     </div>
+
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
+                         
+                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
+
+                         <div className="px-5 md:px-6 pt-16 pb-12 flex flex-col items-center text-center relative z-20 w-full">
+                             <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.2em] uppercase font-bold mb-6">Thông Tin Tiệc Cưới</h3>
+                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] mb-8">Tiệc cưới sẽ diễn ra vào lúc:</p>
+
+                             <div className="text-4xl force-serif text-[#5C4F44] mb-6">18:00</div>
+
+                             <div className="flex items-center justify-center gap-3 md:gap-4 text-[#5C4F44] mb-5">
+                                 <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Chủ Nhật</span>
+                                 <div className="h-4 w-[1px] bg-[#C3B09B]"></div>
+                                 <span className="text-3xl font-serif">03</span>
+                                 <div className="h-4 w-[1px] bg-[#C3B09B]"></div>
+                                 <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Tháng 01</span>
+                             </div>
+                             <span className="text-lg force-serif text-[#5C4F44] mb-2">2027</span>
+                             <span className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.1em] opacity-90 mb-10">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
+
+                             {/* Timeline Đón khách / Khai tiệc */}
+                             <div className="flex w-full justify-center gap-10 md:gap-14 mb-10 text-[#5C4F44]">
+                                <div className="flex flex-col items-center">
+                                   <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-[#8C7A6B] mb-2">Đón Khách</span>
+                                   <span className="text-xl md:text-2xl force-serif">17:30</span>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                   <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-[#8C7A6B] mb-2">Khai Tiệc</span>
+                                   <span className="text-xl md:text-2xl force-serif">18:00</span>
+                                </div>
+                             </div>
+
+                             {/* Bộ Lịch (Calendar) */}
+                             <div className="w-[95%] md:w-[90%] bg-[#77665B] rounded-lg p-5 text-[#F2EBE1] shadow-inner mb-8 border border-[#8C7A6B]">
+                                <div className="text-center font-script text-3xl md:text-4xl mb-4 tracking-wider">Tháng 1 / 2027</div>
+                                <div className="grid grid-cols-7 gap-y-3 text-center text-[10px] opacity-80 mb-2 border-b border-[#F2EBE1]/20 pb-3 font-medium">
+                                   <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                                </div>
+                                <div className="grid grid-cols-7 gap-y-3 gap-x-1 text-center text-[12px] md:text-[13px] force-serif pt-2 items-center">
+                                   <span className="opacity-0"></span><span className="opacity-0"></span><span className="opacity-0"></span><span className="opacity-0"></span>
+                                   <span>1</span><span>2</span>
+                                   {/* Ngày cưới */}
+                                   <span className="relative flex justify-center items-center h-6 w-full">
+                                      <svg className="absolute w-7 h-7 text-[#F2EBE1] drop-shadow-md z-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                      <span className="relative z-10 text-[#77665B] font-bold text-[13px]">3</span>
+                                   </span>
+                                   <span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                                   <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span>
+                                   <span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>
+                                   <span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+                                </div>
+                             </div>
+
+                             {/* Nút hành động */}
+                             <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors">
+                                Thêm vào lịch
+                             </button>
+                             <button className="bg-[#77665B] text-white px-8 py-3.5 rounded-full text-[10px] md:text-[11px] tracking-[0.2em] uppercase shadow-[0_4px_15px_rgba(119,102,91,0.4)] hover:bg-[#5C4F44] active:scale-95 transition-all">
+                                Xác nhận tham dự
+                             </button>
+
+                         </div>
+                     </div>
+                 </FadeIn>
+
                  {/* ALBUM ẢNH */}
-                 <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-12 mb-20 z-20 px-2">
+                 <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-20 z-20 px-2">
+                     {/* Vì đã bỏ overflow-hidden ở thẻ cha, ta khôi phục lại overflow-hidden cho RIÊNG thẻ con Album để nó giấu ảnh tràn đi */}
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                          
                          <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
