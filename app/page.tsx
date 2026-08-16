@@ -481,24 +481,13 @@ export default function WeddingCardPage() {
                       pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
                   }}
               >
-                  <LuxuryCorner className="top-4 left-4 opacity-90 w-12 h-12 md:w-16 md:h-16" />
-                  <LuxuryCorner className="top-4 right-4 rotate-90 opacity-90 w-12 h-12 md:w-16 md:h-16" />
-                  <LuxuryCorner className="bottom-4 right-4 rotate-180 opacity-90 w-12 h-12 md:w-16 md:h-16" />
-                  <LuxuryCorner className="bottom-4 left-4 -rotate-90 opacity-90 w-12 h-12 md:w-16 md:h-16" />
+                  {/* HÌNH BÌA LỒNG BÊN NGOÀI */}
+                  <img src="/bia.png" alt="Bìa" className="absolute inset-0 w-full h-full object-fill md:object-cover pointer-events-none z-10" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/bia.jpg"; }} />
 
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
-                     <div className="absolute flex items-center justify-center">
-                        <div className="absolute w-[220px] h-[220px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 -translate-x-4"></div>
-                        <div className="absolute w-[220px] h-[220px] border-[1px] border-[#D5C7B8] rounded-full opacity-40 translate-x-4"></div>
-                     </div>
-                     <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
-                  </div>
-                  
-                  <GoldenVintageOrnaments className="absolute inset-x-0 bottom-0 pb-4" />
-
-                  <div className="relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full">
+                  {/* NỘI DUNG CĂN GIỮA */}
+                  <div className="relative z-20 flex flex-col items-center justify-center w-full mt-4">
                     
-                    <div className="relative mb-6 mt-2">
+                    <div className="relative mb-6">
                         {/* HIỆU ỨNG TRÁI TIM BUNG */}
                         {cardState === 'bursting' && (
                             <div className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-40 overflow-visible">
@@ -515,9 +504,9 @@ export default function WeddingCardPage() {
                         </div>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl force-serif text-[#5C4F44] font-light mb-2">Đỗ Trung</h1>
+                    <h1 className="text-4xl md:text-5xl force-serif text-[#5C4F44] font-light mb-2">Đỗ Trung</h1>
                     <span className="text-2xl force-serif text-[#8C7A6B] italic my-2">&</span>
-                    <h1 className="text-5xl md:text-6xl force-serif text-[#5C4F44] font-light mt-2">Đặng Hải</h1>
+                    <h1 className="text-4xl md:text-5xl force-serif text-[#5C4F44] font-light mt-2">Đặng Hải</h1>
 
                     <div className="flex items-center gap-2 my-6 text-[#A09386] pointer-events-none">
                       <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
@@ -575,14 +564,12 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI - CÓ GÓC 1 VÀ GÓC 2 */}
+                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
-                     {/* Hoa goc1 - Căn khít góc trên phải */}
                      <div className="absolute top-[-40px] right-[-5px] md:top-[-50px] md:right-[-10px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                          <img src="/goc1.png" alt="Hoa goc 1" className="w-[240px] md:w-[300px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
-                     {/* Hoa goc2 - Căn khít góc dưới trái */}
                      <div className="absolute -bottom-[40px] -left-[10px] md:-bottom-[50px] md:-left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
                          <img src="/goc2.png" alt="Hoa goc 2" className="w-[240px] md:w-[300px] h-auto opacity-100" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc2.jpg"; }} />
                      </div>
@@ -642,7 +629,7 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* THẺ 2: ALBUM ẢNH (KHÔNG CÓ HOA GÓC) */}
+                 {/* THẺ 2: ALBUM ẢNH */}
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-12 z-20 px-2">
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                          
@@ -684,7 +671,6 @@ export default function WeddingCardPage() {
                  {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
                      
-                     {/* CẬP NHẬT: Hoa goc3.png lùi sâu ra ngoài mép góc trên phải, không đè chữ */}
                      <div className="absolute top-[-50px] right-[-45px] md:top-[-60px] md:right-[-55px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                          <img src="/goc3.png" alt="Hoa goc 3" className="w-[160px] md:w-[180px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc3.jpg"; }} />
                      </div>
@@ -729,7 +715,6 @@ export default function WeddingCardPage() {
 
                              <div className="w-[95%] md:w-[90%] bg-[#77665B] rounded-lg p-5 text-[#F2EBE1] shadow-inner mb-8 border border-[#8C7A6B] relative z-40">
                                 
-                                {/* CẬP NHẬT: Nhánh lá phải thu nhỏ 70%, ghim sát vào mép phải của cuốn lịch */}
                                 <div className="absolute top-[-15px] -right-[25px] md:top-[-20px] md:-right-[30px] z-50 pointer-events-none origin-bottom-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
                                     <img src="/La_phai.png" alt="Lá" className="w-[85px] md:w-[95px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                                 </div>
