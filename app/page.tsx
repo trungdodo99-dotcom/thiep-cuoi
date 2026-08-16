@@ -185,6 +185,7 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
+    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
@@ -215,6 +216,7 @@ export default function WeddingCardPage() {
 
     if (time >= 7.5 && stageProgress < 3) setStageProgress(3);
 
+    // Dừng video máy hát ở giây 9.5
     if (time >= 9.5 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -567,17 +569,17 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* Hoa góc dưới bên trái Ảnh 1 (Tăng nhẹ kích thước) */}
-                        <div className="absolute -bottom-[40px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                            <img src="/HoaT1.png" alt="Hoa" className="w-[160px] md:w-[200px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                        {/* Hoa góc dưới bên trái Ảnh 1 (Kích thước gốc) */}
+                        <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                            <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
                  </div>
 
                  {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
-                     <div className="absolute top-[-40px] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right">
-                         <img src="/goc1.png" alt="Hoa goc" className="w-[180px] md:w-[220px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                     <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
+                         <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
@@ -587,8 +589,8 @@ export default function WeddingCardPage() {
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
 
-                         <div className="absolute -bottom-[80px] -left-[40px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
-                             <img src="/HoaT1.png" alt="Hoa" className="w-[200px] md:w-[250px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                         <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                             <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
                          <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
@@ -678,16 +680,16 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* THẺ 3: THÔNG TIN TIỆC CƯỚI (PHÓNG TO LÁ GẤP 2.5 LẦN) */}
+                 {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
-                     {/* Lá bên phải (To gấp 2.5 lần và lùi biên) */}
-                     <div className="absolute top-[5%] right-[-70px] md:right-[-90px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
-                         <img src="/La_phai.png" alt="Lá" className="w-[250px] md:w-[325px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
+                     {/* Lá bên phải: Đặt kích thước 240px */}
+                     <div className="absolute top-[5%] right-[-50px] md:right-[-70px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                         <img src="/La_phai.png" alt="Lá" className="w-[240px] md:w-[260px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                      </div>
 
-                     {/* Hoa khô bên trái (To gấp 2.5 lần và lùi biên) */}
-                     <div className="absolute bottom-[5%] left-[-80px] md:left-[-100px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
-                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[300px] md:w-[375px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
+                     {/* Hoa khô bên trái: Đặt kích thước 250px */}
+                     <div className="absolute bottom-[5%] left-[-60px] md:left-[-80px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
+                         <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[250px] md:w-[270px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
@@ -713,7 +715,6 @@ export default function WeddingCardPage() {
                              <span className="text-lg force-serif text-[#5C4F44] mb-2">2027</span>
                              <span className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.1em] opacity-90 mb-10">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
 
-                             {/* Timeline Đón khách / Khai tiệc */}
                              <div className="flex w-full justify-center gap-10 md:gap-14 mb-10 text-[#5C4F44]">
                                 <div className="flex flex-col items-center">
                                    <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-[#8C7A6B] mb-2">Đón Khách</span>
@@ -725,8 +726,7 @@ export default function WeddingCardPage() {
                                 </div>
                              </div>
 
-                             {/* Bộ Lịch (Calendar) */}
-                             <div className="w-[95%] md:w-[90%] bg-[#77665B] rounded-lg p-5 text-[#F2EBE1] shadow-inner mb-8 border border-[#8C7A6B]">
+                             <div className="w-[95%] md:w-[90%] bg-[#77665B] rounded-lg p-5 text-[#F2EBE1] shadow-inner mb-8 border border-[#8C7A6B] relative z-40">
                                 <div className="text-center font-script text-3xl md:text-4xl mb-4 tracking-wider">Tháng 1 / 2027</div>
                                 <div className="grid grid-cols-7 gap-y-3 text-center text-[10px] opacity-80 mb-2 border-b border-[#F2EBE1]/20 pb-3 font-medium">
                                    <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
@@ -734,7 +734,6 @@ export default function WeddingCardPage() {
                                 <div className="grid grid-cols-7 gap-y-3 gap-x-1 text-center text-[12px] md:text-[13px] force-serif pt-2 items-center">
                                    <span className="opacity-0"></span><span className="opacity-0"></span><span className="opacity-0"></span><span className="opacity-0"></span>
                                    <span>1</span><span>2</span>
-                                   {/* Ngày cưới */}
                                    <span className="relative flex justify-center items-center h-6 w-full">
                                       <svg className="absolute w-7 h-7 text-[#F2EBE1] drop-shadow-md z-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                       <span className="relative z-10 text-[#77665B] font-bold text-[13px]">3</span>
@@ -746,11 +745,10 @@ export default function WeddingCardPage() {
                                 </div>
                              </div>
 
-                             {/* Nút hành động */}
-                             <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors">
+                             <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors relative z-40">
                                 Thêm vào lịch
                              </button>
-                             <button className="bg-[#77665B] text-white px-8 py-3.5 rounded-full text-[10px] md:text-[11px] tracking-[0.2em] uppercase shadow-[0_4px_15px_rgba(119,102,91,0.4)] hover:bg-[#5C4F44] active:scale-95 transition-all">
+                             <button className="bg-[#77665B] text-white px-8 py-3.5 rounded-full text-[10px] md:text-[11px] tracking-[0.2em] uppercase shadow-[0_4px_15px_rgba(119,102,91,0.4)] hover:bg-[#5C4F44] active:scale-95 transition-all relative z-40">
                                 Xác nhận tham dự
                              </button>
 
