@@ -127,6 +127,9 @@ export default function WeddingCardPage() {
   // Trạng thái hiện chữ và máy hát
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
+  
+  // Trạng thái tắt tiếng Video (Bắt buộc true lúc load để vượt rào Safari Mobile)
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
@@ -150,40 +153,36 @@ export default function WeddingCardPage() {
   // Xử lý Auto-Scroll siêu mượt với gia tốc trên Mobile
   useEffect(() => {
     let animationFrameId: number;
-    let exactScrollY = scrollRef.current?.scrollTop || 0;
+    let lastTime = performance.now();
+    let scrollAccumulator = 0;
     
-    const smoothScroll = () => {
+    const smoothScroll = (currentTime: number) => {
       if (isAutoScrolling && scrollRef.current) {
-        exactScrollY += 0.5; // Tốc độ trượt chuẩn xác từng nửa pixel
-        scrollRef.current.scrollTop = exactScrollY;
+        const deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        
+        scrollAccumulator += deltaTime * 0.04; 
+        
+        if (scrollAccumulator >= 1) {
+            const pixelsToScroll = Math.floor(scrollAccumulator);
+            scrollRef.current.scrollTop += pixelsToScroll;
+            scrollAccumulator -= pixelsToScroll;
+        }
+        
         animationFrameId = requestAnimationFrame(smoothScroll);
       }
     };
 
     if (isAutoScrolling) {
-      exactScrollY = scrollRef.current?.scrollTop || 0;
+      lastTime = performance.now();
+      scrollAccumulator = 0;
       animationFrameId = requestAnimationFrame(smoothScroll);
     }
 
     return () => cancelAnimationFrame(animationFrameId);
   }, [isAutoScrolling]);
 
-  // Hàm Fade-in mượt cho MP3 bài hát
-  const fadeAudioIn = () => {
-      if (!audioRef.current) return;
-      let vol = 0;
-      const fadeInterval = setInterval(() => {
-          vol += 0.05;
-          if (vol >= 0.7) { 
-              clearInterval(fadeInterval);
-              if(audioRef.current) audioRef.current.volume = 0.7;
-          } else {
-              if(audioRef.current) audioRef.current.volume = vol;
-          }
-      }, 150);
-  };
-
-  // Đồng bộ Video và thời gian
+  // Đồng bộ thời gian Video & Kích hoạt Audio
   const handleVideoTimeUpdate = () => {
     if (!videoRef.current) return;
     const time = videoRef.current.currentTime;
@@ -191,16 +190,38 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
-    // Đúng giây 4.5 thì mới trượt mác bài hát vào và đẩy Volumn nhạc lên
+    // Đúng giây thứ 4.5, kích hoạt bài hát (Hòa cùng tiếng rột roạt của đĩa than)
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
-        fadeAudioIn();
+        
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0; // Bắt đầu lại từ đầu bài hát
+            audioRef.current.play().then(() => {
+                setIsMusicPlaying(true); // Cập nhật đúng trạng thái nút
+                
+                // Hiệu ứng Fade-in âm lượng cho mượt (Hoạt động tốt trên PC, iOS sẽ tự động phát mức âm thiết bị)
+                audioRef.current!.volume = 0;
+                let vol = 0;
+                const fadeInterval = setInterval(() => {
+                    vol += 0.05;
+                    if (vol >= 0.7) { 
+                        clearInterval(fadeInterval);
+                        if(audioRef.current) audioRef.current.volume = 0.7;
+                    } else {
+                        if(audioRef.current) audioRef.current.volume = vol;
+                    }
+                }, 150);
+            }).catch(e => {
+                console.error("Auto-play song block:", e);
+                setIsMusicPlaying(false);
+            });
+        }
     }
 
     if (time >= 7.5 && stageProgress < 3) setStageProgress(3);
 
-    // Giây 9.5 kết thúc máy hát
+    // Dừng máy hát ở giây 9.5
     if (time >= 9.5 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -209,7 +230,6 @@ export default function WeddingCardPage() {
         setStageProgress(4); 
         setTimeout(() => {
              setCardState('done');
-             // Bắt đầu trượt 2.5s sau khi mở ruột
              setTimeout(() => setIsAutoScrolling(true), 2500); 
         }, 1200); 
     }
@@ -218,24 +238,31 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
-    // 1. NGAY KHI BẤM NÚT: Đánh thức hệ thống Audio và Video cùng 1 lúc (Chặn lỗi lặp 2 lần)
+    // Bật tiếng Video đĩa than
+    setIsVideoMuted(false);
+
+    // MỞ KHÓA AUDIO CHO MOBILE: Phát một mili-giây rồi Dừng ngay lập tức
+    // Cách này giúp Audio được cấp quyền mà không phát tiếng lộn xộn ở màn hình ngoài
     if (audioRef.current) {
-        audioRef.current.volume = 0; // Để nhạc bài hát chạy ngầm ở mức âm lượng 0
-        audioRef.current.play().then(() => { setIsMusicPlaying(true); }).catch(e => console.log(e));
-    }
-    if (videoRef.current) {
-        videoRef.current.muted = false; // Bật tiếng rột roạt của đĩa than
-        videoRef.current.play().catch(e => console.log(e)); // Video bắt đầu phát từ giây số 0
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                audioRef.current?.pause();
+            }).catch(e => console.log("Audio unlock failed", e));
+        }
     }
 
-    // 2. Chuyển trạng thái giao diện
     setCardState('bursting');
-    
     setTimeout(() => setCardState('opening'), 1300); 
     
     setTimeout(() => {
       setCardState('gramophone'); 
-      // Không gọi play() ở đây nữa để tránh lỗi iOS Safari khởi động lại Video
+      musicTriggeredRef.current = false;
+      // Phát Video chính thức có hình có tiếng
+      if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().catch(e => console.log(e));
+      }
     }, 2500); 
   };
 
@@ -405,11 +432,11 @@ export default function WeddingCardPage() {
                       )}
 
                       <div className="relative w-full flex items-center justify-center z-10">
-                          {/* Sửa Video: Đặt muted=true lúc load để vượt rào Mobile, chỉ bật lên khi bấm nút */}
+                          {/* Sửa Video: Đặt muted theo state (Khóa ban đầu, mở bằng click) */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
-                              muted={true} 
+                              muted={isVideoMuted} 
                               playsInline
                               onTimeUpdate={handleVideoTimeUpdate}
                               className="w-full h-auto object-cover scale-[1.02] z-10"
