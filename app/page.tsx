@@ -40,7 +40,6 @@ const ALBUM_IMAGES = [
   "/Ab5.jpg"
 ];
 
-// Cập nhật LuxuryCorner để có thể tùy chỉnh kích thước linh hoạt cho cả bìa và ruột thiệp
 const LuxuryCorner = ({ className = "w-12 h-12 md:w-16 md:h-16" }: { className?: string }) => (
   <svg className={`absolute pointer-events-none z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 98 V2 H98" stroke="#C3B09B" strokeWidth="2"/>
@@ -101,7 +100,6 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-// Nâng cấp FadeIn: Tăng tốc độ xuất hiện (duration 700ms) để nhanh nhẹn hơn nhưng vẫn mượt
 const FadeIn = ({ children, delay = 0, threshold = 0.05, className = "" }: { children: React.ReactNode, delay?: number, threshold?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -141,7 +139,7 @@ export default function WeddingCardPage() {
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
   
-  // Trạng thái tắt tiếng Video (Bắt buộc true lúc load để vượt rào Safari Mobile)
+  // Trạng thái tắt tiếng Video
   const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -168,7 +166,6 @@ export default function WeddingCardPage() {
     let scrollInterval: NodeJS.Timeout;
     
     if (isAutoScrolling && scrollRef.current) {
-        // Tốc độ: 1 pixel mỗi 25ms (~ 40px mỗi giây). Cách này trượt cực kỳ đều đặn và êm trên Mobile.
         scrollInterval = setInterval(() => {
             if (scrollRef.current) {
                 scrollRef.current.scrollTop += 1;
@@ -189,16 +186,15 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
-    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát (Bật tiếng MP3 hòa cùng hộp nhạc)
+    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
         
         if (audioRef.current) {
-            audioRef.current.currentTime = 0; // Bắt đầu lại bài hát từ giây 0
-            audioRef.current.muted = false;   // Bật lại tiếng (Rất quan trọng cho Mobile)
+            audioRef.current.currentTime = 0; 
+            audioRef.current.muted = false;   
             
-            // Fade-in volume mượt mà trên PC (iOS sẽ lấy âm lượng thật của máy)
             audioRef.current.volume = 0;
             audioRef.current.play().then(() => {
                 setIsMusicPlaying(true);
@@ -238,12 +234,10 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
-    // 1. Gỡ muted cho Video đĩa than để CÓ TIẾNG RỘT ROẠT
     setIsVideoMuted(false);
 
-    // 2. MỞ KHÓA AUDIO CHO MOBILE (Kích hoạt chạy ngầm TẮT TIẾNG)
     if (audioRef.current) {
-        audioRef.current.muted = true; // Chặn tiếng hoàn toàn ở màn hình bìa
+        audioRef.current.muted = true; 
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
             playPromise.catch(e => console.log("Audio unlock failed", e));
@@ -256,7 +250,6 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
-      // Phát Video đĩa than chính thức (Có âm thanh rột roạt)
       if (videoRef.current) {
           videoRef.current.currentTime = 0;
           videoRef.current.play().catch(e => console.log(e));
@@ -414,7 +407,6 @@ export default function WeddingCardPage() {
                       ${stageProgress === 4 ? 'animate-split-up' : ''}
                   `}>
                       {showMusicTitle && (
-                          /* THIẾT KẾ TAG BÀI HÁT: Tinh tế, kính mờ (Glassmorphism), chuẩn Châu Âu */
                           <div className="absolute top-4 right-[-10px] bg-white/85 backdrop-blur-md border border-[#EAE3DB] rounded-l-full pr-1 pl-4 py-1.5 flex items-center gap-2 animate-slide-in-right shadow-[0_4px_15px_rgba(0,0,0,0.06)] z-50">
                               <div className="overflow-hidden w-[140px] relative">
                                   <div className="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-white/90 to-transparent z-10 pointer-events-none"></div>
@@ -430,7 +422,6 @@ export default function WeddingCardPage() {
                       )}
 
                       <div className="relative w-full flex items-center justify-center z-10">
-                          {/* Đã thêm muted liên kết State để quản lý linh hoạt */}
                           <video 
                               ref={videoRef}
                               src="/video1.mov" 
@@ -485,7 +476,6 @@ export default function WeddingCardPage() {
                       pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
                   }}
               >
-                  {/* Sử dụng LuxuryCorner mặc định cho Bìa Thiệp */}
                   <LuxuryCorner className="top-4 left-4 opacity-90 w-12 h-12 md:w-16 md:h-16" />
                   <LuxuryCorner className="top-4 right-4 rotate-90 opacity-90 w-12 h-12 md:w-16 md:h-16" />
                   <LuxuryCorner className="bottom-4 right-4 rotate-180 opacity-90 w-12 h-12 md:w-16 md:h-16" />
@@ -544,19 +534,16 @@ export default function WeddingCardPage() {
               {/* === RUỘT THIỆP CHÍNH === */}
               <div 
                   ref={scrollRef}
-                  /* Khóa overflow-x ngang, chống rung phần cứng bằng translateZ */
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative custom-scrollbar
                       ${cardState === 'done' ? 'z-50 overflow-y-auto overflow-x-hidden pb-24' : 'z-10 overflow-hidden'}
                   `}
                   style={{ WebkitOverflowScrolling: 'touch', transform: 'translateZ(0)' }}
-                  /* Hủy auto-scroll khi người dùng tự thao tác (Bao gồm cả touchMove) */
                   onTouchStart={() => setIsAutoScrolling(false)}
                   onTouchMove={() => setIsAutoScrolling(false)}
                   onWheel={() => setIsAutoScrolling(false)}
               >
                  <WatermarkPurpleFlowers />
 
-                 {/* Dải phân cách hoàng gia mờ ở đỉnh ruột thiệp */}
                  <div className="w-full flex justify-center pt-6 opacity-60">
                     <svg width="120" height="20" viewBox="0 0 120 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 10H45M75 10H110" stroke="#C3B09B" strokeWidth="1"/>
@@ -583,13 +570,14 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - Tăng threshold lên 0.05 để hiện ra CỰC NHANH khi cuộn */}
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - XÓA BỎ overflow-hidden ĐỂ LÁ TRÀN RA NGOÀI ĐƯỢC */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
-                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] overflow-hidden">
+                     {/* Khối này ĐÃ XÓA overflow-hidden */}
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
                          
                          {/* THÊM 4 GÓC HOÀNG GIA CHO THẺ THÔNG TIN */}
                          <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
@@ -649,9 +637,9 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* ALBUM ẢNH - Đặt lại Threshold 0.05 để hiện ra sớm ngang với thẻ trên */}
+                 {/* ALBUM ẢNH - Khối này ĐÃ XÓA overflow-hidden */}
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-12 mb-20 z-20 px-2">
-                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center">
                          
                          {/* THÊM 4 GÓC HOÀNG GIA CHO THẺ ALBUM */}
                          <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
@@ -689,7 +677,6 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* Dải hoa văn hoàng gia kết thúc ở đáy ruột thiệp */}
                  <GoldenVintageOrnaments className="opacity-60 mb-20" />
 
               </div>
