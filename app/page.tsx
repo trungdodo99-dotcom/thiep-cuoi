@@ -90,7 +90,8 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+// Nâng cấp FadeIn: Có thêm thuộc tính threshold để chỉnh độ nhạy hiện ra
+const FadeIn = ({ children, delay = 0, threshold = 0.15, className = "" }: { children: React.ReactNode, delay?: number, threshold?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -102,11 +103,11 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
 
   return (
     <div ref={ref} className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] w-full flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-[0.98]'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
@@ -148,21 +149,34 @@ export default function WeddingCardPage() {
     }
   }, []);
 
-  // Xử lý Auto-Scroll
+  // KHẮC PHỤC LỖI TRƯỢT RUNG RUNG TRÊN MOBILE (Time-based scroll)
   useEffect(() => {
     let animationFrameId: number;
-    let currentScrollY = scrollRef.current?.scrollTop || 0;
+    let lastTime = performance.now();
+    let scrollAccumulator = 0;
     
-    const smoothScroll = () => {
+    const smoothScroll = (currentTime: number) => {
       if (isAutoScrolling && scrollRef.current) {
-        currentScrollY += 0.4; 
-        scrollRef.current.scrollTop = currentScrollY;
+        const deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        
+        // Tốc độ: 0.04 pixel mỗi mili-giây (~ 2.4px / frame 60fps)
+        scrollAccumulator += deltaTime * 0.04; 
+        
+        // Chỉ trượt khi tích lũy đủ 1 pixel tròn để tránh màn hình Mobile bị giật (Jitter)
+        if (scrollAccumulator >= 1) {
+            const pixelsToScroll = Math.floor(scrollAccumulator);
+            scrollRef.current.scrollTop += pixelsToScroll;
+            scrollAccumulator -= pixelsToScroll;
+        }
+        
         animationFrameId = requestAnimationFrame(smoothScroll);
       }
     };
 
     if (isAutoScrolling) {
-      currentScrollY = scrollRef.current?.scrollTop || 0; 
+      lastTime = performance.now();
+      scrollAccumulator = 0;
       animationFrameId = requestAnimationFrame(smoothScroll);
     }
 
@@ -203,6 +217,7 @@ export default function WeddingCardPage() {
 
     if (time >= 7 && stageProgress < 3) setStageProgress(3);
 
+    // Dừng Video dứt điểm
     if (time >= 9 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -219,11 +234,7 @@ export default function WeddingCardPage() {
   const handleOpenCard = () => {
     if (cardState !== 'idle') return;
 
-    if (videoRef.current) {
-        videoRef.current.muted = false; 
-        const p1 = videoRef.current.play();
-        if (p1 !== undefined) p1.then(() => videoRef.current?.pause()).catch(e => console.log(e));
-    }
+    // CHỈ "mở khóa" Audio tại đây. GỠ BỎ mẹo chạy/dừng Video để Mobile không bị lỗi play 2 lần.
     if (audioRef.current) {
         audioRef.current.volume = 0;
         const p2 = audioRef.current.play();
@@ -237,6 +248,7 @@ export default function WeddingCardPage() {
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
+      // KHI NÀY CHUYỂN SANG CẢNH HỘP NHẠC THÌ MỚI PLAY VIDEO CHÍNH THỨC
       if (videoRef.current) {
           videoRef.current.currentTime = 0;
           videoRef.current.play().catch(e => console.log(e));
@@ -519,13 +531,14 @@ export default function WeddingCardPage() {
               </div>
 
               {/* === RUỘT THIỆP CHÍNH === */}
-              {/* Thêm overflow-x-hidden vào wrapper tổng để chống thanh cuộn ngang khi hoa tràn ra, đồng thời bỏ overflow-hidden ở các thẻ con */}
               <div 
                   ref={scrollRef}
                   className={`absolute inset-0 w-full h-full bg-[#FDFBF7] relative custom-scrollbar
                       ${cardState === 'done' ? 'z-50 overflow-y-auto overflow-x-hidden pb-24' : 'z-10 overflow-hidden'}
                   `}
+                  /* Hủy auto-scroll khi người dùng tự thao tác (Bao gồm cả touchMove) */
                   onTouchStart={() => setIsAutoScrolling(false)}
+                  onTouchMove={() => setIsAutoScrolling(false)}
                   onWheel={() => setIsAutoScrolling(false)}
               >
                  <WatermarkPurpleFlowers />
@@ -534,7 +547,6 @@ export default function WeddingCardPage() {
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p> 
                      <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-8">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2> 
                      
-                     {/* BỨC ẢNH ĐẦU TIÊN */}
                      <div className="relative w-[85%] max-w-[320px] bg-white p-3 pb-12 shadow-xl rotate-[2deg] mx-auto mt-2">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
                         <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
@@ -542,24 +554,19 @@ export default function WeddingCardPage() {
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
                         
-                        {/* Hoa góc dưới bên trái Ảnh 1 */}
                         <div className="absolute -bottom-[40px] -left-[30px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                             <img src="/HoaT1.png" alt="Hoa" className="w-[120px] h-auto" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                         </div>
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - Đã bỏ overflow-hidden ở div này */}
-                 <div className="relative w-full flex justify-center mt-8 mb-12 px-2">
-                     {/* Hoa goc1 - Ghim sát mếp phải, dạt ra ngoài */}
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - Nâng cấp FadeIn xuất hiện siêu nhanh (Chỉ 5% viền hiện lên là Fade) */}
+                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-8 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
-                     {/* Thiệp nhỏ bên trong */}
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
-                         
-                         {/* HoaT1 góc dưới trái - Kéo dạt xuống dưới và sang trái */}
                          <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
                              <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
@@ -606,10 +613,10 @@ export default function WeddingCardPage() {
                              <span className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.1em] opacity-90">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
                          </div>
                      </div>
-                 </div>
+                 </FadeIn>
 
                  {/* ALBUM ẢNH */}
-                 <FadeIn delay={100} className="relative w-full flex flex-col items-center mt-12 mb-16 z-20">
+                 <FadeIn threshold={0.15} className="relative w-full flex flex-col items-center mt-12 mb-16 z-20">
                      <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center">
                          <h3 className="text-[#5C4F44] force-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
                          
