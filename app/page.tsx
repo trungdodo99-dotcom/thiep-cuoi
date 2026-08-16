@@ -471,7 +471,7 @@ export default function WeddingCardPage() {
 
               {/* === BÌA THIỆP (Z-50 khi chưa mở) === */}
               <div 
-                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 overflow-hidden flex flex-col items-center justify-center text-center px-4 md:px-6 transition-all duration-[1500ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]
+                  className={`absolute inset-0 w-full h-full bg-[#FDFBF7] z-50 flex flex-col items-center justify-center text-center px-6 relative overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]
                       ${cardState === 'done' ? 'hidden' : ''}
                   `}
                   style={{ 
@@ -481,15 +481,13 @@ export default function WeddingCardPage() {
                       pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
                   }}
               >
-                  {/* HÌNH BÌA LỒNG BÊN NGOÀI */}
-                  <img src="/bia.png" alt="Bìa" className="absolute inset-0 w-full h-full object-fill md:object-cover pointer-events-none z-10" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/bia.jpg"; }} />
-
-                  {/* NỘI DUNG CĂN GIỮA */}
+                  {/* LỒNG ẢNH BÌA DÙNG OBJECT-COVER ĐỂ KHÔNG BAO GIỜ BỊ KÉO DÃN XẤU TRÊN MOBILE */}
+                  <img src="/bia.png" alt="Bìa" className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-10" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/bia.jpg"; }} />
+                  
                   <div className="relative z-20 flex flex-col items-center justify-center w-full mt-4">
-                    
-                    <div className="relative mb-6">
-                        {/* HIỆU ỨNG TRÁI TIM BUNG */}
-                        {cardState === 'bursting' && (
+                    <div className="mb-6 relative z-30">
+                       {/* HIỆU ỨNG TRÁI TIM BUNG */}
+                       {cardState === 'bursting' && (
                             <div className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-40 overflow-visible">
                                 {GENTLE_CONFETTI.map((p) => (
                                     <div key={p.id} className="absolute animate-gentle-burst opacity-0" style={{'--tx': `${p.tx}px`, '--ty': `${p.ty}px`, left: '-12px', top: '-12px', width: p.shape === 'heart' ? '24px' : '18px', color: p.color, animationDelay: `${p.delay}s` } as React.CSSProperties}>
@@ -498,30 +496,19 @@ export default function WeddingCardPage() {
                                     </div>
                                 ))}
                             </div>
-                        )}
-                        <div className={`relative z-10 bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg group transition-transform duration-300 ${cardState === 'bursting' ? 'scale-110' : ''}`}>
-                          <svg className={`w-5 h-5 md:w-6 md:h-6 text-white transition-colors duration-500 ${cardState === 'bursting' ? 'animate-fast-beat text-[#FF99C2]' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                        </div>
+                       )}
+                       <div className={`bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg transition-transform duration-300 ${cardState === 'bursting' ? 'scale-110' : ''}`}>
+                         <svg className={`w-5 h-5 md:w-6 md:h-6 text-white ${cardState === 'bursting' ? 'animate-fast-beat' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                       </div>
                     </div>
-
-                    <h1 className="text-4xl md:text-5xl force-serif text-[#5C4F44] font-light mb-2">Đỗ Trung</h1>
-                    <span className="text-2xl force-serif text-[#8C7A6B] italic my-2">&</span>
-                    <h1 className="text-4xl md:text-5xl force-serif text-[#5C4F44] font-light mt-2">Đặng Hải</h1>
-
-                    <div className="flex items-center gap-2 my-6 text-[#A09386] pointer-events-none">
-                      <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
-                      <span className="text-xl force-serif">❦</span>
-                      <span className="w-12 h-[1px] bg-[#D5C7B8]"></span>
-                    </div>
-
-                    <p className="text-[#8C7A6B] text-lg md:text-xl force-serif tracking-wide mb-12">3 tháng 1, 2027</p>
-
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} 
-                        className="px-10 md:px-12 py-3.5 md:py-4 bg-[#8C7A6B] text-white text-[13px] md:text-[14px] uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] active:scale-90 transition-all duration-300 relative z-50"
-                    >
-                        Mở thiệp
-                    </button>
+                    
+                    {/* CHỮ ĐÃ THU NHỎ ĐỂ KHÔNG CHẠM LÁ */}
+                    <h1 className="text-3xl md:text-4xl force-serif text-[#5C4F44] font-light mb-1">Đỗ Trung</h1>
+                    <span className="text-xl md:text-2xl force-serif text-[#8C7A6B] italic my-1">&</span>
+                    <h1 className="text-3xl md:text-4xl force-serif text-[#5C4F44] font-light mt-1">Đặng Hải</h1>
+                    
+                    <p className="text-[#8C7A6B] text-base md:text-lg force-serif tracking-wide mt-4 mb-8">3 tháng 1, 2027</p>
+                    <button onClick={(e) => { e.stopPropagation(); handleOpenCard(); }} className="px-10 py-3.5 bg-[#8C7A6B] text-white text-xs md:text-sm uppercase tracking-widest rounded-full shadow-lg hover:bg-[#7A6A5E] active:scale-90 transition-all z-50">Mở thiệp</button>
                   </div>
               </div>
 
@@ -575,14 +562,8 @@ export default function WeddingCardPage() {
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
-                         
-                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
-
                          <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
-                             <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.2em] uppercase font-bold mb-5">Thông Tin Lễ Cưới</h3>
+                             <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-5">Thông Tin Lễ Cưới</h3>
 
                              <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-6 relative px-1">
                                  <div className="w-[48%] flex flex-col items-center">
@@ -633,11 +614,6 @@ export default function WeddingCardPage() {
                  <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-12 z-20 px-2">
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                          
-                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
-
                          <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
                          
                          <div className="grid grid-cols-2 gap-3 w-full mb-4 z-10 relative">
@@ -680,12 +656,6 @@ export default function WeddingCardPage() {
                      </div>
 
                      <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
-                         
-                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
-
                          <div className="px-5 md:px-6 pt-16 pb-12 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.2em] uppercase font-bold mb-6">Thông Tin Tiệc Cưới</h3>
                              <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] mb-8">Tiệc cưới sẽ diễn ra vào lúc:</p>
