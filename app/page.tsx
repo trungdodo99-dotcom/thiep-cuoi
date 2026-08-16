@@ -40,8 +40,9 @@ const ALBUM_IMAGES = [
   "/Ab5.jpg"
 ];
 
-const LuxuryCorner = ({ className }: { className?: string }) => (
-  <svg className={`absolute w-12 h-12 md:w-16 md:h-16 pointer-events-none opacity-90 z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+// Cập nhật LuxuryCorner để có thể tùy chỉnh kích thước linh hoạt cho cả bìa và ruột thiệp
+const LuxuryCorner = ({ className = "w-12 h-12 md:w-16 md:h-16" }: { className?: string }) => (
+  <svg className={`absolute pointer-events-none z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2 98 V2 H98" stroke="#C3B09B" strokeWidth="2"/>
     <path d="M14 98 V14 H98" stroke="#C3B09B" strokeWidth="1"/>
     <path d="M26 98 V26 H98" stroke="#C3B09B" strokeWidth="0.5"/>
@@ -53,8 +54,8 @@ const LuxuryCorner = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const GoldenVintageOrnaments = () => (
-  <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[15] flex justify-center items-end overflow-hidden pb-4">
+const GoldenVintageOrnaments = ({ className = "" }: { className?: string }) => (
+  <div className={`pointer-events-none z-[15] flex justify-center items-end overflow-hidden ${className}`}>
     <svg viewBox="0 0 600 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[90%] md:w-[80%] h-auto opacity-95 drop-shadow-md">
       <defs>
         <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
@@ -78,8 +79,19 @@ const GoldenVintageOrnaments = () => (
   </div>
 );
 
+// Họa tiết dải ngang hoàng gia cổ điển
+const VintageDivider = () => (
+  <div className="flex items-center justify-center w-full my-4 opacity-70">
+     <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-[#C3B09B]"></div>
+     <svg className="w-6 h-6 mx-3 text-[#C3B09B]" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" opacity="0.8"/>
+     </svg>
+     <div className="h-[1px] w-16 bg-gradient-to-l from-transparent to-[#C3B09B]"></div>
+  </div>
+);
+
 const WatermarkPurpleFlowers = () => (
-  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.1]">
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.08]">
       <img src="/Hoa_chim.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
       <img src="/Hoa_chim.png" alt="" className="absolute top-[18%] -right-[5%] w-[150px] opacity-50 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
       <img src="/Hoa_chim.png" alt="" className="absolute top-[35%] -left-[10%] w-[180px] opacity-40 -rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
@@ -89,7 +101,7 @@ const WatermarkPurpleFlowers = () => (
   </div>
 );
 
-// Nâng cấp FadeIn: Tăng tốc độ xuất hiện (duration 700ms, translate-y-6) để nhanh nhẹn hơn nhưng vẫn mượt
+// Nâng cấp FadeIn: Tăng tốc độ xuất hiện (duration 700ms) để nhanh nhẹn hơn nhưng vẫn mượt
 const FadeIn = ({ children, delay = 0, threshold = 0.05, className = "" }: { children: React.ReactNode, delay?: number, threshold?: number, className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -473,10 +485,11 @@ export default function WeddingCardPage() {
                       pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
                   }}
               >
-                  <LuxuryCorner className="top-4 left-4" />
-                  <LuxuryCorner className="top-4 right-4 rotate-90" />
-                  <LuxuryCorner className="bottom-4 right-4 rotate-180" />
-                  <LuxuryCorner className="bottom-4 left-4 -rotate-90" />
+                  {/* Sử dụng LuxuryCorner mặc định cho Bìa Thiệp */}
+                  <LuxuryCorner className="top-4 left-4 opacity-90 w-12 h-12 md:w-16 md:h-16" />
+                  <LuxuryCorner className="top-4 right-4 rotate-90 opacity-90 w-12 h-12 md:w-16 md:h-16" />
+                  <LuxuryCorner className="bottom-4 right-4 rotate-180 opacity-90 w-12 h-12 md:w-16 md:h-16" />
+                  <LuxuryCorner className="bottom-4 left-4 -rotate-90 opacity-90 w-12 h-12 md:w-16 md:h-16" />
 
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 overflow-hidden">
                      <div className="absolute flex items-center justify-center">
@@ -486,7 +499,7 @@ export default function WeddingCardPage() {
                      <div className="text-[150px] font-serif text-[#D5C7B8] opacity-20 select-none">囍</div>
                   </div>
                   
-                  <GoldenVintageOrnaments />
+                  <GoldenVintageOrnaments className="absolute inset-x-0 bottom-0 pb-4" />
 
                   <div className="relative z-40 flex flex-col items-center justify-center pt-8 pb-12 w-full">
                     
@@ -543,13 +556,23 @@ export default function WeddingCardPage() {
               >
                  <WatermarkPurpleFlowers />
 
-                 <div className="relative w-full min-h-[95vh] flex flex-col items-center justify-center pt-8 pb-16 z-20"> 
+                 {/* Dải phân cách hoàng gia mờ ở đỉnh ruột thiệp */}
+                 <div className="w-full flex justify-center pt-6 opacity-60">
+                    <svg width="120" height="20" viewBox="0 0 120 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 10H45M75 10H110" stroke="#C3B09B" strokeWidth="1"/>
+                        <circle cx="60" cy="10" r="3" fill="#C3B09B"/>
+                        <circle cx="50" cy="10" r="1.5" fill="#C3B09B"/>
+                        <circle cx="70" cy="10" r="1.5" fill="#C3B09B"/>
+                    </svg>
+                 </div>
+
+                 <div className="relative w-full min-h-[90vh] flex flex-col items-center justify-center pt-4 pb-16 z-20"> 
                      <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p> 
                      <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-8">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2> 
                      
-                     <div className="relative w-[85%] max-w-[320px] bg-white p-3 pb-12 shadow-xl rotate-[2deg] mx-auto mt-2">
+                     <div className="relative w-[85%] max-w-[320px] bg-white p-3 pb-12 shadow-xl rotate-[2deg] mx-auto mt-2 border border-[#F2EBE1]">
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
-                        <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative">
+                        <div className="w-full aspect-[4/5] bg-gray-200 overflow-hidden relative border border-[#F2EBE1]">
                             <img src="/AnhT1.jpg" alt="Wedding Photo" className="w-full h-full object-cover" onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = "/AnhT1.png"; }} />
                         </div>
                         <img src="/Con_dau1.png" alt="Wax Seal" className="absolute -bottom-6 -right-5 w-16 h-16 z-30 drop-shadow-md object-contain" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Con_dau1.jpg"; }} />
@@ -560,13 +583,20 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI - Tăng độ nhạy hiện ra (ngắn & nhanh hơn) */}
-                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-8 mb-12 px-2">
+                 {/* THẺ THÔNG TIN LỄ CƯỚI - Tăng threshold lên 0.05 để hiện ra CỰC NHANH khi cuộn */}
+                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                      </div>
 
-                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB]">
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] overflow-hidden">
+                         
+                         {/* THÊM 4 GÓC HOÀNG GIA CHO THẺ THÔNG TIN */}
+                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
+
                          <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
                              <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
@@ -574,7 +604,7 @@ export default function WeddingCardPage() {
                          <div className="px-5 md:px-6 pt-20 pb-24 flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
 
-                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-10 relative px-1">
+                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-8 relative px-1">
                                  <div className="w-[48%] flex flex-col items-center">
                                      <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
                                      <span className="font-bold mb-1">Võ Nhật Minh</span>
@@ -589,17 +619,21 @@ export default function WeddingCardPage() {
                                  </div>
                              </div>
 
-                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+                             <VintageDivider />
+
+                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6 mt-4">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
                              <div className="w-full flex flex-col items-center">
                                 <h1 className="text-4xl md:text-5xl force-serif mb-1 text-[#5C4F44]">Đỗ Trung</h1>
                                 <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-4">Trưởng Nam</span>
                                 <span className="text-2xl force-serif text-[#C3B09B] italic my-1">❦</span>
                                 <h1 className="text-4xl md:text-5xl force-serif mt-3 mb-1 text-[#5C4F44]">Đặng Hải</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-10">Út Nữ</span>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-6">Út Nữ</span>
                              </div>
 
-                             <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
+                             <VintageDivider />
+
+                             <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-4 mt-6">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
                              <div className="text-3xl force-serif text-[#5C4F44] mb-6">09:00</div>
 
                              <div className="flex items-center justify-center gap-3 md:gap-4 text-[#5C4F44] mb-5">
@@ -615,16 +649,23 @@ export default function WeddingCardPage() {
                      </div>
                  </FadeIn>
 
-                 {/* ALBUM ẢNH - Bật nhanh */}
-                 <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-12 mb-16 z-20">
-                     <div className="relative w-[90%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center">
+                 {/* ALBUM ẢNH - Đặt lại Threshold 0.05 để hiện ra sớm ngang với thẻ trên */}
+                 <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-12 mb-20 z-20 px-2">
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
+                         
+                         {/* THÊM 4 GÓC HOÀNG GIA CHO THẺ ALBUM */}
+                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
+
                          <h3 className="text-[#5C4F44] force-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
                          
-                         <div className="grid grid-cols-2 gap-3 w-full mb-4">
+                         <div className="grid grid-cols-2 gap-3 w-full mb-4 z-10 relative">
                             {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
                                 <div 
                                     key={idx} 
-                                    className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200 rounded-sm border-2 border-white"
+                                    className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200 rounded-sm border-2 border-[#F2EBE1]"
                                     onClick={(e) => { 
                                         e.stopPropagation(); 
                                         setLightboxIndex(idx); 
@@ -647,6 +688,10 @@ export default function WeddingCardPage() {
                          </div>
                      </div>
                  </FadeIn>
+
+                 {/* Dải hoa văn hoàng gia kết thúc ở đáy ruột thiệp */}
+                 <GoldenVintageOrnaments className="opacity-60 mb-20" />
+
               </div>
 
           </div>
