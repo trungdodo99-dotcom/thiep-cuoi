@@ -452,7 +452,7 @@ export default function WeddingCardPage() {
                   `}>
                     <p className={`absolute top-0 transition-all duration-1000 ease-out text-[11px] md:text-[13px] force-serif text-[#8C7A6B] font-bold tracking-[0.25em] uppercase
                         ${stageProgress >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                      Xin chào bạn...
+                      Xin chào bạn
                     </p>
                     
                     <div className={`absolute top-10 w-full transition-all duration-1000 ease-out px-2
