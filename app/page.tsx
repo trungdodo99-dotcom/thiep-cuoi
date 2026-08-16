@@ -78,8 +78,9 @@ const GoldenVintageOrnaments = ({ className = "" }: { className?: string }) => (
   </div>
 );
 
+// Họa tiết dải ngang hoàng gia cổ điển
 const VintageDivider = () => (
-  <div className="flex items-center justify-center w-full my-4 opacity-70">
+  <div className="flex items-center justify-center w-full my-3 opacity-70">
      <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-[#C3B09B]"></div>
      <svg className="w-6 h-6 mx-3 text-[#C3B09B]" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" opacity="0.8"/>
@@ -133,8 +134,12 @@ export default function WeddingCardPage() {
 
   // Trạng thái Bìa
   const [cardState, setCardState] = useState<'idle' | 'bursting' | 'opening' | 'gramophone' | 'done'>('idle');
+  
+  // Trạng thái hiện chữ và máy hát
   const [showMusicTitle, setShowMusicTitle] = useState(false);
   const [stageProgress, setStageProgress] = useState(0);
+  
+  // Trạng thái tắt tiếng Video
   const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -150,12 +155,16 @@ export default function WeddingCardPage() {
   useEffect(() => {
     setIsMounted(true);
     setTimeout(() => setIsPageLoaded(true), 150);
-    if (audioRef.current) { audioRef.current.loop = true; }
+
+    if (audioRef.current) {
+        audioRef.current.loop = true; 
+    }
   }, []);
 
-  // Xử lý Auto-Scroll chống rung
+  // Xử lý Auto-Scroll chống rung giật cực êm bằng setInterval
   useEffect(() => {
     let scrollInterval: NodeJS.Timeout;
+    
     if (isAutoScrolling && scrollRef.current) {
         scrollInterval = setInterval(() => {
             if (scrollRef.current) {
@@ -163,9 +172,13 @@ export default function WeddingCardPage() {
             }
         }, 25);
     }
-    return () => { if (scrollInterval) clearInterval(scrollInterval); };
+
+    return () => {
+        if (scrollInterval) clearInterval(scrollInterval);
+    };
   }, [isAutoScrolling]);
 
+  // Đồng bộ thời gian Video & Kích hoạt Audio
   const handleVideoTimeUpdate = () => {
     if (!videoRef.current) return;
     const time = videoRef.current.currentTime;
@@ -173,12 +186,15 @@ export default function WeddingCardPage() {
     if (time >= 2.5 && stageProgress < 1) setStageProgress(1);
     if (time >= 4.0 && stageProgress < 2) setStageProgress(2);
     
+    // ĐÚNG GIÂY THỨ 4.5, kích hoạt bài hát
     if (time >= 4.5 && !musicTriggeredRef.current) {
         musicTriggeredRef.current = true;
         setShowMusicTitle(true);
+        
         if (audioRef.current) {
             audioRef.current.currentTime = 0; 
             audioRef.current.muted = false;   
+            
             audioRef.current.volume = 0;
             audioRef.current.play().then(() => {
                 setIsMusicPlaying(true);
@@ -201,6 +217,7 @@ export default function WeddingCardPage() {
 
     if (time >= 7.5 && stageProgress < 3) setStageProgress(3);
 
+    // Dừng video máy hát ở giây 9.5
     if (time >= 9.5 && !videoRef.current.paused) {
         videoRef.current.pause();
     }
@@ -218,6 +235,7 @@ export default function WeddingCardPage() {
     if (cardState !== 'idle') return;
 
     setIsVideoMuted(false);
+
     if (audioRef.current) {
         audioRef.current.muted = true; 
         const playPromise = audioRef.current.play();
@@ -225,6 +243,7 @@ export default function WeddingCardPage() {
             playPromise.catch(e => console.log("Audio unlock failed", e));
         }
     }
+
     if (videoRef.current) {
         videoRef.current.currentTime = 0;
         const playPromise = videoRef.current.play();
@@ -235,6 +254,7 @@ export default function WeddingCardPage() {
 
     setCardState('bursting');
     setTimeout(() => setCardState('opening'), 1300); 
+    
     setTimeout(() => {
       setCardState('gramophone'); 
       musicTriggeredRef.current = false;
@@ -556,7 +576,7 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ THÔNG TIN LỄ CƯỚI */}
+                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI (Đã thu gọn khoảng cách) */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
@@ -573,10 +593,11 @@ export default function WeddingCardPage() {
                              <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
                          </div>
 
-                         <div className="px-5 md:px-6 pt-20 pb-24 flex flex-col items-center text-center relative z-20 w-full">
-                             <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8">Thông Tin Lễ Cưới</h3>
+                         {/* Khoảng cách Padding được thu nhỏ lại (pt-16 pb-16 thay vì pt-20 pb-24) */}
+                         <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
+                             <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-5">Thông Tin Lễ Cưới</h3>
 
-                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-8 relative px-1">
+                             <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-6 relative px-1">
                                  <div className="w-[48%] flex flex-col items-center">
                                      <span className="text-[#8C7A6B] mb-1.5 uppercase tracking-[0.1em] text-[9px]">Ông Bà</span>
                                      <span className="font-bold mb-1">Võ Nhật Minh</span>
@@ -593,36 +614,77 @@ export default function WeddingCardPage() {
 
                              <VintageDivider />
 
-                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-loose mb-6 mt-4">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
+                             {/* Rút ngắn margin */}
+                             <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-relaxed mb-4 mt-3">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
                              <div className="w-full flex flex-col items-center">
                                 <h1 className="text-4xl md:text-5xl force-serif mb-1 text-[#5C4F44]">Đỗ Trung</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-4">Trưởng Nam</span>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-1 mb-2">Trưởng Nam</span>
                                 <span className="text-2xl force-serif text-[#C3B09B] italic my-1">❦</span>
-                                <h1 className="text-4xl md:text-5xl force-serif mt-3 mb-1 text-[#5C4F44]">Đặng Hải</h1>
-                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-2 mb-6">Út Nữ</span>
+                                <h1 className="text-4xl md:text-5xl force-serif mt-2 mb-1 text-[#5C4F44]">Đặng Hải</h1>
+                                <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-1 mb-5">Út Nữ</span>
                              </div>
 
                              <VintageDivider />
 
-                             <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-loose mb-4 mt-6">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
-                             <div className="text-3xl force-serif text-[#5C4F44] mb-6">09:00</div>
+                             {/* Rút ngắn margin */}
+                             <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-relaxed mb-3 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
+                             <div className="text-3xl force-serif text-[#5C4F44] mb-4">09:00</div>
 
-                             <div className="flex items-center justify-center gap-3 md:gap-4 text-[#5C4F44] mb-5">
+                             <div className="flex items-center justify-center gap-3 md:gap-4 text-[#5C4F44] mb-3">
                                  <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Chủ Nhật</span>
                                  <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
                                  <span className="text-4xl font-serif">03</span>
                                  <div className="h-6 w-[1px] bg-[#C3B09B]"></div>
                                  <span className="uppercase tracking-[0.2em] text-[10px] font-medium">Tháng 01</span>
                              </div>
-                             <span className="text-lg force-serif text-[#5C4F44] mb-2">2027</span>
+                             <span className="text-lg force-serif text-[#5C4F44] mb-1">2027</span>
                              <span className="text-[#8C7A6B] text-[9px] md:text-[10px] uppercase tracking-[0.1em] opacity-90">(Tức ngày 26 tháng 11 năm Bính Ngọ)</span>
                          </div>
                      </div>
                  </FadeIn>
 
-                 {/* THẺ THÔNG TIN TIỆC CƯỚI */}
-                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
+                 {/* THẺ 2: ALBUM ẢNH (Đảo vị trí lên trước Tiệc Cưới) */}
+                 <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-12 z-20 px-2">
+                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
+                         
+                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
+                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
+
+                         <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
+                         
+                         <div className="grid grid-cols-2 gap-3 w-full mb-4 z-10 relative">
+                            {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200 rounded-sm border-2 border-[#F2EBE1]"
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        setLightboxIndex(idx); 
+                                    }}
+                                >
+                                    <img 
+                                        src={src} 
+                                        alt={`Album ${idx + 1}`} 
+                                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+                                        onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
+                                    />
+                                    
+                                    {idx === 3 && ALBUM_IMAGES.length > 4 && (
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
+                                            <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 4 + 1}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                         </div>
+                     </div>
+                 </FadeIn>
+
+                 {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
+                 <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
                      {/* Lá bên phải */}
                      <div className="absolute top-[10%] right-[-25px] md:right-[-35px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
                          <img src="/La_phai.png" alt="Lá" className="w-[100px] md:w-[130px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
@@ -697,45 +759,6 @@ export default function WeddingCardPage() {
                                 Xác nhận tham dự
                              </button>
 
-                         </div>
-                     </div>
-                 </FadeIn>
-
-                 {/* ALBUM ẢNH */}
-                 <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-20 z-20 px-2">
-                     <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
-                         
-                         <LuxuryCorner className="top-2 left-2 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="top-2 right-2 rotate-90 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
-                         <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
-
-                         <h3 className="text-[#5C4F44] force-serif text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
-                         
-                         <div className="grid grid-cols-2 gap-3 w-full mb-4 z-10 relative">
-                            {ALBUM_IMAGES.slice(0, 4).map((src, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="relative aspect-[4/5] overflow-hidden shadow-sm cursor-pointer bg-gray-200 rounded-sm border-2 border-[#F2EBE1]"
-                                    onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        setLightboxIndex(idx); 
-                                    }}
-                                >
-                                    <img 
-                                        src={src} 
-                                        alt={`Album ${idx + 1}`} 
-                                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
-                                        onError={(e) => { if (!e.currentTarget.src.includes('.png')) e.currentTarget.src = src.replace('.jpg', '.png'); }} 
-                                    />
-                                    
-                                    {idx === 3 && ALBUM_IMAGES.length > 4 && (
-                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-colors hover:bg-black/30">
-                                            <span className="text-white text-3xl font-sans font-light tracking-widest">+{ALBUM_IMAGES.length - 4 + 1}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
                          </div>
                      </div>
                  </FadeIn>
