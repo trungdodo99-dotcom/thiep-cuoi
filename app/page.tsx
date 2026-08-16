@@ -588,9 +588,9 @@ export default function WeddingCardPage() {
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
 
-                         {/* THAY ĐỔI THEO YÊU CẦU: Phóng to HoaT2 gấp ~2.5 lần và căn lại góc */}
-                         <div className="absolute -bottom-[90px] -left-[80px] md:-bottom-[110px] md:-left-[100px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
-                             <img src="/HoaT2.png" alt="Hoa" className="w-[280px] md:w-[320px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT2.jpg"; }} />
+                         {/* THAY ĐỔI: HoaT2 nằm ngang căn giữa dưới cùng */}
+                         <div className="absolute -bottom-[35px] md:-bottom-[45px] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex justify-center w-full" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                             <img src="/HoaT2.png" alt="Hoa ngang" className="w-[85%] md:w-[90%] max-w-[320px] h-auto opacity-95 object-contain" style={{ filter: 'drop-shadow(0px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT2.jpg"; }} />
                          </div>
 
                          <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
