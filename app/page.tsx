@@ -575,7 +575,7 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
+                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI - NỚI RỘNG GIẤY VÀ ĐẨY HOA T2 XUỐNG ĐÁY */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
@@ -588,12 +588,13 @@ export default function WeddingCardPage() {
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
 
-                         {/* THAY ĐỔI: HoaT2 nằm ngang căn giữa dưới cùng */}
-                         <div className="absolute -bottom-[35px] md:-bottom-[45px] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex justify-center w-full" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
+                         {/* Dải lá HoaT2 ngang căn giữa ôm sát mép dưới, nhấp nhô nhẹ nhàng */}
+                         <div className="absolute -bottom-[20px] md:-bottom-[30px] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex justify-center w-full" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
                              <img src="/HoaT2.png" alt="Hoa ngang" className="w-[85%] md:w-[90%] max-w-[320px] h-auto opacity-95 object-contain" style={{ filter: 'drop-shadow(0px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT2.jpg"; }} />
                          </div>
 
-                         <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
+                         {/* Tăng padding-bottom lên rất lớn (100-120px) để chừa nguyên khoảng đáy cho dải lá ngang mà không đè chữ */}
+                         <div className="px-5 md:px-6 pt-16 pb-[100px] md:pb-[120px] flex flex-col items-center text-center relative z-20 w-full">
                              <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-5">Thông Tin Lễ Cưới</h3>
 
                              <div className="w-full flex justify-between items-start text-[#5C4F44] text-[11px] md:text-[12px] mb-6 relative px-1">
