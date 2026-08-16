@@ -458,7 +458,7 @@ export default function WeddingCardPage() {
                     <div className={`absolute top-10 w-full transition-all duration-1000 ease-out px-2
                         ${stageProgress >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                         <p className="force-serif text-[clamp(14px,4.5vw,20px)] text-[#5C4F44] italic tracking-wide whitespace-nowrap overflow-visible">
-                          Cảm ơn bạn đã đến với đám cưới của chúng tôi!
+                          Chào mừng bạn đã đến với đám cưới của chúng tôi!
                         </p>
                     </div>
 
