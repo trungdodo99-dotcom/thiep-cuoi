@@ -458,13 +458,13 @@ export default function WeddingCardPage() {
                     <div className={`absolute top-10 w-full transition-all duration-1000 ease-out px-2
                         ${stageProgress >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                         <p className="force-serif text-[clamp(14px,4.5vw,20px)] text-[#5C4F44] italic tracking-wide whitespace-nowrap overflow-visible">
-                          Chào mừng bạn đã đến với Lễ cưới của chúng tôi!
+                          Cảm ơn bạn đã đến với đám cưới của chúng tôi!
                         </p>
                     </div>
 
                     <p className={`absolute top-24 transition-all duration-1000 ease-out text-[13px] md:text-[15px] force-serif font-bold tracking-[0.25em] text-[#8C7A6B] uppercase
                         ${stageProgress >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                      Xin Cảm Ơn!
+                      Xin Cảm Ơn
                     </p>
                   </div>
               </div>
@@ -575,7 +575,7 @@ export default function WeddingCardPage() {
                      </div>
                  </div>
 
-                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
+                 {/* THẺ 1: THÔNG TIN LỄ CƯỚI - SỬA LẠI THÀNH HoaT2 */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
                      <div className="absolute top-[-30px] right-[-10px] md:right-[-20px] z-30 pointer-events-none origin-top-right">
                          <img src="/goc1.png" alt="Hoa goc" className="w-[120px] md:w-[150px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
@@ -588,8 +588,9 @@ export default function WeddingCardPage() {
                          <LuxuryCorner className="bottom-2 right-2 rotate-180 w-8 h-8 opacity-40" />
                          <LuxuryCorner className="bottom-2 left-2 -rotate-90 w-8 h-8 opacity-40" />
 
+                         {/* THAY ĐỔI THEO YÊU CẦU: DÙNG HoaT2 Ở GÓC DƯỚI THÔNG TIN LỄ CƯỚI */}
                          <div className="absolute -bottom-[70px] -left-[20px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 7s ease-in-out infinite' }}>
-                             <img src="/HoaT1.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT1.jpg"; }} />
+                             <img src="/HoaT2.png" alt="Hoa" className="w-[130px] md:w-[150px] h-auto opacity-95" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.3))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/HoaT2.jpg"; }} />
                          </div>
 
                          <div className="px-5 md:px-6 pt-16 pb-16 flex flex-col items-center text-center relative z-20 w-full">
@@ -681,12 +682,10 @@ export default function WeddingCardPage() {
 
                  {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
                  <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
-                     {/* Lá bên phải: Đặt kích thước 150px */}
-                     <div className="absolute top-[20%] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
+                     <div className="absolute top-[35%] right-[-30px] md:right-[-40px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 8s ease-in-out infinite' }}>
                          <img src="/La_phai.png" alt="Lá" className="w-[150px] md:w-[170px] h-auto opacity-95" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/La_phai.jpg"; }} />
                      </div>
 
-                     {/* Hoa khô bên trái: Đặt kích thước 220px */}
                      <div className="absolute bottom-[5%] left-[-50px] md:left-[-70px] z-30 pointer-events-none origin-bottom-left" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                          <img src="/Hoa_kho_trai.png" alt="Hoa khô" className="w-[220px] md:w-[240px] h-auto opacity-90" style={{ filter: 'drop-shadow(4px 8px 6px rgba(0,0,0,0.25))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_kho_trai.jpg"; }} />
                      </div>
