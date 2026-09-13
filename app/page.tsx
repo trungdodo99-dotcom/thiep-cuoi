@@ -250,7 +250,7 @@ export default function WeddingCardPage() {
             }
         });
 
-        alert(`Cảm ơn ${rsvpForm.name} đã gửi xác nhận tham dự!`);
+        alert(`Cảm ơn bạn ${rsvpForm.name} đã gửi xác nhận tham dự!`);
         setIsRsvpOpen(false);
         setRsvpForm({ name: "", attendance: "", message: "" });
     } catch (error) {
@@ -371,21 +371,34 @@ export default function WeddingCardPage() {
                         pointerEvents: (cardState === 'opening' || cardState === 'gramophone') ? 'none' : 'auto'
                     }}
                 >
-                    {/* LỒNG ẢNH BÌA TRÀN VIỀN BẰNG OBJECT-COVER (KHÔNG PADDING, KHÔNG BỊ NHỎ) */}
+                    {/* LỒNG ẢNH BÌA TRÀN VIỀN BẰNG OBJECT-COVER */}
                     <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none z-10">
                         <img src="/bia.png" alt="Bìa" className="w-full h-full object-cover object-center select-none" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/bia.jpg"; }} />
                     </div>
                     
                     <div className="relative z-20 flex flex-col items-center justify-center w-full mt-4 px-6">
                       <div className="mb-6 relative z-30">
+                         {/* HIỆU ỨNG TRÁI TIM BUNG ĐÃ SỬA LỖI VERCEL */}
                          {cardState === 'bursting' && (
                               <div className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-40 overflow-visible">
-                                  {GENTLE_CONFETTI.map((p) => (
-                                      <div key={p.id} className="absolute animate-gentle-burst opacity-0" style={{'--tx': `${p.tx}px`, '--ty': `${p.ty}px`, left: '-12px', top: '-12px', width: p.shape === 'heart' ? '24px' : '18px', color: p.color, animationDelay: `${p.delay}s` } as React.CSSProperties}>
-                                          {p.shape === 'heart' && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>}
-                                          {p.shape === 'bubble' && <div className="w-3 h-3 bg-currentColor rounded-full opacity-60 mt-1 ml-1"></div>}
-                                      </div>
-                                  ))}
+                                  {GENTLE_CONFETTI.map((p) => {
+                                      const pStyle = {
+                                          '--tx': \`\${p.tx}px\`,
+                                          '--ty': \`\${p.ty}px\`,
+                                          left: '-12px',
+                                          top: '-12px',
+                                          width: p.shape === 'heart' ? '24px' : '18px',
+                                          color: p.color,
+                                          animationDelay: \`\${p.delay}s\`
+                                      } as React.CSSProperties;
+
+                                      return (
+                                          <div key={p.id} className="absolute animate-gentle-burst opacity-0" style={pStyle}>
+                                              {p.shape === 'heart' && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>}
+                                              {p.shape === 'bubble' && <div className="w-3 h-3 bg-currentColor rounded-full opacity-60 mt-1 ml-1"></div>}
+                                          </div>
+                                      );
+                                  })}
                               </div>
                          )}
                          <div className={`bg-[#8C7A6B] w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg transition-transform duration-300 ${cardState === 'bursting' ? 'scale-110' : ''}`}>
