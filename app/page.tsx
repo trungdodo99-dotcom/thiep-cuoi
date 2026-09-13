@@ -1,10 +1,3 @@
-`git add . ; git commit -m "Fix Turbopack build error by removing escape characters in template literals" ; git push`
-
-Lỗi bạn gặp phải trên Vercel (Turbopack) xảy ra do các dấu gạch chéo ngược (`\`) bị thừa bên trong Template Literal của biến `pStyle` (chỗ `\$\` và `\``), khiến trình biên dịch không thể hiểu cú pháp. Tôi đã xóa bỏ toàn bộ các dấu escape thừa đó để đưa về đúng chuẩn JS/TS (ví dụ: `${p.tx}px`).
-
-Dưới đây là toàn bộ code đã được fix hoàn chỉnh, bạn chỉ việc Ctrl + A -> Delete -> Paste nhé:
-
-```tsx
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -720,5 +713,3 @@ export default function WeddingCardPage() {
     </React.Fragment>
   );
 }
-
-```
