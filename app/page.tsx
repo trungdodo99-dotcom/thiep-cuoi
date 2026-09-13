@@ -3,8 +3,31 @@
 import React, { useState, useEffect, useRef } from "react";
 
 // ==========================================
-// 1. DỮ LIỆU TĨNH & COMPONENT TRANG TRÍ
+// 1. DỮ LIỆU TĨNH, CSS & COMPONENT TRANG TRÍ
 // ==========================================
+const customCSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap');
+  .force-serif { font-family: 'Cormorant Garamond', serif !important; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .font-sans { font-family: 'Montserrat', sans-serif; }
+  .font-script { font-family: 'Great Vibes', cursive; }
+  @keyframes float-up-down { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+  @keyframes music-rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes music-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(140, 122, 107, 0.6); } }
+  .animate-music-on { animation: music-rotate 4s linear infinite, music-pulse 2s ease-in-out infinite; }
+  @keyframes slide-in-right { 0% { transform: translateX(120%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+  @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+  .animate-marquee { animation: marquee 6s linear infinite; }
+  @keyframes float-note { 0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 0; } 30% { opacity: 0.9; } 100% { transform: translate(20px, -90px) scale(1.2) rotate(30deg); opacity: 0; } }
+  .animate-float-note { animation: float-note 3s ease-out infinite; }
+  @keyframes split-up { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120%); opacity: 0; } }
+  @keyframes split-down { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(120%); opacity: 0; } }
+  .animate-split-up { animation: split-up 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards; }
+  .animate-split-down { animation: split-down 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards; }
+  .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
+  .art-paper-bg { background-color: #F8F4ED; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
+`;
+
 const PARTICLES = [
   { id: 1, left: "12%", delay: "0s", duration: "18s", size: "12px", content: "❤" },
   { id: 2, left: "20%", delay: "4s", duration: "22s", size: "10px", content: "✿" },
@@ -204,7 +227,7 @@ export default function WeddingCardPage() {
     else { audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(e => console.error(e)); }
   };
 
-  // LOGIC GỬI DATA VỀ GOOGLE SHEETS
+  // LOGIC GỬI DATA VỀ GOOGLE SHEETS BẰNG URLSearchParams ĐỂ TƯƠNG THÍCH 100%
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rsvpForm.name.trim() || !rsvpForm.attendance) return;
@@ -227,7 +250,7 @@ export default function WeddingCardPage() {
             }
         });
 
-        alert(`Cảm ơn bạn ${rsvpForm.name} đã gửi xác nhận tham dự!`);
+        alert(`Cảm ơn ${rsvpForm.name} đã gửi xác nhận tham dự!`);
         setIsRsvpOpen(false);
         setRsvpForm({ name: "", attendance: "", message: "" });
     } catch (error) {
@@ -249,28 +272,8 @@ export default function WeddingCardPage() {
         
         <audio ref={audioRef} src="/Nhac.mp3" preload="auto" />
 
-        <style dangerouslySetInnerHTML={{__html: `
-          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap');
-          .force-serif { font-family: 'Cormorant Garamond', serif !important; }
-          .font-serif { font-family: 'Cormorant Garamond', serif; }
-          .font-sans { font-family: 'Montserrat', sans-serif; }
-          .font-script { font-family: 'Great Vibes', cursive; }
-          @keyframes float-up-down { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-          @keyframes music-rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-          @keyframes music-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(140, 122, 107, 0.6); } }
-          .animate-music-on { animation: music-rotate 4s linear infinite, music-pulse 2s ease-in-out infinite; }
-          @keyframes slide-in-right { 0% { transform: translateX(120%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
-          @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-          .animate-marquee { animation: marquee 6s linear infinite; }
-          @keyframes float-note { 0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 0; } 30% { opacity: 0.9; } 100% { transform: translate(20px, -90px) scale(1.2) rotate(30deg); opacity: 0; } }
-          .animate-float-note { animation: float-note 3s ease-out infinite; }
-          @keyframes split-up { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120%); opacity: 0; } }
-          @keyframes split-down { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(120%); opacity: 0; } }
-          .animate-split-up { animation: split-up 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards; }
-          .animate-split-down { animation: split-down 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards; }
-          .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
-          .art-paper-bg { background-color: #F8F4ED; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
-        `}} />
+        {/* Chèn CSS từ biến customCSS để không bị lỗi Vercel Turbopack */}
+        <style dangerouslySetInnerHTML={{ __html: customCSS }} />
 
         {/* Thông báo Auto Scroll */}
         <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-black/40 text-white px-5 py-2.5 rounded-full backdrop-blur-sm text-[10px] md:text-[11px] uppercase tracking-widest transition-opacity duration-1000 pointer-events-none flex items-center gap-2 shadow-lg ${isAutoScrolling ? 'opacity-100' : 'opacity-0'}`}>
