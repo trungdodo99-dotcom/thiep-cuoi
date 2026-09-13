@@ -204,13 +204,12 @@ export default function WeddingCardPage() {
     else { audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(e => console.error(e)); }
   };
 
-  // LOGIC GỬI DATA VỀ GOOGLE SHEETS BẰNG URLSearchParams ĐỂ TƯƠNG THÍCH 100%
+  // LOGIC GỬI DATA VỀ GOOGLE SHEETS
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rsvpForm.name.trim() || !rsvpForm.attendance) return;
     setIsSubmitting(true);
 
-    // API LINK GOOGLE SHEETS CỦA SẾP
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxDKiud9GAzFYapySIsTnjbOE-Oo0CisDt0iD6SujqYWx_R7lYaKbN8dHRK4Wj_55bD/exec";
 
     try {
@@ -228,7 +227,7 @@ export default function WeddingCardPage() {
             }
         });
 
-        alert(`Cảm ơn ${rsvpForm.name} đã gửi xác nhận tham dự!`);
+        alert(`Cảm ơn bạn ${rsvpForm.name} đã gửi xác nhận tham dự!`);
         setIsRsvpOpen(false);
         setRsvpForm({ name: "", attendance: "", message: "" });
     } catch (error) {
@@ -392,7 +391,7 @@ export default function WeddingCardPage() {
                       </div>
                       
                       <h1 className="text-3xl md:text-4xl force-serif text-[#5C4F44] font-light mb-1 drop-shadow-md">Đỗ Trung</h1>
-                      <span className="text-xl md:text-2xl force-serif text-[#8C7A6B] italic my-1 drop-shadow-md">&</span>
+                      <span className="text-xl md:text-2xl force-serif text-[#8C7A6B] italic my-1 drop-shadow-md">&amp;</span>
                       <h1 className="text-3xl md:text-4xl force-serif text-[#5C4F44] font-light mt-1 drop-shadow-md">Đặng Hải</h1>
                       
                       <p className="text-[#8C7A6B] text-base md:text-lg force-serif tracking-wide mt-4 mb-8 drop-shadow-md">3 tháng 1, 2027</p>
@@ -422,7 +421,7 @@ export default function WeddingCardPage() {
 
                    <div className="relative w-full min-h-[90vh] flex flex-col items-center justify-center pt-16 pb-16 z-20"> 
                        <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-[#8C7A6B] font-medium mb-3">The Wedding Of</p> 
-                       <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-8">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&</span> Đặng Hải</h2> 
+                       <h2 className="text-4xl md:text-5xl force-serif italic text-[#5C4F44] mb-8">Đỗ Trung <span className="force-serif italic text-[#8C7A6B] mx-2">&amp;</span> Đặng Hải</h2> 
                        
                        <div className="relative w-[85%] max-w-[320px] bg-white p-3 pb-12 shadow-xl rotate-[2deg] mx-auto mt-2 border border-[#F2EBE1]">
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-[#DBCBB5] opacity-85 rotate-[-3deg] shadow-sm z-10"></div>
@@ -584,7 +583,7 @@ export default function WeddingCardPage() {
                                   </div>
                                </div>
 
-                               <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors relative z-40" style={{ zIndex: 100 }}>
+                               <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors relative z-40">
                                   Thêm vào lịch
                                </button>
 
@@ -592,7 +591,6 @@ export default function WeddingCardPage() {
                                <button 
                                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsRsvpOpen(true); }} 
                                   className="bg-[#77665B] text-white px-8 py-3.5 rounded-full text-[10px] md:text-[11px] tracking-[0.2em] uppercase shadow-[0_4px_15px_rgba(119,102,91,0.4)] hover:bg-[#5C4F44] active:scale-95 transition-all relative z-50 cursor-pointer"
-                                  style={{ zIndex: 100 }}
                                >
                                   Xác nhận tham dự
                                </button>
