@@ -242,7 +242,7 @@ export default function WeddingCardPage() {
   if (!isMounted) return <div className="min-h-[100dvh] bg-[#8C8076]"></div>;
 
   return (
-    <>
+    <React.Fragment>
       {/* ========================================================================= 
           LỚP CHÍNH CỦA THIỆP CƯỚI 
           ========================================================================= */}
@@ -587,6 +587,7 @@ export default function WeddingCardPage() {
                                <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors relative z-40" style={{ zIndex: 100 }}>
                                   Thêm vào lịch
                                </button>
+
                                {/* NÚT MỞ POPUP BẢNG ĐIỀN THÔNG TIN RSVP */}
                                <button 
                                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsRsvpOpen(true); }} 
@@ -607,14 +608,14 @@ export default function WeddingCardPage() {
             </div>
         </div>
 
-      {/* =====================================================================
-          MỌI POPUP (LIGHTBOX, RSVP) ĐƯỢC DI CHUYỂN XUỐNG DƯỚI CÙNG DOM 
-          VÀ ÉP Z-INDEX 99999 ĐỂ ĐẢM BẢO KHÔNG BỊ KHUẤT BỞI CARD
-          ===================================================================== */}
+      {/* ========================================================================= 
+          LỚP POPUP HIỂN THỊ TRÊN CÙNG (KHÔNG BỊ CHE KHUẤT BỞI BẤT CỨ THỨ GÌ)
+          ========================================================================= */}
+      
       {/* Lightbox Album */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 flex flex-col items-center justify-center touch-none" style={{ zIndex: 99998, backgroundColor: 'rgba(0,0,0,0.95)' }} onClick={() => setLightboxIndex(null)}>
-            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4" style={{ zIndex: 99999 }} onClick={() => setLightboxIndex(null)}>
+        <div className="fixed inset-0 flex flex-col items-center justify-center touch-none" style={{ zIndex: 999998, backgroundColor: 'rgba(0,0,0,0.95)' }} onClick={() => setLightboxIndex(null)}>
+            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4" onClick={() => setLightboxIndex(null)}>
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="relative w-full h-full flex items-center justify-center px-2">
@@ -626,13 +627,13 @@ export default function WeddingCardPage() {
                     <svg className="w-10 h-10 text-white drop-shadow-lg opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </div>
             </div>
-            <div className="absolute bottom-8 text-white/80 tracking-[0.2em] text-sm font-sans" style={{ zIndex: 99999 }}>{lightboxIndex + 1} / {ALBUM_IMAGES.length}</div>
+            <div className="absolute bottom-8 text-white/80 tracking-[0.2em] text-sm font-sans">{lightboxIndex + 1} / {ALBUM_IMAGES.length}</div>
         </div>
       )}
 
       {/* POPUP RSVP MODAL - GIAO DIỆN MỚI CHUẨN 100% HÌNH CỦA BẠN */}
       {isRsvpOpen && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300" style={{ zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setIsRsvpOpen(false)}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300" style={{ zIndex: 999999, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setIsRsvpOpen(false)}>
             <div className="relative w-full max-w-[380px] bg-white rounded-2xl shadow-2xl p-6 md:p-8 flex flex-col font-sans max-h-[90vh] overflow-y-auto custom-scrollbar" onClick={(e) => e.stopPropagation()}>
                 {/* Nút đóng X */}
                 <button type="button" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition-colors cursor-pointer" onClick={() => setIsRsvpOpen(false)}>
@@ -695,6 +696,6 @@ export default function WeddingCardPage() {
             </div>
         </div>
       )}
-    </>
+    </React.Fragment>
   );
 }
