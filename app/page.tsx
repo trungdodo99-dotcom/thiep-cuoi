@@ -378,11 +378,11 @@ export default function WeddingCardPage() {
                     
                     <div className="relative z-20 flex flex-col items-center justify-center w-full mt-4 px-6">
                       <div className="mb-6 relative z-30">
-                         {/* HIỆU ỨNG TRÁI TIM BUNG ĐÃ SỬA LỖI VERCEL BẰNG CÁCH DÙNG ANY VÀ XÓA BACKSLASH */}
+                         {/* HIỆU ỨNG TRÁI TIM BUNG ĐÃ SỬA LỖI VERCEL */}
                          {cardState === 'bursting' && (
                               <div className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-40 overflow-visible">
                                   {GENTLE_CONFETTI.map((p) => {
-                                      const pStyle: any = {
+                                      const pStyle = {
                                           '--tx': `${p.tx}px`,
                                           '--ty': `${p.ty}px`,
                                           left: '-12px',
@@ -390,7 +390,7 @@ export default function WeddingCardPage() {
                                           width: p.shape === 'heart' ? '24px' : '18px',
                                           color: p.color,
                                           animationDelay: `${p.delay}s`
-                                      };
+                                      } as any;
 
                                       return (
                                           <div key={p.id} className="absolute animate-gentle-burst opacity-0" style={pStyle}>
@@ -712,4 +712,4 @@ export default function WeddingCardPage() {
       )}
     </React.Fragment>
   );
-} 
+}
