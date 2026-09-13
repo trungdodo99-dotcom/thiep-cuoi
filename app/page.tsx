@@ -40,19 +40,6 @@ const ALBUM_IMAGES = [
   "/Ab5.jpg"
 ];
 
-const LuxuryCorner = ({ className = "w-12 h-12 md:w-16 md:h-16" }: { className?: string }) => (
-  <svg className={`absolute pointer-events-none z-40 ${className}`} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M2 98 V2 H98" stroke="#C3B09B" strokeWidth="2"/>
-    <path d="M14 98 V14 H98" stroke="#C3B09B" strokeWidth="1"/>
-    <path d="M26 98 V26 H98" stroke="#C3B09B" strokeWidth="0.5"/>
-    <path d="M2 38 H14" stroke="#C3B09B" strokeWidth="2"/>
-    <path d="M38 2 V14" stroke="#C3B09B" strokeWidth="2"/>
-    <path d="M14 54 H26" stroke="#C3B09B" strokeWidth="1"/>
-    <path d="M54 14 V26" stroke="#C3B09B" strokeWidth="1"/>
-    <rect x="11" y="11" width="6" height="6" transform="rotate(45 14 14)" fill="#C3B09B"/>
-  </svg>
-);
-
 const GoldenVintageOrnaments = ({ className = "" }: { className?: string }) => (
   <div className={`pointer-events-none z-[15] flex justify-center items-end overflow-hidden ${className}`}>
     <svg viewBox="0 0 600 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[90%] md:w-[80%] h-auto opacity-95 drop-shadow-md">
@@ -90,12 +77,12 @@ const VintageDivider = () => (
 
 const WatermarkPurpleFlowers = () => (
   <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-[0.08]">
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[18%] -right-[5%] w-[150px] opacity-50 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[35%] -left-[10%] w-[180px] opacity-40 -rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[50%] -right-[8%] w-[140px] opacity-60 rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
-      <img src="/Hoa_chim.png" alt="" className="absolute top-[70%] -left-[5%] w-[160px] opacity-45 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
-      <img src="/Hoa_chim.png" alt="" className="absolute bottom-[5%] -right-[5%] w-[130px] opacity-55 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="watermark 1" className="absolute top-[2%] -left-[5%] w-[120px] opacity-60 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="watermark 2" className="absolute top-[18%] -right-[5%] w-[150px] opacity-50 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="watermark 3" className="absolute top-[35%] -left-[10%] w-[180px] opacity-40 -rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="watermark 4" className="absolute top-[50%] -right-[8%] w-[140px] opacity-60 rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="watermark 5" className="absolute top-[70%] -left-[5%] w-[160px] opacity-45 -rotate-12" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
+      <img src="/Hoa_chim.png" alt="watermark 6" className="absolute bottom-[5%] -right-[5%] w-[130px] opacity-55 rotate-45" onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/Hoa_chim.jpg"; }} />
   </div>
 );
 
@@ -597,14 +584,14 @@ export default function WeddingCardPage() {
                                   </div>
                                </div>
 
-                               <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors relative z-40">
+                               <button className="text-[#8C7A6B] text-[11px] md:text-[12px] font-medium underline underline-offset-4 mb-6 hover:text-[#5C4F44] transition-colors relative z-40" style={{ zIndex: 100 }}>
                                   Thêm vào lịch
                                </button>
-
                                {/* NÚT MỞ POPUP BẢNG ĐIỀN THÔNG TIN RSVP */}
                                <button 
                                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsRsvpOpen(true); }} 
-                                  className="bg-[#77665B] text-white px-8 py-3.5 rounded-full text-[10px] md:text-[11px] tracking-[0.2em] uppercase shadow-[0_4px_15px_rgba(119,102,91,0.4)] hover:bg-[#5C4F44] active:scale-95 transition-all relative z-40 cursor-pointer"
+                                  className="bg-[#77665B] text-white px-8 py-3.5 rounded-full text-[10px] md:text-[11px] tracking-[0.2em] uppercase shadow-[0_4px_15px_rgba(119,102,91,0.4)] hover:bg-[#5C4F44] active:scale-95 transition-all relative z-50 cursor-pointer"
+                                  style={{ zIndex: 100 }}
                                >
                                   Xác nhận tham dự
                                </button>
@@ -620,14 +607,14 @@ export default function WeddingCardPage() {
             </div>
         </div>
 
-      {/* ========================================================================= 
-          LỚP POPUP HIỂN THỊ TRÊN CÙNG (KHÔNG BỊ CHE KHUẤT BỞI BẤT CỨ THỨ GÌ)
-          ========================================================================= */}
-      
+      {/* =====================================================================
+          MỌI POPUP (LIGHTBOX, RSVP) ĐƯỢC DI CHUYỂN XUỐNG DƯỚI CÙNG DOM 
+          VÀ ÉP Z-INDEX 99999 ĐỂ ĐẢM BẢO KHÔNG BỊ KHUẤT BỞI CARD
+          ===================================================================== */}
       {/* Lightbox Album */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 flex flex-col items-center justify-center touch-none" style={{ zIndex: 999998, backgroundColor: 'rgba(0,0,0,0.95)' }} onClick={() => setLightboxIndex(null)}>
-            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4" onClick={() => setLightboxIndex(null)}>
+        <div className="fixed inset-0 flex flex-col items-center justify-center touch-none" style={{ zIndex: 99998, backgroundColor: 'rgba(0,0,0,0.95)' }} onClick={() => setLightboxIndex(null)}>
+            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-4" style={{ zIndex: 99999 }} onClick={() => setLightboxIndex(null)}>
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="relative w-full h-full flex items-center justify-center px-2">
@@ -639,13 +626,13 @@ export default function WeddingCardPage() {
                     <svg className="w-10 h-10 text-white drop-shadow-lg opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </div>
             </div>
-            <div className="absolute bottom-8 text-white/80 tracking-[0.2em] text-sm font-sans">{lightboxIndex + 1} / {ALBUM_IMAGES.length}</div>
+            <div className="absolute bottom-8 text-white/80 tracking-[0.2em] text-sm font-sans" style={{ zIndex: 99999 }}>{lightboxIndex + 1} / {ALBUM_IMAGES.length}</div>
         </div>
       )}
 
       {/* POPUP RSVP MODAL - GIAO DIỆN MỚI CHUẨN 100% HÌNH CỦA BẠN */}
       {isRsvpOpen && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300" style={{ zIndex: 999999, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setIsRsvpOpen(false)}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300" style={{ zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setIsRsvpOpen(false)}>
             <div className="relative w-full max-w-[380px] bg-white rounded-2xl shadow-2xl p-6 md:p-8 flex flex-col font-sans max-h-[90vh] overflow-y-auto custom-scrollbar" onClick={(e) => e.stopPropagation()}>
                 {/* Nút đóng X */}
                 <button type="button" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition-colors cursor-pointer" onClick={() => setIsRsvpOpen(false)}>
