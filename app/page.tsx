@@ -1,3 +1,10 @@
+`git add . ; git commit -m "Fix Turbopack build error by removing escape characters in template literals" ; git push`
+
+Lỗi bạn gặp phải trên Vercel (Turbopack) xảy ra do các dấu gạch chéo ngược (`\`) bị thừa bên trong Template Literal của biến `pStyle` (chỗ `\$\` và `\``), khiến trình biên dịch không thể hiểu cú pháp. Tôi đã xóa bỏ toàn bộ các dấu escape thừa đó để đưa về đúng chuẩn JS/TS (ví dụ: `${p.tx}px`).
+
+Dưới đây là toàn bộ code đã được fix hoàn chỉnh, bạn chỉ việc Ctrl + A -> Delete -> Paste nhé:
+
+```tsx
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -227,7 +234,7 @@ export default function WeddingCardPage() {
     else { audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(e => console.error(e)); }
   };
 
-  // LOGIC GỬI DATA VỀ GOOGLE SHEETS BẰNG URLSearchParams ĐỂ TƯƠNG THÍCH 100%
+  // LOGIC GỬI DATA VỀ GOOGLE SHEETS
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rsvpForm.name.trim() || !rsvpForm.attendance) return;
@@ -378,19 +385,19 @@ export default function WeddingCardPage() {
                     
                     <div className="relative z-20 flex flex-col items-center justify-center w-full mt-4 px-6">
                       <div className="mb-6 relative z-30">
-                         {/* HIỆU ỨNG TRÁI TIM BUNG ĐÃ SỬA LỖI VERCEL */}
+                         {/* HIỆU ỨNG TRÁI TIM BUNG ĐÃ SỬA LỖI VERCEL BẰNG CÁCH DÙNG ANY VÀ XÓA BACKSLASH */}
                          {cardState === 'bursting' && (
                               <div className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none z-40 overflow-visible">
                                   {GENTLE_CONFETTI.map((p) => {
-                                      const pStyle = {
-                                          '--tx': \`\${p.tx}px\`,
-                                          '--ty': \`\${p.ty}px\`,
+                                      const pStyle: any = {
+                                          '--tx': `${p.tx}px`,
+                                          '--ty': `${p.ty}px`,
                                           left: '-12px',
                                           top: '-12px',
                                           width: p.shape === 'heart' ? '24px' : '18px',
                                           color: p.color,
-                                          animationDelay: \`\${p.delay}s\`
-                                      } as React.CSSProperties;
+                                          animationDelay: `${p.delay}s`
+                                      };
 
                                       return (
                                           <div key={p.id} className="absolute animate-gentle-burst opacity-0" style={pStyle}>
@@ -453,7 +460,7 @@ export default function WeddingCardPage() {
                    </div>
 
                    {/* THẺ 1: THÔNG TIN LỄ CƯỚI */}
-                   <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-12 px-2">
+                   <FadeIn className="relative w-full flex justify-center mt-4 mb-12 px-2" threshold={0.05}>
                        <div className="absolute top-[-40px] right-[-5px] md:top-[-50px] md:right-[-10px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                            <img src="/goc1.png" alt="Hoa goc 1" className="w-[240px] md:w-[300px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc1.jpg"; }} />
                        </div>
@@ -480,7 +487,7 @@ export default function WeddingCardPage() {
                                </div>
                            </div>
 
-                           <VintageDivider />
+                           <VintageDivider/>
 
                            <p className="text-[#8C7A6B] text-[10px] md:text-[11px] uppercase tracking-[0.15em] leading-relaxed mb-4 mt-3">Trân trọng báo tin<br/>Lễ thành hôn của con chúng tôi</p>
 
@@ -492,7 +499,7 @@ export default function WeddingCardPage() {
                               <span className="text-[#8C7A6B] text-[8px] uppercase tracking-[0.3em] mt-1 mb-5">Út Nữ</span>
                            </div>
 
-                           <VintageDivider />
+                           <VintageDivider/>
 
                            <p className="text-[#5C4F44] text-[11px] md:text-[12px] uppercase tracking-[0.15em] leading-relaxed mb-3 mt-4">Lễ thành hôn được cử hành tại<br/><span className="font-bold text-base md:text-lg">Tư Gia</span><br/>Vào lúc</p>
                            <div className="text-3xl force-serif text-[#5C4F44] mb-4">09:00</div>
@@ -510,7 +517,7 @@ export default function WeddingCardPage() {
                    </FadeIn>
 
                    {/* THẺ 2: ALBUM ẢNH */}
-                   <FadeIn threshold={0.05} className="relative w-full flex flex-col items-center mt-4 mb-12 z-20 px-2">
+                   <FadeIn className="relative w-full flex flex-col items-center mt-4 mb-12 z-20 px-2" threshold={0.05}>
                        <div className="relative w-[95%] max-w-[400px] art-paper-bg rounded-sm shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-[#EAE3DB] p-6 flex flex-col items-center overflow-hidden">
                            
                            <h3 className="text-[#5C4F44] force-serif text-[18px] md:text-xl tracking-[0.25em] uppercase font-bold mb-8 mt-4 text-center">Album Ảnh</h3>
@@ -537,7 +544,7 @@ export default function WeddingCardPage() {
                    </FadeIn>
 
                    {/* THẺ 3: THÔNG TIN TIỆC CƯỚI */}
-                   <FadeIn threshold={0.05} className="relative w-full flex justify-center mt-4 mb-20 px-2">
+                   <FadeIn className="relative w-full flex justify-center mt-4 mb-20 px-2" threshold={0.05}>
                        
                        <div className="absolute top-[-50px] right-[-45px] md:top-[-60px] md:right-[-55px] z-30 pointer-events-none origin-top-right" style={{ animation: 'float-up-down 6s ease-in-out infinite' }}>
                            <img src="/goc3.png" alt="Hoa goc 3" className="w-[160px] md:w-[180px] h-auto opacity-100" style={{ filter: 'drop-shadow(-4px 8px 6px rgba(0,0,0,0.15))' }} onError={(e) => { if (!e.currentTarget.src.includes('.jpg')) e.currentTarget.src = "/goc3.jpg"; }} />
@@ -583,7 +590,7 @@ export default function WeddingCardPage() {
 
                                   <div className="text-center font-script text-3xl md:text-4xl mb-4 tracking-wider">Tháng 1 / 2027</div>
                                   <div className="grid grid-cols-7 gap-y-3 text-center text-[10px] opacity-80 mb-2 border-b border-[#F2EBE1]/20 pb-3 font-medium">
-                                     <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                                      <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
                                   </div>
                                   <div className="grid grid-cols-7 gap-y-3 gap-x-1 text-center text-[12px] md:text-[13px] force-serif pt-2 items-center">
                                      <span className="opacity-0"></span><span className="opacity-0"></span><span className="opacity-0"></span><span className="opacity-0"></span>
@@ -615,7 +622,7 @@ export default function WeddingCardPage() {
                        </div>
                    </FadeIn>
 
-                   <GoldenVintageOrnaments className="opacity-60 mb-20" />
+                   <GoldenVintageOrnaments className="opacity-60 mb-20"/>
 
                 </div>
 
@@ -713,3 +720,5 @@ export default function WeddingCardPage() {
     </React.Fragment>
   );
 }
+
+```
